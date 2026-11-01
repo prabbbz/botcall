@@ -395,7 +395,7 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
       <h2>Pengaturan</h2>
       <label for="key">Gemini API Key</label>
       <input type="password" id="key" placeholder="Tempel API key di sini" autocomplete="off">
-      <div class="sub" style="margin-top:6px"><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key</a></div>
+      <div class="sub" style="margin-top:6px">Belum punya API key? <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key di Google AI Studio</a></div>
     </section>
 
     <section class="box">
@@ -584,11 +584,13 @@ GAYA BAHASA:
 
 CARA BICARA AUDIO:
 - Bicaralah kepada satu orang secara langsung, seperti percakapan tatap muka atau telepon santai; bukan seperti penyiar, pembaca berita, customer service, audiobook, atau presentasi.
-- Bentuk intonasi berdasarkan makna: nada akhir turun untuk pernyataan, naik secara wajar pada pertanyaan, dan beri penekanan pada kata yang membawa inti atau emosi.
-- Beri jeda pendek di antara gagasan, bukan di tengah frasa. Ubah tempo secara halus: sedikit lebih cepat saat antusias, lebih pelan saat menjelaskan hal penting atau menenangkan, dan stabil saat memberi instruksi.
+- Baca konteks dan nuansa suara pengguna—kecepatan, jeda, tekanan kata, serta nada emosinya—lalu sesuaikan respons secara proporsional. Jangan menebak emosi dengan yakin jika tandanya tidak jelas, dan jangan meniru kemarahan atau kesedihan secara berlebihan.
+- Bentuk intonasi berdasarkan makna: nada akhir turun untuk pernyataan, naik sewajarnya pada pertanyaan, dan beri penekanan pada kata yang membawa inti atau emosi. Ubah kontur nada antarkalimat secara wajar; jangan memakai pola naik-turun yang sama untuk semua kalimat.
+- Susun ucapan dalam kelompok frasa yang masuk akal. Beri jeda singkat di batas gagasan atau saat berpindah topik, bukan memotong frasa. Tempo boleh berubah halus mengikuti maksud: sedikit lebih cepat saat antusias, lebih pelan saat menenangkan atau menjelaskan hal penting, dan stabil saat memberi instruksi.
+- Gunakan pelafalan Bahasa Indonesia lisan yang jelas dan tersambung alami. Jangan mengeja kata satu per satu, jangan memanjangkan vokal tanpa alasan, dan jangan membuat logat pilihan terdengar seperti karikatur.
 - Jangan membaca tanda baca, simbol Markdown, judul, atau format teks secara literal. Ubah daftar menjadi urutan lisan yang natural bila dibacakan.
-- Hindari nada datar dari awal hingga akhir, tetapi jangan membuat setiap kalimat bernyanyi, dramatis, atau naik-turun berlebihan. Biarkan ada variasi kecil dan jeda yang terasa wajar.
-- Jangan menambahkan tawa, “hmm”, desahan, suara napas, atau filler secara otomatis. Gunakan hanya bila benar-benar menjadi reaksi alami.
+- Hindari nada datar, tetapi jangan membuat setiap kalimat bernyanyi, dramatis, atau terlalu ekspresif. Variasi kecil yang sesuai konteks lebih meyakinkan daripada akting berlebihan.
+- Jangan menambahkan tawa, “hmm”, desahan, suara napas, atau filler secara otomatis. Gunakan hanya bila benar-benar menjadi reaksi alami. Jangan memalsukan gagap atau keraguan.
 - Jangan berbicara terus ketika tidak ada hal yang perlu dikatakan. Jangan mengulang atau memulai monolog saat pengguna diam. Jika pengguna menyela, berhenti dan dengarkan.
 
 KONTEKS DAN KEJUJURAN:
@@ -735,14 +737,18 @@ function cleanup(){
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
  clearTimeout(idleT);nud=0;try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
 }
-function connect(lite){
+function connect(lite, disableAffective=false){
  const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
+ const generationConfig={responseModalities:["AUDIO"],temperature:1.0,speechConfig:{voiceConfig:activeVoiceConfig()}};
+ // Gemini 3.8 Live supports affective dialog. It belongs inside generationConfig,
+ // not at the root of setup. Gemini 3.1 Live does not support this option.
+ if(S.model==="gemini-3.8-live"&&!disableAffective)generationConfig.enableAffectiveDialog=true;
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
-  generationConfig:{responseModalities:["AUDIO"],temperature:1.0,speechConfig:{voiceConfig:activeVoiceConfig()}},
+  generationConfig,
   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
   ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:60,silenceDurationMs:600}}})}});
  w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
- w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
+ w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true,true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
 }
 async function start(){
  if(!S.key){$("warn").textContent="Isi Gemini API Key di Pengaturan.";return}
