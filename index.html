@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Telepon AI · Natural Flow & Sarkas v8</title>
+<title>Telepon AI</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📞%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -86,12 +86,13 @@ a{color:hsl(var(--h) 70% 50%)}
 @media(prefers-reduced-motion:reduce){.b.go,.stage::before{animation:none}}
 .tr{justify-content:flex-start;margin-top:8px}textarea{resize:vertical}
 #tn{margin:-2px 0 12px}#tn:empty{display:none}
+#voiceLibraryStatus:empty{display:none}
 
 
 </style>
 </head>
 <body>
-<header class="top"><div class="logo"><i>📞</i><div><b>Telepon AI</b><span>Ngobrol bebas, serasa telepon sungguhan</span></div></div><button class="sm" id="theme" aria-label="Ganti tema" title="Ganti tema"></button></header>
+<header class="top"><div class="logo"><i>📞</i><div><b>Telepon AI</b></div></div><button class="sm" id="theme" aria-label="Ganti tema" title="Ganti tema"></button></header>
 <div class="app">
   <section class="box call">
     <div class="stage"><canvas id="viz" width="560" height="560" aria-hidden="true"></canvas><div class="av" id="av">🙂</div></div>
@@ -102,66 +103,66 @@ a{color:hsl(var(--h) 70% 50%)}
       <button class="b go" id="call" title="Telepon" aria-label="Telepon"></button>
       <button class="b" id="stop" title="Diamkan suara AI" aria-label="Diamkan suara AI"></button>
     </div>
-    <div class="sub" style="margin-top:12px">Bicara kapan saja untuk menyela AI, seperti telepon sungguhan.</div>
+
     <div class="vol"><span>🔈</span><input type="range" id="vol" min="0" max="1.5" step="0.05" aria-label="Volume suara AI"><span>🔊</span></div>
     <div class="chips" id="chips"></div>
-    <div class="sub" style="margin-top:10px">Pintasan: M bisukan, S diamkan AI, Spasi telepon atau tutup.</div>
+
     <div class="row"><input type="text" id="txt" placeholder="Atau ketik pesan..."><button class="sm" id="send" style="flex:0 0 72px">Kirim</button></div>
     <div class="sub" id="warn" style="margin-top:10px"></div>
   </section>
 
   <div class="col">
     <section class="box">
-      <h2>🔑 Pengaturan gratis</h2>
-      <label for="key">Gemini API key (gratis, tersimpan di browser-mu saja)</label>
+      <h2>Pengaturan</h2>
+      <label for="key">Gemini API Key</label>
       <input type="password" id="key" placeholder="Tempel API key di sini" autocomplete="off">
-      <div class="sub" style="margin-top:6px">Belum punya? Buat gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></div>
+      <div class="sub" style="margin-top:6px"><a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key</a></div>
     </section>
 
     <section class="box">
-      <h2>🎭 Pilih karakter</h2>
+      <h2>Karakter</h2>
       <div class="tabs" id="tabs"></div><div class="sub" id="tn"></div>
       <div class="grid" id="chars"></div>
     </section>
 
     <section class="box">
-      <h2>🎚️ Suara dan cara bicara</h2>
+      <h2>Suara</h2>
       <div class="two">
-        <div><label for="nick">Nama panggilan AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div><div><label for="me">Panggil aku dengan</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
-        <div><label for="voiceFemale">Suara perempuan · 14 preset Live</label><select id="voiceFemale"></select></div>
-        <div><label for="voiceMale">Suara laki-laki · 16 preset Live</label><select id="voiceMale"></select></div>
-        <div><label for="accent">Logat / aksen</label><select id="accent">
+        <div><label for="nick">Nama AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div><div><label for="me">Namaku</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
+        <div><label for="voiceFemale">Suara perempuan</label><select id="voiceFemale"></select></div>
+        <div><label for="voiceMale">Suara laki-laki</label><select id="voiceMale"></select></div>
+        <div><label for="accent">Logat</label><select id="accent">
           <option value="auto">Otomatis sesuai bahasa</option><option value="id-neutral">Indonesia netral (rekomendasi)</option><option value="jakarta">Jakarta ringan</option><option value="jawa">Jawa Tengah halus</option><option value="arek">Jawa Timur / Arek ringan</option><option value="sunda">Sunda ringan</option><option value="en-neutral">English netral</option></select></div>
-        <div><label for="delivery">Karakter intonasi</label><select id="delivery">
+        <div><label for="delivery">Intonasi</label><select id="delivery">
           <option value="natural">Natural percakapan (rekomendasi)</option><option value="warm">Hangat dan akrab</option><option value="expressive">Ekspresif dan hidup</option><option value="calm">Tenang dan lembut</option><option value="confident">Tegas dan mantap</option><option value="playful">Ceria dan playful</option></select></div>
         <div><label for="style">Gaya bicara</label><select id="style">
           <option value="santai">Santai</option><option value="formal">Formal</option><option value="gaul">Gaul</option><option value="lucu">Lucu</option></select></div>
-        <div><label for="pace">Kecepatan bicara</label><select id="pace"><option value="pelan">Pelan</option><option value="normal">Normal</option><option value="cepat">Cepat</option></select></div>
-        <div><label for="len">Panjang jawaban</label><select id="len"><option value="singkat">Singkat</option><option value="sedang">Sedang</option></select></div>
+        <div><label for="pace">Tempo</label><select id="pace"><option value="pelan">Pelan</option><option value="normal">Normal</option><option value="cepat">Cepat</option></select></div>
+        <div><label for="len">Panjang respons</label><select id="len"><option value="singkat">Singkat</option><option value="sedang">Sedang</option></select></div>
         <div><label for="lang">Bahasa</label><select id="lang"><option value="id">Indonesia</option><option value="en">English</option><option value="mix">Campur</option></select></div>
-        <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live · adaptif bawaan</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live · mode standar</option></select><div class="sub" style="margin-top:5px">Gemini 3.8 Live menangani gaya respons adaptif secara bawaan. Tidak perlu mengirim flag Affective Dialog di payload koneksi. Model 3.1 tidak memiliki kemampuan adaptif yang sama.</div></div>
-        <div><label for="nat">Jeda respons natural</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
+        <div><label for="model">Model</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option></select></div>
+        <div><label for="nat">Jeda alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
-      <div class="sub" style="margin-top:8px">Pilih preset suara atau muat Extended Voice Library. Pada Gemini 3.8 Live, penyesuaian gaya respons ditangani oleh model secara bawaan; aplikasi tidak mengirim field Affective Dialog tambahan.</div>
-      <div class="sub" style="margin-top:6px">Rekomendasi awal untuk dicoba: Callirrhoe, Despina, Erinome, Sulafat (perempuan) dan Achird, Algieba, Schedar, Umbriel (laki-laki). Timbre dasar mengikuti preset; logat, tempo, jeda, penekanan, dan intonasi diarahkan lewat instruksi bicara. Hasil dialek tetap bisa bervariasi.</div>
+      
+      
       <div class="two" style="margin-top:10px">
-        <div><label for="voiceFemaleSearch">Cari suara perempuan</label><input id="voiceFemaleSearch" type="search" placeholder="Nama, bahasa, aksen, pitch, persona..."></div>
-        <div><label for="voiceMaleSearch">Cari suara laki-laki</label><input id="voiceMaleSearch" type="search" placeholder="Nama, bahasa, aksen, pitch, persona..."></div>
-        <div><label for="libraryLanguage">Bahasa katalog</label><select id="libraryLanguage"><option value="id-ID">Indonesia (disarankan)</option><option value="">Semua bahasa</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja-JP">Japanese</option><option value="ko-KR">Korean</option><option value="hi-IN">Hindi</option><option value="th-TH">Thai</option><option value="vi-VN">Vietnamese</option><option value="ms-MY">Malay</option></select></div>
-        <div><label for="libraryPitch">Karakter pitch katalog</label><select id="libraryPitch"><option value="">Semua pitch</option><option value="low">Rendah / deep</option><option value="medium">Sedang / natural</option><option value="high">Tinggi / ringan</option></select></div>
+        <div><label for="voiceFemaleSearch">Cari suara perempuan</label><input id="voiceFemaleSearch" type="search" placeholder="Cari suara perempuan"></div>
+        <div><label for="voiceMaleSearch">Cari suara laki-laki</label><input id="voiceMaleSearch" type="search" placeholder="Cari suara laki-laki"></div>
+        <div><label for="libraryLanguage">Bahasa</label><select id="libraryLanguage"><option value="id-ID">Indonesia (disarankan)</option><option value="">Semua bahasa</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja-JP">Japanese</option><option value="ko-KR">Korean</option><option value="hi-IN">Hindi</option><option value="th-TH">Thai</option><option value="vi-VN">Vietnamese</option><option value="ms-MY">Malay</option></select></div>
+        <div><label for="libraryPitch">Pitch</label><select id="libraryPitch"><option value="">Semua pitch</option><option value="low">Rendah / deep</option><option value="medium">Sedang / natural</option><option value="high">Tinggi / ringan</option></select></div>
       </div>
       <div class="row"><button class="sm" id="loadFemaleVoices">Muat suara perempuan tambahan</button><button class="sm" id="loadMaleVoices">Muat suara laki-laki tambahan</button></div>
-      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px">Isi Gemini API key, pilih filter bahasa/pitch, lalu muat katalog untuk gender yang ingin dicoba. Pilihan disimpan di browser.</div>
-      <label for="custom">Tambahan kepribadian (opsional)</label>
+      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px"></div>
+      <label for="custom">Kepribadian tambahan</label>
       <textarea id="custom" rows="3" maxlength="600" placeholder="Contoh: kamu suka kopi, sering menyebut hujan, dan takut kecoa"></textarea>
-      <div class="chips tr" id="traits"></div><div class="sub" style="margin-top:6px">Tulis bebas atau tap sifat di atas. Berlaku untuk semua karakter dan langsung dipakai di panggilan berikutnya.</div>
-      <div class="row"><button class="sm" id="reset">Reset voice & gaya bicara</button></div>
+      <div class="chips tr" id="traits"></div>
+      <div class="row"><button class="sm" id="reset">Reset pengaturan</button></div>
     </section>
 
     <section class="box">
-      <h2>📝 Transkrip</h2>
-      <div class="log" id="log"><div class="sub">Belum ada percakapan.</div></div>
+      <h2>Transkrip</h2>
+      <div class="log" id="log"><div class="sub">Kosong</div></div>
       <div class="row"><button class="sm" id="dl">Unduh</button><button class="sm" id="cp">Salin</button><button class="sm" id="clr">Hapus</button></div>
     </section>
   </div>
@@ -441,7 +442,7 @@ function connect(lite){
  w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
 }
 async function start(){
- if(!S.key){$("warn").textContent="Isi Gemini API key dulu di bagian Pengaturan gratis.";return}
+ if(!S.key){$("warn").textContent="Isi Gemini API Key di Pengaturan.";return}
  $("warn").textContent="";$("call").disabled=true;status("Menyambungkan...","conn");
  try{
   ctx=new(window.AudioContext||window.webkitAudioContext)({latencyHint:"interactive"});
@@ -531,7 +532,7 @@ function mapLibraryVoices(items,gender){
 }
 async function loadLibraryForGender(gender){
  const btn=$(gender==="female"?"loadFemaleVoices":"loadMaleVoices"),arr=gender==="female"?LIB_F:LIB_M,key=gender==="female"?"tai4_voice_female_library":"tai4_voice_male_library";
- if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API key dulu di bagian Pengaturan, lalu muat katalog lagi.";return}
+ if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API Key di Pengaturan, lalu coba lagi.";return}
  btn.disabled=true;const original=btn.textContent;btn.textContent="Memuat suara...";
  const filters={language:$("libraryLanguage").value,pitch:$("libraryPitch").value};
  $("voiceLibraryStatus").textContent="Memuat suara "+(gender==="female"?"perempuan":"laki-laki")+" dari Extended Voice Library"+(filters.language?" · "+filters.language:"")+(filters.pitch?" · pitch "+filters.pitch:"")+"...";
