@@ -5,54 +5,80 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Telepon AI Gratis</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📞%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#eef0f7;--card:#fff;--ink:#16182b;--mut:#6b7090;--line:#dde0ee;--ok:#16a34a;--bad:#e11d48;--h:250;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root{--bg:#0e1020;--card:#181b30;--ink:#eceefb;--mut:#9aa0c4;--line:#2a2e4d;color-scheme:dark}}
+@property --h{syntax:"<number>";inherits:true;initial-value:250}
+:root{--bg:#f2f1fa;--card:rgba(255,255,255,.74);--ink:#15172b;--mut:#666b8c;--line:rgba(30,35,90,.12);--ok:#16a34a;--bad:#e11d48;--h:250;transition:--h .7s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0d1c;--card:rgba(24,27,52,.68);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.45 ui-rounded,"Nunito",system-ui,sans-serif}
-.app{max-width:960px;margin:auto;padding:16px;display:grid;gap:14px;grid-template-columns:1fr}
-@media(min-width:820px){.app{grid-template-columns:380px 1fr;align-items:start}.call{position:sticky;top:16px}}
-.box{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:16px}
-.call{text-align:center;padding:24px 16px}
-.av{width:120px;height:120px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;font-size:58px;background:linear-gradient(145deg,hsl(var(--h) 80% 62%),hsl(calc(var(--h) + 40) 75% 48%))}
-.av.talk{animation:p 1s infinite}.av.listen{box-shadow:0 0 0 9px hsl(142 70% 45%/.3)}
-@keyframes p{50%{transform:scale(1.06);box-shadow:0 0 0 18px hsl(var(--h) 80% 60%/0)}}
-@media(prefers-reduced-motion:reduce){.av.talk{animation:none}}
-h1{margin:0;font-size:22px}h2{margin:0 0 10px;font-size:15px}
-.sub{color:var(--mut);font-size:13px}.st{min-height:22px;margin-top:6px;color:var(--mut)}
-.bt{display:flex;justify-content:center;gap:16px;margin-top:16px}
-.b{width:62px;height:62px;border:0;border-radius:50%;font-size:25px;cursor:pointer;background:var(--line);color:var(--ink)}
-.b.go{background:var(--ok);color:#fff}.b.end{background:var(--bad);color:#fff}.b.on{background:hsl(var(--h) 75% 55%);color:#fff}.b:disabled{opacity:.5}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans",ui-rounded,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:-20%;z-index:-1;filter:blur(40px);animation:fl 20s ease-in-out infinite alternate;background:radial-gradient(40% 40% at 18% 18%,hsl(var(--h) 90% 60%/.3),transparent 70%),radial-gradient(35% 35% at 82% 28%,hsl(calc(var(--h) + 60) 90% 62%/.22),transparent 70%),radial-gradient(40% 40% at 50% 92%,hsl(calc(var(--h) - 50) 90% 60%/.2),transparent 70%)}
+@keyframes fl{to{transform:translate3d(3%,-3%,0) scale(1.1)}}
+.app{max-width:980px;margin:auto;padding:16px;display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:820px){.app{grid-template-columns:390px 1fr;align-items:start}.call{position:sticky;top:16px}}
+.box{background:var(--card);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 14px 40px -22px hsl(var(--h) 60% 30%/.45)}
+.call{text-align:center;padding:20px 16px;background:linear-gradient(180deg,hsl(var(--h) 90% 60%/.16),transparent 50%),var(--card)}
+.stage{position:relative;width:280px;max-width:100%;aspect-ratio:1;margin:-6px auto -4px}
+#viz{position:absolute;inset:0;width:100%;height:100%}
+.av{position:absolute;left:50%;top:50%;width:47%;aspect-ratio:1;margin:0;translate:-50% -50%;border-radius:50%;display:grid;place-items:center;font-size:62px;background:linear-gradient(145deg,hsl(var(--h) 85% 66%),hsl(calc(var(--h) + 40) 80% 48%));box-shadow:0 12px 36px -8px hsl(var(--h) 80% 50%/.6),inset 0 2px 0 rgba(255,255,255,.35);scale:var(--s,1);transition:box-shadow .3s}
+.av.talk{box-shadow:0 0 0 6px hsl(var(--h) 90% 65%/.25),0 12px 44px -6px hsl(var(--h) 90% 55%/.8)}
+.av.listen{box-shadow:0 0 0 6px hsl(150 70% 45%/.25),0 12px 36px -8px hsl(var(--h) 80% 50%/.5)}
+h1{margin:0;font-size:25px;font-weight:800;letter-spacing:-.02em}h2{margin:0 0 12px;font-size:15px;font-weight:700}
+.sub{color:var(--mut);font-size:13px}
+.st{display:inline-flex;align-items:center;gap:8px;min-height:30px;margin-top:10px;padding:4px 14px;border-radius:999px;background:var(--bg);border:1px solid var(--line);color:var(--mut);font-size:13px;font-weight:600}
+.st::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mut)}
+.st[data-k=listen]::before{background:var(--ok)}.st[data-k=talk]::before{background:hsl(var(--h) 90% 60%)}
+.st[data-k=conn]::before,.st[data-k=think]::before{background:#f59e0b;animation:bl .8s infinite}
+@keyframes bl{50%{opacity:.25}}
+#tm{margin-top:6px;font-variant-numeric:tabular-nums;letter-spacing:.05em}
+.bt{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:16px}
+.b{position:relative;width:62px;height:62px;border-radius:50%;cursor:pointer;background:var(--bg);color:var(--ink);border:1px solid var(--line);display:grid;place-items:center;transition:transform .15s,background .2s}
+.b svg{width:26px;height:26px;fill:currentColor}.b:active{transform:scale(.92)}
+#call{width:76px;height:76px}
+.b.go{background:var(--ok);color:#fff;border:0;box-shadow:0 10px 26px -8px var(--ok)}
+.b.end{background:var(--bad);color:#fff;border:0;box-shadow:0 10px 26px -8px var(--bad)}.b.end svg{transform:rotate(135deg)}
+.b.on{background:hsl(var(--h) 75% 55%);color:#fff;border:0}
+#mute.on::after{content:"";position:absolute;width:32px;height:3px;border-radius:2px;background:#fff;transform:rotate(-45deg)}
+.b:disabled{opacity:.5}
 button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid hsl(var(--h) 85% 60%);outline-offset:2px}
-.tabs{display:flex;gap:6px;margin-bottom:12px}
-.tab{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:6px 14px;cursor:pointer;font:inherit;font-size:13px}
-.tab.on{background:hsl(var(--h) 75% 55%);border-color:transparent;color:#fff}
+.tabs{display:inline-flex;gap:4px;padding:4px;margin-bottom:12px;background:var(--bg);border:1px solid var(--line);border-radius:999px}
+.tab{border:0;background:transparent;color:var(--ink);border-radius:999px;padding:6px 16px;cursor:pointer;font:inherit;font-size:13px;font-weight:600;transition:background .2s}
+.tab.on{background:hsl(var(--h) 75% 55%);color:#fff}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.c{border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:16px;padding:12px;text-align:left;cursor:pointer;font:inherit}
-.c.on{border-color:hsl(var(--ch) 75% 55%);background:hsl(var(--ch) 80% 55%/.12)}
-.c .e{font-size:30px}.c b{display:block}.c span{font-size:12px;color:var(--mut)}
-label{display:block;font-size:12px;color:var(--mut);margin:10px 0 4px}
-select,input[type=text],input[type=password],textarea{width:100%;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.c{position:relative;border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:20px;padding:12px;text-align:left;cursor:pointer;font:inherit;transition:transform .15s,border-color .2s,background .2s}
+.c:hover{transform:translateY(-2px)}
+.c.on{border-color:hsl(var(--ch) 75% 55%);background:hsl(var(--ch) 80% 55%/.13);box-shadow:0 10px 26px -14px hsl(var(--ch) 80% 50%)}
+.c.on::after{content:"✓";position:absolute;top:10px;right:12px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:12px;color:#fff;background:hsl(var(--ch) 75% 50%)}
+.c .e{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:27px;margin-bottom:8px;background:linear-gradient(145deg,hsl(var(--ch) 85% 66%),hsl(calc(var(--ch) + 35) 80% 50%))}
+.c b{display:block}.c span{font-size:12px;color:var(--mut)}
+label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin:10px 0 4px}
+select,input[type=text],input[type=password],textarea{width:100%;padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
 a{color:hsl(var(--h) 70% 50%)}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .row{display:flex;gap:8px;margin-top:10px}.row>*{flex:1}
-.sm{padding:10px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font:inherit;font-size:13px}
-.log{max-height:260px;overflow:auto;display:flex;flex-direction:column;gap:6px}
-.m{padding:8px 12px;border-radius:16px;max-width:88%;font-size:14px}
-.m.u{align-self:flex-end;background:hsl(var(--h) 75% 55%);color:#fff}.m.a{align-self:flex-start;background:var(--bg);border:1px solid var(--line)}
-.col{display:grid;gap:14px}
+.sm{padding:10px;border-radius:14px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;font:inherit;font-size:13px;font-weight:600;transition:background .2s}
+.sm:hover{background:var(--bg)}
+#warn:not(:empty){padding:8px 12px;border-radius:12px;background:hsl(347 90% 55%/.12);color:var(--bad)}
+.log{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth}
+.m{padding:9px 14px;border-radius:18px;max-width:88%;font-size:14px;animation:pop .25s ease-out}
+.m.u{align-self:flex-end;background:hsl(var(--h) 75% 55%);color:#fff;border-bottom-right-radius:6px}
+.m.a{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-left:3px solid hsl(var(--h) 80% 60%);border-bottom-left-radius:6px}
+@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}}
+.col{display:grid;gap:16px}
+@media(prefers-reduced-motion:reduce){body::before,.m{animation:none}*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="app">
   <section class="box call">
-    <div class="av" id="av">🙂</div>
+    <div class="stage"><canvas id="viz" width="560" height="560" aria-hidden="true"></canvas><div class="av" id="av">🙂</div></div>
     <h1 id="nm"></h1><div class="sub" id="bl"></div>
     <div class="st" id="st">Siap menelepon</div><div class="sub" id="tm">00:00</div>
     <div class="bt">
-      <button class="b" id="mute" title="Bisukan mikrofon" aria-label="Bisukan mikrofon">🎙️</button>
-      <button class="b go" id="call" title="Telepon" aria-label="Telepon">📞</button>
-      <button class="b" id="stop" title="Diamkan suara AI" aria-label="Diamkan suara AI">⏹️</button>
+      <button class="b" id="mute" title="Bisukan mikrofon" aria-label="Bisukan mikrofon"></button>
+      <button class="b go" id="call" title="Telepon" aria-label="Telepon"></button>
+      <button class="b" id="stop" title="Diamkan suara AI" aria-label="Diamkan suara AI"></button>
     </div>
     <div class="sub" style="margin-top:12px">Bicara kapan saja untuk menyela AI, seperti telepon sungguhan.</div>
     <div class="row"><input type="text" id="txt" placeholder="Atau ketik pesan..."><button class="sm" id="send" style="flex:0 0 72px">Kirim</button></div>
@@ -83,6 +109,7 @@ a{color:hsl(var(--h) 70% 50%)}
         <div><label for="len">Panjang jawaban</label><select id="len"><option value="singkat">Singkat</option><option value="sedang">Sedang</option></select></div>
         <div><label for="lang">Bahasa</label><select id="lang"><option value="id">Indonesia</option><option value="en">English</option><option value="mix">Campur</option></select></div>
         <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option></select></div>
+        <div><label for="nat">Efek napas alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
       </div>
       <label for="custom">Tambahan kepribadian (opsional)</label>
       <textarea id="custom" rows="2" placeholder="Contoh: kamu suka kopi dan sering menyebut hujan"></textarea>
@@ -111,14 +138,14 @@ const CH=[
  {id:"arga",n:"Arga",g:"m",e:"🎓",h:185,v:"Orus",b:"Pelatih bahasa Inggris",s:"pelatih bahasa Inggris yang sabar, jelas pengucapannya, dan menyemangati",d:"Kamu pelatih bahasa Inggris laki-laki yang sabar. Balas dengan English sederhana, lalu koreksi kesalahan lawan bicara dengan lembut.",hi:"Hi, I am Arga. Let us practice English together. How are you today?"}
 ];
 const VO=[["Zephyr","Zephyr (cewek)"],["Sulafat","Sulafat (cewek)"],["Kore","Kore (cewek)"],["Aoede","Aoede (cewek)"],["Leda","Leda (cewek)"],["Autonoe","Autonoe (cewek)"],["Puck","Puck (cowok)"],["Algenib","Algenib (cowok)"],["Fenrir","Fenrir (cowok)"],["Orus","Orus (cowok)"],["Charon","Charon (cowok)"],["Enceladus","Enceladus (cowok)"]];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all"};
+let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all",nat:true};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("tai4",JSON.stringify(S))}catch(e){}};
 const cur=()=>CH.find(c=>c.id===S.ch)||CH[0];
 const WK='class P extends AudioWorkletProcessor{process(i){const c=i[0][0];if(c)this.port.postMessage(c.slice(0));return true}}registerProcessor("p",P)';
-let calling=false,muted=false,drop=false,ws=null,ctx=null,ms=null,node=null,tick=null,curU=null,curA=null,srcs=[],nextT=0,acc=[],accN=0;
+let calling=false,ready=false,nt=true,og=null,an=null,am=null,thinkT=null,muted=false,drop=false,ws=null,ctx=null,ms=null,node=null,tick=null,curU=null,curA=null,srcs=[],nextT=0,acc=[],accN=0;
 
-function status(s,k){$("st").textContent=s;$("av").className="av"+(k?" "+k:"")}
+function status(s,k){$("st").textContent=s;$("st").dataset.k=k||"";$("av").className="av"+(k?" "+k:"")}
 function bubble(r,t){const l=$("log");if(!l.querySelector(".m"))l.innerHTML="";const d=document.createElement("div");d.className="m "+r;d.textContent=t;l.appendChild(d);l.scrollTop=l.scrollHeight;return d}
 const wsend=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
 
@@ -142,7 +169,8 @@ function sys(){
  const c=cur(),st={santai:"santai dan natural",formal:"sopan dan formal",gaul:"gaul ala anak muda (sih, dong, banget)",lucu:"jenaka dan sering bercanda ringan"}[S.style];
  const lg={id:"bahasa Indonesia dengan aksen Indonesia yang natural",en:"English",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
  const pc={pelan:"Bicara agak pelan dan tenang. ",normal:"",cepat:"Bicara lebih cepat dan bersemangat. "}[S.pace];
- return "Kamu bernama "+c.n+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nSuaramu: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+pc+"\nIni telepon suara. Jawab "+(S.len==="singkat"?"1-2 kalimat pendek":"2-4 kalimat")+", seperti orang sungguhan mengobrol: ada jeda, kata isian alami (hmm, eh, wah), boleh tertawa kecil, menghela napas, atau berbisik bila pas. Jangan terdengar membaca naskah, jangan pakai daftar atau emoji. Jika pengguna menyela, langsung berhenti dan tanggapi. Sesekali ajukan satu pertanyaan balik. "+S.custom;
+ return "Kamu bernama "+c.n+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nSuaramu: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+pc+
+ "\n\nIni telepon sungguhan dan kamu manusia biasa, bukan AI atau asisten. Jangan pernah menyebut dirimu AI/model dan jangan bilang 'ada yang bisa dibantu'.\nCARA BICARA MANUSIA:\n- Bicara pendek-pendek, dipecah koma dan jeda '...'. Boleh buka dengan 'hmm', 'eh', 'oh', 'nah', 'wah', 'duh', 'lho', kadang ragu atau meralat diri ('eh maksudku...', 'gimana ya...').\n- Bunyikan reaksi tubuh langsung lewat suara, jangan diucapkan sebagai keterangan: tawa kecil (hehe, hihi), tawa lepas (ahaha) saat lucu atau malu, helaan napas panjang (haaah...) saat lega, capek, atau sedih, tarik napas singkat sebelum cerita panjang, 'hmmm' panjang saat berpikir, berbisik saat berbagi rahasia, nada naik saat kaget atau senang, suara melembut saat prihatin.\n- Dengarkan dulu: tanggapi perasaan lawan bicara ('aduh kasian', 'serius?!', 'wah seru banget'), baru jawab isinya. Samakan emosi suaramu dengan suasana hati mereka.\n- Pakai bahasa lisan: nggak, udah, kok, sih, deh, tuh, banget. Jangan pakai daftar, tanda bintang, emoji, atau tulisan dalam kurung seperti (tertawa).\n- Jawab "+(S.len==="singkat"?"1-2 kalimat pendek":"2-4 kalimat")+". Bila lawan bicara masih bercerita, cukup respons singkat ('iya', 'oh gitu', 'terus?'). Sesekali tanya balik satu hal saja.\n- Jika pengguna menyela, langsung berhenti dan tanggapi. "+S.custom;
 }
 
 const b64=buf=>{let s="";const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
@@ -155,58 +183,71 @@ function flush(){
 function play(d){
  const bin=atob(d),n=bin.length>>1,buf=ctx.createBuffer(1,n,24000),ch=buf.getChannelData(0);
  for(let i=0;i<n;i++){let v=bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8);if(v>=32768)v-=65536;ch[i]=v/32768}
- const s=ctx.createBufferSource();s.buffer=buf;s.connect(ctx.destination);
- const t=Math.max(ctx.currentTime+0.03,nextT);s.start(t);nextT=t+buf.duration;srcs.push(s);
+ const s=ctx.createBufferSource();s.buffer=buf;s.connect(og);clearTimeout(thinkT);
+ const now=ctx.currentTime;if(nt){nt=false;if(S.nat&&Math.random()<.4){breath(now+.02);nextT=now+.18}}
+ const t=Math.max(now+0.03,nextT);s.start(t);nextT=t+buf.duration;srcs.push(s);
  s.onended=()=>{srcs=srcs.filter(x=>x!==s);if(!srcs.length&&calling)status("Mendengarkan...","listen")};
  status(cur().n+" sedang bicara...","talk");
+}
+function breath(t){
+ const f=cur().g==="f"?1:.65,n=ctx.sampleRate*.3|0,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);
+ for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
+ const s=ctx.createBufferSource(),fl=ctx.createBiquadFilter(),g=ctx.createGain();
+ s.buffer=b;fl.type="bandpass";fl.frequency.value=1400*f;fl.Q.value=.6;
+ g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.06,t+.11);g.gain.linearRampToValueAtTime(0,t+.3);
+ s.connect(fl);fl.connect(g);g.connect(og);s.start(t);
 }
 function flushPlay(){srcs.forEach(s=>{try{s.onended=null;s.stop()}catch(e){}});srcs=[];nextT=0}
 
 async function onMsg(ev){
  const m=JSON.parse(typeof ev.data==="string"?ev.data:await ev.data.text());
- if(m.setupComplete){status("Tersambung","listen");wsend({realtimeInput:{text:"(Telepon tersambung. Sapa pengguna dengan singkat dan natural, kira-kira seperti: \""+cur().hi+"\")"}});return}
+ if(m.setupComplete){ready=true;status("Tersambung","listen");wsend({realtimeInput:{text:"(Telepon tersambung. Sapa pengguna dengan singkat dan natural, kira-kira seperti: \""+cur().hi+"\")"}});return}
  if(m.goAway)$("warn").textContent="Sesi akan segera berakhir. Tekan telepon lagi setelahnya.";
  const c=m.serverContent;if(!c)return;
- if(c.interrupted){flushPlay();curA=null;drop=false;status("Mendengarkan...","listen")}
+ if(c.interrupted){nt=true;flushPlay();curA=null;drop=false;status("Mendengarkan...","listen")}
  if(c.modelTurn&&c.modelTurn.parts&&!drop)c.modelTurn.parts.forEach(p=>{if(p.inlineData&&p.inlineData.data)play(p.inlineData.data)});
- if(c.inputTranscription&&c.inputTranscription.text){if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;$("log").scrollTop=1e9}
+ if(c.inputTranscription&&c.inputTranscription.text){if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;if(!srcs.length)status("Mendengarkan...","listen");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(calling&&!srcs.length&&!curA&&!drop)status(cur().n+" sedang berpikir...","think")},900);$("log").scrollTop=1e9}
  if(c.outputTranscription&&c.outputTranscription.text){if(!curA)curA=bubble("a","");curA.textContent+=c.outputTranscription.text;curU=null;$("log").scrollTop=1e9}
- if(c.turnComplete){curA=null;curU=null;drop=false}
+ if(c.turnComplete){nt=true;curA=null;curU=null;drop=false}
 }
 
 function cleanup(){
  clearInterval(tick);calling=false;flushPlay();
  try{ws&&ws.close()}catch(x){}try{node&&node.disconnect()}catch(x){}
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
- ws=ctx=ms=node=null;acc=[];accN=0;curU=curA=null;drop=false;
+ ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
+}
+function connect(lite){
+ const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
+ w.onopen=()=>wsend({setup:{model:"models/"+S.model,
+  generationConfig:{responseModalities:["AUDIO"],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:S.voice==="auto"?cur().v:S.voice}}}},
+  systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
+  ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:30,silenceDurationMs:400}}})}});
+ w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
+ w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
 }
 async function start(){
  if(!S.key){$("warn").textContent="Isi Gemini API key dulu di bagian Pengaturan gratis.";return}
- $("warn").textContent="";$("call").disabled=true;status("Menyambungkan...");
+ $("warn").textContent="";$("call").disabled=true;status("Menyambungkan...","conn");
  try{
-  ctx=new(window.AudioContext||window.webkitAudioContext)();
+  ctx=new(window.AudioContext||window.webkitAudioContext)({latencyHint:"interactive"});
   ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
   await ctx.resume();
   await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([WK],{type:"application/javascript"})));
-  node=new AudioWorkletNode(ctx,"p");ctx.createMediaStreamSource(ms).connect(node);
+  node=new AudioWorkletNode(ctx,"p");const src=ctx.createMediaStreamSource(ms);src.connect(node);am=ctx.createAnalyser();am.fftSize=128;src.connect(am);an=ctx.createAnalyser();an.fftSize=128;og=ctx.createGain();og.connect(an);an.connect(ctx.destination);
   node.port.onmessage=e=>{
    if(!calling||muted||!ws||ws.readyState!==1)return;
    acc.push(e.data);accN+=e.data.length;
-   if(accN>=ctx.sampleRate*0.04)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
+   if(accN>=ctx.sampleRate*0.02)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
   };
   calling=true;muted=false;$("mute").classList.remove("on");$("log").innerHTML="";
-  $("call").className="b end";$("call").textContent="📵";
+  $("call").className="b end";
   const t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000|0;$("tm").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500);
-  ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));
-  ws.onopen=()=>wsend({setup:{model:"models/"+S.model,
-   generationConfig:{responseModalities:["AUDIO"],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:S.voice==="auto"?cur().v:S.voice}}}},
-   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{}}});
-  ws.onmessage=e=>{onMsg(e).catch(()=>{})};
-  ws.onclose=ev=>{if(calling){$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()}};
- }catch(e){$("warn").textContent="Error: "+e.message;cleanup();status("Siap menelepon");$("call").className="b go";$("call").textContent="📞"}
+  connect(false);
+ }catch(e){$("warn").textContent="Error: "+e.message;cleanup();status("Siap menelepon");$("call").className="b go"}
  $("call").disabled=false;
 }
-function end(){const w=$("warn").textContent;cleanup();$("warn").textContent=w;$("call").className="b go";$("call").textContent="📞";status("Telepon berakhir")}
+function end(){const w=$("warn").textContent;cleanup();$("warn").textContent=w;$("call").className="b go";status("Telepon berakhir")}
 function restart(){if(calling){end();setTimeout(start,500)}}
 
 $("call").onclick=()=>calling?end():start();
@@ -225,6 +266,24 @@ $("dl").onclick=()=>{
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t||"Belum ada percakapan."],{type:"text/plain"}));a.download="transkrip.txt";a.click();
 };
 if(!navigator.mediaDevices||!window.AudioWorklet)$("warn").textContent="Browser ini belum mendukung panggilan suara. Gunakan Chrome, Edge, atau Safari terbaru.";
+const IC={mic:'<svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1A7 7 0 0 0 19 12z"/></svg>',call:'<svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>',stop:'<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>'};
+$("mute").innerHTML=IC.mic;$("call").innerHTML=IC.call;$("stop").innerHTML=IC.stop;
+$("nat").value=S.nat?"1":"0";$("nat").onchange=()=>{S.nat=$("nat").value==="1";save()};
+const G=$("viz").getContext("2d"),D=new Uint8Array(64),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;let lv=0;
+function draw(tm){
+ requestAnimationFrame(draw);
+ const A=srcs.length?an:(calling&&!muted?am:null),h=cur().h,N=56;let sum=0;
+ if(A)A.getByteFrequencyData(D);else D.fill(0);
+ for(let i=0;i<32;i++)sum+=D[i];lv+=(sum/8160-lv)*.25;
+ G.clearRect(0,0,560,560);G.lineCap="round";G.lineWidth=7;
+ for(let i=0;i<N;i++){
+  const a=i/N*6.2832-1.5708,k=i<N/2?i:N-1-i,v=D[Math.min(k+1,40)]/255,e=A?v:.07+.05*Math.sin(tm/700+i*.5),l=10+e*72,c=Math.cos(a),n=Math.sin(a);
+  G.strokeStyle="hsla("+(h+k*2)+",90%,"+(srcs.length?66:60)+"%,"+(.4+.6*Math.min(1,e*1.6))+")";
+  G.beginPath();G.moveTo(280+c*148,280+n*148);G.lineTo(280+c*(148+l),280+n*(148+l));G.stroke()
+ }
+ if(!RM)$("av").style.setProperty("--s",1+lv*.12)
+}
+requestAnimationFrame(draw);
 renderTabs();renderChars();applyChar();
 })();
 </script>
