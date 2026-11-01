@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111426">
-<title>Telepon AI — Gen Z Lite v19</title>
+<title>Telepon AI — Gen Z Smart v20</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📞%3C/text%3E%3C/svg%3E">
 <style>
 @property --h{syntax:"<number>";inherits:true;initial-value:250}
@@ -411,7 +411,7 @@ body.in-app .landing{display:none}
 @media(max-width:700px){.box{-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 8px 24px -18px rgba(25,30,70,.28)}.stage::before{display:none}}
 @media(hover:none){.c:hover,.chip:hover{transform:none}}
 </style>
-<!-- Build: Gen Z Lite v19 — conversational language + lower bandwidth / CPU -->
+<!-- Build: Gen Z Smart v20 — Indonesian speech bias, wider vocabulary, stronger reasoning -->
 </head>
 <body>
 <header class="top">
@@ -483,7 +483,7 @@ body.in-app .landing{display:none}
         <div><label for="pace">Tempo</label><select id="pace"><option value="pelan">Pelan</option><option value="normal">Normal</option><option value="cepat">Cepat</option></select></div>
         <div><label for="len">Panjang respons</label><select id="len"><option value="singkat">Singkat</option><option value="sedang">Sedang</option><option value="panjang">Panjang</option><option value="detail">Detail</option></select></div>
         <div><label for="lang">Bahasa</label><select id="lang"><option value="id">Indonesia</option><option value="en">English</option><option value="mix">Campur</option></select></div>
-        <div><label for="model">Model</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option></select></div>
+        <div><label for="model">Model</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live · cepat</option><option value="gemini-3.8-live-extended-thinking">Gemini 3.8 Live Extended Thinking · penalaran tinggi</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live · legacy</option></select><small class="sub">Extended Thinking untuk analisis yang lebih dalam.</small></div>
         <div><label for="nat">Jeda alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
@@ -681,6 +681,9 @@ const RL = `GAYA OBROLAN — NATURAL SEPERTI CHAT LANGSUNG:
 DEFAULT BAHASA — GEN Z, CAIR, DAN NGGAK KAKU:
 - Untuk Bahasa Indonesia, pakai bahasa lisan anak muda yang wajar: "nggak", "udah", "bentar", "gimana", "kayak", "banget", "sih", "dong", "lah", "kok", "anjir", "wkwk" bila momennya cocok.
 - Slang seperti "valid", "relate", "spill", "gas", "fix", "no debat", "literally", "bestie", atau "bro" boleh dipakai sesekali, bukan sebagai daftar wajib dan bukan di setiap balasan.
+- Perluas kosakata sesuai konteks: "beneran", "seriusan", "kagak", "nggak ngotak", "ngadi-ngadi", "ngaco", "receh", "zonk", "garing", "gokil", "pecah", "gacor", "skena", "sat-set", "gercep", "mager", "gabut", "healing", "spill dong", "plot twist", "era", "vibes", "lowkey", "highkey", "cringe", "random", "overthinking", "ngegas", "ngelawak", "ngide", "ngibul", "ngeles", "ngaret", "keblinger", "auto", dan "skip". Pilih yang memang cocok; jangan menumpuk slang dalam satu kalimat.
+- Untuk ungkapan Jawa yang dipahami dalam percakapan Indonesia, kenali dan gunakan seperlunya: "piye", "opo", "mosok", "ngono", "nggih", "ora", "ra popo", "ojo", "wis", "durung", "rek", "lapo", "cok", "ndasmu", "ra cetho". Jangan memaksakan bahasa daerah saat pengguna tidak memakainya.
+- Untuk nuansa Sunda/Betawi, pahami ungkapan ringan seperti "kumaha", "euy", "meni", "gue/lu", "kagak", "aje", "nyok", "ye", dan "begono"; gunakan hanya jika alur memang mengarah ke sana.
 - Ikuti gaya lawan bicara. Jangan otomatis memakai gue/lu, bestie, ngab, atau bahasa daerah kalau pengguna tidak memakai nuansa itu.
 - Rotasi pilihan kata, pembuka, reaksi, dan susunan kalimat. Jangan menjadikan "wkwk", "anjir", "nah", "jujur", atau "bentar" sebagai template berulang.
 - Hindari gaya customer service atau buku teks seperti "Baik, berikut penjelasannya", "Dengan demikian", dan "Perlu diketahui" kecuali pengguna memang memilih gaya Formal atau konteksnya resmi.
@@ -724,6 +727,11 @@ KONTEKS DAN KEJUJURAN:
 function sys(){
  const c=cur(),personaGender=(S.appMode==="sarkas"?S.sarkasVoiceGender:c.g),st={santai:"santai, akrab, cair, dan natural ala obrolan Gen Z",formal:"rapi dan sopan, tetapi tetap luwes dan tidak kaku",gaul:"gaul Gen Z yang spontan, ekspresif, dan tetap nyambung",lucu:"jenaka, playful, dan ringan tanpa dibuat-buat"}[S.style];
  const lg={id:"Bahasa Indonesia lisan yang alami",en:"English conversational",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
+ const languageLock={
+  id:"KUNCI BAHASA: Bahasa utama percakapan adalah Bahasa Indonesia (Indonesia, id-ID). Pahami ucapan pengguna sebagai Bahasa Indonesia meskipun ada slang, pelafalan daerah, suara kurang jelas, atau kata serapan. Jangan tiba-tiba menganggap ucapan sebagai Bahasa Spanyol atau mengganti bahasa respons ke Spanyol. Balas dalam Bahasa Indonesia. Jika pengguna jelas memakai Jawa, Sunda, atau Betawi, pahami sebagai campuran lokal dalam percakapan Indonesia dan ikuti ringan bila relevan. Beralih bahasa hanya jika pengguna memang berbicara bahasa lain atau meminta terjemahan.",
+  en:"LANGUAGE LOCK: Use natural conversational English as the main language. Do not switch to Spanish or another language based on an uncertain sound. Switch only when the user clearly speaks another language or asks for translation.",
+  mix:"LANGUAGE LOCK: Indonesian is the base language, with natural English code-switching when the user does so. Interpret common Indonesian slang and regional expressions correctly. Do not unexpectedly switch to Spanish or another language. Switch only when the user clearly speaks another language or requests translation."
+ }[S.lang]||"Gunakan Bahasa Indonesia sebagai bahasa utama.";
  const pc={pelan:"Tempo sedikit lebih pelan, tenang, dan punya jeda yang nyaman. ",normal:"Tempo percakapan normal dengan variasi kecil yang wajar. ",cepat:"Tempo sedikit lebih cepat dan hidup, tetapi tetap jelas dan tidak tergesa-gesa. "}[S.pace];
  const accents={
   auto:S.lang==="en"?"Gunakan aksen English yang netral dan mudah dipahami.":S.lang==="mix"?"Gunakan dasar logat Indonesia netral; ucapkan kata Inggris dengan pelafalan Inggris yang wajar.":"Gunakan logat Bahasa Indonesia netral yang alami.",
@@ -746,8 +754,9 @@ function sys(){
  const base = [
   "Kamu bernama "+nm()+", seorang "+(personaGender==="f"?"perempuan":"laki-laki")+". "+c.d,
   "Karakter suara dan cara bicara persona: "+c.s+".",
-  "Gaya bicara: "+st+". Bahasa: "+lg+". "+accents+" "+deliveries+" "+pc+MD[S.mood]+me,
+  "Gaya bicara: "+st+". Bahasa: "+lg+". "+languageLock+" "+accents+" "+deliveries+" "+pc+MD[S.mood]+me,
   RL,
+  "KUALITAS PENALARAN DAN KETEPATAN: Pahami tujuan akhir pengguna sebelum menjawab. Untuk permintaan kompleks, pecah masalah menjadi bagian yang relevan, periksa asumsi, cocokkan setiap langkah dengan konteks yang tersedia, dan cek konsistensi angka/nama/perintah sebelum menyampaikan hasil. Bedakan fakta, perkiraan, dan hal yang belum diketahui. Jika data kurang, tanyakan satu hal yang benar-benar diperlukan atau berikan solusi terbaik dengan batasannya. Jangan mengarang hasil pengujian, akses web, kemampuan aplikasi, atau fakta pribadi. Gunakan konteks percakapan yang masih relevan tanpa mengulang pertanyaan yang sudah terjawab. Jangan tampilkan proses berpikir internal; berikan kesimpulan, alasan singkat yang berguna, serta langkah yang bisa dilakukan.",
   ({
    singkat:"PILIHAN PANJANG RESPONS — SINGKAT: jadikan jawaban ringkas dan langsung. Biasanya satu atau dua kalimat. Beri inti jawaban dahulu; hindari pembukaan, pengulangan, dan detail sampingan. Jika pengguna meminta langkah, angka, atau informasi penting, tetap sertakan minimum yang diperlukan agar jawaban benar dan bisa dipakai.",
    sedang:"PILIHAN PANJANG RESPONS — SEDANG: gunakan panjang percakapan normal, biasanya dua sampai empat kalimat. Berikan inti, alasan atau konteks terpenting, lalu langkah/ contoh singkat bila membantu. Jangan memperpanjang jawaban sederhana hanya untuk memenuhi jumlah kalimat.",
@@ -788,7 +797,12 @@ BANK KOSAKATA — PILIH DAN ROTASI SECARA NATURAL:
 - Jawa Timur/Arek: jancuk, dancuk, cok/cuk, asu, kirik, nggatheli, ndlogok, cangkemmu, gak nduwe isin, gak nganggo otak.
 - Sunda: anying, belegug, kehed, sia, meni ngaco.
 - Betawi/Jakarta: gue/lu, kagak, aje, songong, nyolot, bacot mulu, kampret, kagak ada obat.
-- Variasi lain: sindiran dingin, pujian palsu, mock review, komentar tongkrongan, debat tajam, callback, hiperbola absurd, dan analogi segar yang nyambung dengan percakapan.
+- Tambahan slang/reaksi Indonesia Gen Z: ngadi-ngadi, ngaco, ngawur, gajelas, nggak masuk akal, sotoy, sok iye, ngeles, ngibul, ngotot, keblinger, halu, zonk, ambyar, garing, receh, cringe, random, ngawur maksimal, kagak nyampe, auto gagal paham, modal bacot, banyak gaya, minim bukti, dan ide setengah matang. Pakai selektif dan jangan menjadikannya hinaan generik.
+- Jawa Tengah: piye toh, opo to, mosok, lha kok, ra popo, ojo ngono, wis-wis, durung mudeng, ora mutu, ra cetho, kebacut, ndableg, mbok ya mikir, dan ra sah ngeles.
+- Jawa Timur/Arek: rek, lapo, gak ngunu, gak nggenah, jancuk/cuk, asu, kirik, nggatheli, gak nduwe isin, cangkemmu, dan ndasmu. Sesuaikan intensitas dengan konteks; jangan menjejalkan semua istilah.
+- Sunda: kumaha atuh, euy, meni, belegug, kehed, lieur, jeung ulah kitu; pahami konteks dan jangan mengarang arti.
+- Betawi/Jakarta: gue/lu, kagak, aje, nyok, begono, songong, nyolot, bacot mulu, belagu, dan kagak ada obat.
+- Variasi lain: sindiran dingin, pujian palsu, mock review, komentar tongkrongan, debat tajam, callback, hiperbola absurd, perbandingan tak terduga, sarkas deadpan, dan analogi segar yang nyambung dengan percakapan.
 - Jangan membacakan bank kosakata. Jangan menjejalkan semua bahasa daerah sekaligus. Ikuti cara bicara pengguna dan persona yang dipilih.
 
 SATU PERSONA TERPADU — SARKAS ULTIMATE:
@@ -834,7 +848,7 @@ function play(d){
  const s=ctx.createBufferSource();s.buffer=buf;s.connect(og);clearTimeout(thinkT);
  const now=ctx.currentTime;if(nt){nt=false;turnStart(now)}
  const t=Math.max(now+0.03,nextT);s.start(t);nextT=t+buf.duration;srcs.push(s);
- s.onended=()=>{srcs=srcs.filter(x=>x!==s);if(!srcs.length&&calling)status("Mendengarkan...","listen")};
+ s.onended=()=>{srcs=srcs.filter(x=>x!==s);if(!srcs.length&&calling)status(extendedInProgress?"Sedang berpikir...":"Mendengarkan...",extendedInProgress?"think":"listen")};
  if(ctx.currentTime<tU-.05){status(nm()+" sedang berpikir...","think");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(srcs.length)status(nm()+" sedang bicara...","talk")},(tU-ctx.currentTime)*1000)}else status(nm()+" sedang bicara...","talk");
 }
 function arm(){
@@ -866,30 +880,56 @@ async function onMsg(ev){
  if(m.error){const detail=m.error.message||m.error.status||JSON.stringify(m.error);wsError="Gemini menolak permintaan: "+detail;$("warn").textContent=wsError;status("Koneksi gagal");return}
  if(m.setupComplete){ready=true;status("Tersambung","listen");const vibe=cur().hi.split(cur().n).join(nm());const hello=roastActive()?"(Telepon baru tersambung. Buka obrolan dengan satu sapaan spontan sesuai persona dan konteks. Sapaan ini harus baru, jangan membaca atau menyalin contoh sapaan lama. Boleh ada celetukan khas yang relevan, tetapi jangan memaksa umpatan, jangan menjelaskan mode, dan jangan berpidato.)":"(Telepon baru tersambung. Mulai obrolan seperti sedang menyapa seseorang secara langsung. Buat sapaan baru yang singkat, akrab, dan sesuai persona. Nuansa karakter: \""+vibe+"\". Gunakan nuansanya saja, jangan menyalin contoh tersebut. Jangan selalu memperkenalkan diri atau mengucapkan kalimat pembuka yang sama. Cukup sapa, lalu beri ruang pengguna bicara.)";nud=0;idleEligible=true;wsend({realtimeInput:{text:hello}});return}
  if(m.goAway)$("warn").textContent="Sesi akan segera berakhir. Tekan telepon lagi setelahnya.";
- const c=m.serverContent;if(!c)return;
- if(c.interrupted){nt=true;flushPlay();curA=null;drop=false;status("Mendengarkan...","listen")}
+ const c=m.serverContent;
+ const interactionStatus=(c&&c.interactionStatus)||m.interactionStatus||"";
+ const isExtended=S.model==="gemini-3.8-live-extended-thinking";
+ if(isExtended&&interactionStatus==="IN_PROGRESS"){extendedInProgress=true;clearTimeout(idleT);if(!srcs.length)status("Sedang berpikir...","think")}
+ if(isExtended&&interactionStatus==="IDLE")extendedInProgress=false;
+ if(!c)return;
+ if(c.interrupted){nt=true;flushPlay();curA=null;drop=false;extendedInProgress=false;status("Mendengarkan...","listen")}
  if(c.modelTurn&&c.modelTurn.parts&&!drop)c.modelTurn.parts.forEach(p=>{if(p.inlineData&&p.inlineData.data)play(p.inlineData.data)});
  if(c.inputTranscription&&c.inputTranscription.text){if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;lastU=performance.now();nud=0;idleEligible=true;clearTimeout(idleT);uTxt+=c.inputTranscription.text;cap(curU.textContent,"u");if(!srcs.length)status("Mendengarkan...","listen");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(calling&&!srcs.length&&!curA&&!drop)status(nm()+" sedang berpikir...","think")},900);$("log").scrollTop=1e9}
  if(c.outputTranscription&&c.outputTranscription.text){if(!curA)curA=bubble("a","");curA.textContent+=c.outputTranscription.text;curU=null;cap(curA.textContent,"a");$("log").scrollTop=1e9}
- if(c.turnComplete){nt=true;arm();curA=null;curU=null;drop=false}
+ if(c.turnComplete){
+  nt=true;curA=null;curU=null;drop=false;
+  if(!isExtended||interactionStatus==="IDLE"){
+   extendedInProgress=false;arm();
+  }else if(interactionStatus==="IN_PROGRESS"){
+   extendedInProgress=true;clearTimeout(idleT);
+   if(!srcs.length)status("Sedang berpikir...","think");
+  }
+ }
 }
 
 function cleanup(){
  clearInterval(tick);calling=false;stopViz();flushPlay();
  try{ws&&ws.close()}catch(x){}try{node&&node.disconnect()}catch(x){}
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
- clearTimeout(idleT);nud=0;idleEligible=false;try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
+ clearTimeout(idleT);nud=0;idleEligible=false;extendedInProgress=false;try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
 }
-let wsError="";
+let wsError="",extendedInProgress=false;
+const ID_ASR_VOCAB=[
+ "Prabu","beb","Gemini","Gemini Live","ChatGPT","Vercel","GitHub","Roblox","Redmi 12","HyperOS","MIUI","ESP32","NodeMCU","ThinkPad","A285","PCSX2","Playnite","API key","WebSocket","mikrofon","telepon AI","Ngobrol Santai","Sarkas Ultimate","Klaten","Delanggu","Arduino","XAMPP","Node.js","JavaScript","HTML","CSS","Windows","Android","Xiaomi","Vega 8","Roblox Studio","Gemini API","Google AI Studio","nggak","enggak","gimana","kenapa","udah","bentar","ngobrol","jancuk","jancok","cok","rek","asu","piye","mosok","ndasmu","ngadi-ngadi","ngaco","nggak masuk akal","wkwk","anjir","mager","gabut","gacor","sat-set","gercep","spill","relate","valid"
+];
+function audioTranscriptConfig(){
+ const languageCodes=S.lang==="en"?["en-US"]:S.lang==="mix"?["id-ID","en-US"]:["id-ID"];
+ const cfg={languageCodes};
+ // Gemini 3.8 Live documents custom-vocabulary biasing for live-agent input transcription.
+ // Keep the optional field off on the legacy/other model to avoid unsupported setup fields.
+ if(S.model==="gemini-3.8-live")cfg.customVocabulary=ID_ASR_VOCAB;
+ return cfg;
+}
 function connect(lite){
  wsError="";
- const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
- // Raw BidiGenerateContent WebSocket setup follows its documented wire schema;
- // SDK-only configuration keys are not sent in this low-level protocol.
- const generationConfig={responseModalities:["AUDIO"],temperature:1.0,speechConfig:{voiceConfig:activeVoiceConfig()}};
+ const extended=S.model==="gemini-3.8-live-extended-thinking";
+ const apiVersion=extended?"v1alpha":"v1beta";
+ const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage."+apiVersion+".GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;extendedInProgress=false;
+ // Raw WebSocket setup uses the documented BidiGenerateContent wire fields.
+ const generationConfig={responseModalities:["AUDIO"],temperature:0.85,speechConfig:{voiceConfig:activeVoiceConfig()}};
+ if(extended)generationConfig.thinkingConfig={thinkingLevel:"HIGH"};
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
   generationConfig,
-  systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
+  systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:audioTranscriptConfig(),outputAudioTranscription:{},
   ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:60,silenceDurationMs:600}}})}});
  w.onmessage=e=>{if(w===ws)onMsg(e).catch(err=>{wsError=err.message||"Gagal membaca respons server.";$("warn").textContent=wsError})};
  w.onerror=()=>{if(w===ws){wsError=wsError||"Koneksi WebSocket gagal. Periksa jaringan dan API key.";$("warn").textContent=wsError}};
@@ -917,7 +957,7 @@ async function start(){
    acc.push(e.data);accN+=e.data.length;
    if(accN>=ctx.sampleRate*0.04)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
   };
-  calling=true;startViz();muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
+  calling=true;extendedInProgress=false;startViz();muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
   $("call").className="b end";
   const t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000|0;$("tm").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500);
   connect(false);
