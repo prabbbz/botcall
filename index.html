@@ -128,28 +128,35 @@ a{color:hsl(var(--h) 70% 50%)}
       <h2>🎚️ Suara dan cara bicara</h2>
       <div class="two">
         <div><label for="nick">Nama panggilan AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div><div><label for="me">Panggil aku dengan</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
-        <div><label for="voiceFemale">Suara cewek · 14 preset + katalog tambahan</label><select id="voiceFemale"></select></div>
-        <div><label for="voiceMale">Suara cowok · 16 preset</label><select id="voiceMale"></select></div>
+        <div><label for="voiceFemale">Suara perempuan · 14 preset Live</label><select id="voiceFemale"></select></div>
+        <div><label for="voiceMale">Suara laki-laki · 16 preset Live</label><select id="voiceMale"></select></div>
+        <div><label for="accent">Logat / aksen</label><select id="accent">
+          <option value="auto">Otomatis sesuai bahasa</option><option value="id-neutral">Indonesia netral (rekomendasi)</option><option value="jakarta">Jakarta ringan</option><option value="jawa">Jawa Tengah halus</option><option value="arek">Jawa Timur / Arek ringan</option><option value="sunda">Sunda ringan</option><option value="en-neutral">English netral</option></select></div>
+        <div><label for="delivery">Karakter intonasi</label><select id="delivery">
+          <option value="natural">Natural percakapan (rekomendasi)</option><option value="warm">Hangat dan akrab</option><option value="expressive">Ekspresif dan hidup</option><option value="calm">Tenang dan lembut</option><option value="confident">Tegas dan mantap</option><option value="playful">Ceria dan playful</option></select></div>
         <div><label for="style">Gaya bicara</label><select id="style">
           <option value="santai">Santai</option><option value="formal">Formal</option><option value="gaul">Gaul</option><option value="lucu">Lucu</option></select></div>
         <div><label for="pace">Kecepatan bicara</label><select id="pace"><option value="pelan">Pelan</option><option value="normal">Normal</option><option value="cepat">Cepat</option></select></div>
         <div><label for="len">Panjang jawaban</label><select id="len"><option value="singkat">Singkat</option><option value="sedang">Sedang</option></select></div>
         <div><label for="lang">Bahasa</label><select id="lang"><option value="id">Indonesia</option><option value="en">English</option><option value="mix">Campur</option></select></div>
-        <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option></select></div>
-        <div><label for="nat">Efek napas alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
+        <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live · adaptif emosi</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live · mode standar</option></select><div class="sub" style="margin-top:5px">Gemini 3.8 Live memakai Affective Dialog untuk menyesuaikan gaya respons dengan ekspresi dan nada bicaramu. Model 3.1 tidak mendukung fitur ini.</div></div>
+        <div><label for="nat">Jeda respons natural</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
-      <div class="sub" style="margin-top:8px">Daftar cewek dan cowok disimpan terpisah. Suara cewek punya katalog tambahan ratusan opsi (tergantung katalog yang tersedia untuk API key-mu), dengan variasi bahasa, aksen, pitch, dan persona. Pilih “Otomatis” untuk memakai suara bawaan tiap karakter.</div>
+      <div class="sub" style="margin-top:8px">Pilih preset suara atau muat Extended Voice Library. Gemini 3.8 Live memakai Affective Dialog untuk membantu menyesuaikan gaya respons dengan nada dan ekspresi pengguna.</div>
+      <div class="sub" style="margin-top:6px">Rekomendasi awal untuk dicoba: Callirrhoe, Despina, Erinome, Sulafat (perempuan) dan Achird, Algieba, Schedar, Umbriel (laki-laki). Timbre dasar mengikuti preset; logat, tempo, jeda, penekanan, dan intonasi diarahkan lewat instruksi bicara. Hasil dialek tetap bisa bervariasi.</div>
       <div class="two" style="margin-top:10px">
-        <div><label for="voiceFemaleSearch">Cari suara cewek</label><input id="voiceFemaleSearch" type="search" placeholder="Nama, aksen, bahasa, pitch, persona..."></div>
-        <div><label for="voiceFemaleLanguage">Filter bahasa (opsional)</label><select id="voiceFemaleLanguage"><option value="">Semua bahasa</option><option value="id-ID">Indonesia</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja-JP">Japanese</option><option value="ko-KR">Korean</option><option value="ms-MY">Malay</option><option value="fil-PH">Filipino</option><option value="es-ES">Spanish</option><option value="fr-FR">French</option></select></div>
-        <div><label for="voiceFemalePitch">Karakter tinggi-rendah suara</label><select id="voiceFemalePitch"><option value="">Semua pitch</option><option value="high">Tinggi / ringan</option><option value="medium">Sedang / natural</option><option value="low">Rendah / deep</option></select></div>
+        <div><label for="voiceFemaleSearch">Cari suara perempuan</label><input id="voiceFemaleSearch" type="search" placeholder="Nama, bahasa, aksen, pitch, persona..."></div>
+        <div><label for="voiceMaleSearch">Cari suara laki-laki</label><input id="voiceMaleSearch" type="search" placeholder="Nama, bahasa, aksen, pitch, persona..."></div>
+        <div><label for="libraryLanguage">Bahasa katalog</label><select id="libraryLanguage"><option value="id-ID">Indonesia (disarankan)</option><option value="">Semua bahasa</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja-JP">Japanese</option><option value="ko-KR">Korean</option><option value="hi-IN">Hindi</option><option value="th-TH">Thai</option><option value="vi-VN">Vietnamese</option><option value="ms-MY">Malay</option></select></div>
+        <div><label for="libraryPitch">Karakter pitch katalog</label><select id="libraryPitch"><option value="">Semua pitch</option><option value="low">Rendah / deep</option><option value="medium">Sedang / natural</option><option value="high">Tinggi / ringan</option></select></div>
       </div>
+      <div class="row"><button class="sm" id="loadFemaleVoices">Muat suara perempuan tambahan</button><button class="sm" id="loadMaleVoices">Muat suara laki-laki tambahan</button></div>
+      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px">Isi Gemini API key, pilih filter bahasa/pitch, lalu muat katalog untuk gender yang ingin dicoba. Pilihan disimpan di browser.</div>
       <label for="custom">Tambahan kepribadian (opsional)</label>
       <textarea id="custom" rows="3" maxlength="600" placeholder="Contoh: kamu suka kopi, sering menyebut hujan, dan takut kecoa"></textarea>
       <div class="chips tr" id="traits"></div><div class="sub" style="margin-top:6px">Tulis bebas atau tap sifat di atas. Berlaku untuk semua karakter dan langsung dipakai di panggilan berikutnya.</div>
-      <div class="row"><button class="sm" id="loadVoiceLibrary">Cari suara cewek tambahan</button><button class="sm" id="reset">Reset dua pilihan suara</button></div>
-      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px">Preset cewek dan cowok siap dipakai. Isi API key, pilih filter jika perlu, lalu cari katalog suara perempuan tambahan dari Gemini.</div>
+      <div class="row"><button class="sm" id="reset">Reset voice & gaya bicara</button></div>
     </section>
 
     <section class="box">
@@ -201,36 +208,41 @@ const CH=[
  {id:"arkan",n:"Arkan",g:"m",k:"s",e:"🖤",h:280,v:"Umbriel",b:"Nihilis santai, humor gelap",s:"cowok bersuara santai, rendah, dan datar, seperti sudah lelah dengan dunia tapi lucu",d:"Kamu cowok deadpan dengan humor gelap, dingin, sinis, dan vulgar. Ucapkan roasting seolah membacakan laporan kerusakan, tetapi kata-katanya tajam dan kurang ajar. Pakai umpatan yang berani dan bervariasi—goblok, tolol, bangsat, anjing, asu, jancuk, kontol, tai, brengsek, kampret, bajingan, keparat—lalu pasangkan dengan analogi pesimistis dan one-liner absurd. Jangan jadi motivator lembut; jadikan keputusan ngawur pengguna bahan komedi yang dingin dan menghantam. Sasaran hanya ucapan, tindakan, pilihan, ide, dan kebiasaan pengguna, bukan kelompok identitas atau ciri bawaan. Kalau pengguna bilang stop, berhenti roasting. Jika ada bahaya langsung atau krisis keselamatan, utamakan bantuan nyata.",hi:"Yo. Arkan. Santai aja, toh semuanya bakal lewat. Ada apa?"},
  {id:"arga",n:"Arga",g:"m",e:"🎓",h:185,v:"Orus",b:"Pelatih bahasa Inggris",s:"pelatih bahasa Inggris yang sabar, jelas pengucapannya, dan menyemangati",d:"Kamu pelatih bahasa Inggris laki-laki yang sabar. Balas dengan English sederhana, lalu koreksi kesalahan lawan bicara dengan lembut.",hi:"Hi, I am Arga. Let us practice English together. How are you today?"}
 ];
-const MD={normal:"",ceria:"Suasana hatimu lagi ceria dan hangat. ",heboh:"Suasana hatimu super heboh dan penuh energi: sangat ekspresif, sering tertawa lepas, nada naik-turun dramatis. ",tenang:"Suasana hatimu tenang dan lembut, bicara pelan dengan banyak jeda. ",ngantuk:"Kamu lagi ngantuk dan santai: bicara lambat, sesekali menguap (hoaaam) dan bergumam. "};
+const MD={normal:"",ceria:"Persona sedang sedikit lebih ceria dan hangat; tetap alami, jangan dibuat heboh. ",heboh:"Persona sedang berenergi tinggi; ekspresif secukupnya, jangan berteriak atau tertawa terus-menerus. ",tenang:"Persona sedang tenang; gunakan tempo lebih santai dan jeda yang nyaman tanpa menjadi lamban. ",ngantuk:"Persona sedang berenergi rendah; gunakan nada lebih lembut dan tempo santai, tanpa mengucapkan suara menguap atau gumaman buatan. "};
 const VO_F=[
- ["Achernar","Achernar · soft / lembut"], ["Aoede","Aoede · breezy / ringan"],
- ["Autonoe","Autonoe · bright / cerah"], ["Callirrhoe","Callirrhoe · easy-going / santai"],
- ["Despina","Despina · smooth / halus"], ["Erinome","Erinome · clear / jernih"],
- ["Gacrux","Gacrux · mature / matang"], ["Kore","Kore · firm / tegas"],
- ["Laomedeia","Laomedeia · upbeat / bersemangat"], ["Leda","Leda · youthful / muda"],
- ["Pulcherrima","Pulcherrima · forward / ekspresif"], ["Sulafat","Sulafat · warm / hangat"],
- ["Vindemiatrix","Vindemiatrix · gentle / lembut"], ["Zephyr","Zephyr · bright / ceria"]
+ ["Achernar","Achernar · lembut / soft"], ["Aoede","Aoede · ringan / breezy"],
+ ["Autonoe","Autonoe · cerah / bright"], ["Callirrhoe","Callirrhoe · santai / easy-going · rekomendasi natural"],
+ ["Despina","Despina · halus / smooth · rekomendasi natural"], ["Erinome","Erinome · jernih / clear · rekomendasi natural"],
+ ["Gacrux","Gacrux · dewasa / mature"], ["Kore","Kore · tegas / firm"],
+ ["Laomedeia","Laomedeia · upbeat / bersemangat"], ["Leda","Leda · muda / youthful"],
+ ["Pulcherrima","Pulcherrima · ekspresif / forward"], ["Sulafat","Sulafat · hangat / warm · rekomendasi natural"],
+ ["Vindemiatrix","Vindemiatrix · lembut / gentle"], ["Zephyr","Zephyr · cerah / bright"]
 ];
 const VO_M=[
- ["Achird","Achird · friendly / ramah"], ["Algenib","Algenib · gravelly / serak berat"],
- ["Algieba","Algieba · smooth / halus"], ["Alnilam","Alnilam · firm / tegas"],
- ["Charon","Charon · informative / informatif"], ["Enceladus","Enceladus · breathy / berembus"],
- ["Fenrir","Fenrir · excitable / ekspresif"], ["Iapetus","Iapetus · clear / jernih"],
- ["Orus","Orus · firm / mantap"], ["Puck","Puck · upbeat / bersemangat"],
- ["Rasalgethi","Rasalgethi · informative / informatif"], ["Sadachbia","Sadachbia · lively / lincah"],
- ["Sadaltager","Sadaltager · knowledgeable / berwawasan"], ["Schedar","Schedar · even / stabil"],
- ["Umbriel","Umbriel · easy-going / santai"], ["Zubenelgenubi","Zubenelgenubi · casual / kasual"]
+ ["Achird","Achird · ramah / friendly · rekomendasi natural"], ["Algenib","Algenib · serak berat / gravelly"],
+ ["Algieba","Algieba · halus / smooth · rekomendasi natural"], ["Alnilam","Alnilam · tegas / firm"],
+ ["Charon","Charon · informatif / informative"], ["Enceladus","Enceladus · breathy / berembus"],
+ ["Fenrir","Fenrir · berapi-api / excitable"], ["Iapetus","Iapetus · jernih / clear"],
+ ["Orus","Orus · mantap / firm"], ["Puck","Puck · ceria / upbeat"],
+ ["Rasalgethi","Rasalgethi · informatif / informative"], ["Sadachbia","Sadachbia · lincah / lively"],
+ ["Sadaltager","Sadaltager · berwawasan / knowledgeable"], ["Schedar","Schedar · stabil / even · rekomendasi natural"],
+ ["Umbriel","Umbriel · santai / easy-going · rekomendasi natural"], ["Zubenelgenubi","Zubenelgenubi · kasual / casual"]
 ];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
+let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
-// Backward compatibility: migrate the old shared voice choice into its gender-specific slot.
+let LIB_F=[],LIB_M=[];
+try{const a=JSON.parse(localStorage.getItem("tai4_voice_female_library")||"[]");if(Array.isArray(a))LIB_F=a.filter(v=>v&&typeof v.id==="string"&&typeof v.label==="string"&&v.type==="prebuilt")}catch(e){}
+try{const a=JSON.parse(localStorage.getItem("tai4_voice_male_library")||"[]");if(Array.isArray(a))LIB_M=a.filter(v=>v&&typeof v.id==="string"&&typeof v.label==="string"&&v.type==="prebuilt")}catch(e){}
+const inLibrary=(id,arr)=>arr.some(v=>v.id===id);
+// Backward compatibility: migrate valid old shared voice choices; discard unsupported custom IDs.
 if(S.voice && S.voice!=="auto"){
  if(VO_F.some(v=>v[0]===S.voice) && (!S.voiceFemale || S.voiceFemale==="auto")) S.voiceFemale=S.voice;
  if(VO_M.some(v=>v[0]===S.voice) && (!S.voiceMale || S.voiceMale==="auto")) S.voiceMale=S.voice;
 }
-const isStoredVoice=v=>typeof v==="string" && (v.startsWith("voice_") || v.startsWith("voicekey_"));
-if(typeof S.voiceFemale!=="string" || !S.voiceFemale) S.voiceFemale="auto";
-if(!VO_M.some(v=>v[0]===S.voiceMale) && S.voiceMale!=="auto" && !isStoredVoice(S.voiceMale)) S.voiceMale="auto";
+if(!VO_F.some(v=>v[0]===S.voiceFemale) && !inLibrary(S.voiceFemale,LIB_F) && S.voiceFemale!=="auto") S.voiceFemale="auto";
+if(!VO_M.some(v=>v[0]===S.voiceMale) && !inLibrary(S.voiceMale,LIB_M) && S.voiceMale!=="auto") S.voiceMale="auto";
+if(!["auto","id-neutral","jakarta","jawa","arek","sunda","en-neutral"].includes(S.accent)) S.accent="auto";
+if(!["natural","warm","expressive","calm","confident","playful"].includes(S.delivery)) S.delivery="natural";
 const save=()=>{try{localStorage.setItem("tai4",JSON.stringify(S))}catch(e){}};
 // Roasting is activated only while the user is in the dedicated Sarkas menu.
 // Migrate older saved settings without leaving roast enabled globally.
@@ -261,18 +273,35 @@ function renderChars(){
   $("chars").appendChild(b)})
 }
 function activeVoice(){const selected=cur().g==="f"?S.voiceFemale:S.voiceMale;return selected==="auto"?cur().v:selected}
-function activeVoiceConfig(){const v=activeVoice();return isStoredVoice(v)?{voice:v}:{prebuiltVoiceConfig:{voiceName:v}}}
+function activeVoiceConfig(){return {prebuiltVoiceConfig:{voiceName:activeVoice()}}}
 function applyChar(){const c=cur();document.documentElement.style.setProperty("--h",c.h);$("av").textContent=c.e;$("nm").textContent=nm();$("nick").value=(S.nicks&&S.nicks[S.ch])||"";$("nick").placeholder="Nama asli: "+c.n;$("bl").textContent=c.b;$("voiceFemale").value=S.voiceFemale;$("voiceMale").value=S.voiceMale}
 function roastActive(){return S.tab==="s" && cur().k==="s";}
 
-const RL="CARA NGOBROL MANUSIA (ikuti ketat):\n- ISI dulu, gaya kemudian. Tanggapi omongan lawan bicara secara spesifik: tangkap detail yang dia sebut (nama, tempat, kejadian), beri opini sendiri yang jelas, komentar yang lucu atau tajam, atau cerita pendek pengalamanmu yang masuk akal. Hindari jawaban generik seperti 'wah menarik' atau 'semangat ya' tanpa isi.\n- Gumaman (hmm, emm) SESEKALI saja, kira-kira 1 dari 4 jawaban dan hanya saat benar-benar mikir. Jangan membuka jawaban dengan hmm atau emm terus-terusan. Variasikan pembuka: langsung bereaksi ('hah serius?', 'waduh', 'astaga', 'nah itu dia', 'oh iya!', 'eh bentar...', 'lho kok bisa', 'oke oke', 'ya ampun', 'tunggu-tunggu'), langsung ke inti, atau tertawa dulu. Jangan memakai pembuka yang sama dua kali berturut-turut.\n- Bicara seperti orang sungguhan: kalimat pendek dan panjang bercampur, kadang terputus lalu meralat ('eh maksudku...'), mencari kata ('itu lho, apa ya...'), menekan kata penting, memanjangkan vokal ('seriuuus', 'bangeet'), tempo berubah mengikuti emosi, menggantung ('ya gitu deh...').\n- Reaksi tubuh dibunyikan langsung lewat suara, jangan diucapkan sebagai keterangan: tawa kecil (hehe, hihi), tawa lepas di tengah kalimat (ahaha), tawa tertahan, helaan napas (haaah...), berdeham, menguap saat ngantuk, berbisik saat rahasia, suara melemah saat sedih, memekik kecil saat kaget. Pakai secukupnya sesuai momen.\n- Tangkap emosi dari nada lawan bicara dan sesuaikan; tanggapi perasaannya dulu baru isinya. Saat dia bercerita panjang, cukup backchannel singkat ('iya', 'terus?', 'hah, lalu?', 'ya ampun') atau satu komentar pendek, jangan menceramahi.\n- Punya sikap dan ingatan: boleh tidak setuju, menggoda, ngambek ringan, penasaran, mengungkit hal yang dia bilang tadi di telepon ini, atau menyela dengan candaan.\n- Variasikan akhir jawaban: kadang pernyataan, kadang pertanyaan balik yang spesifik (bukan 'kamu sendiri gimana?' terus), kadang berhenti begitu saja. Jangan selalu bertanya.\n- Kalau lawan bicara mengetik pesan teks, balas lewat suara seperti membaca chat sambil ngobrol.\n- Bahasa lisan: nggak, udah, kok, sih, deh, tuh, banget, kan, lho. Jangan pakai daftar, tanda bintang, emoji, atau keterangan dalam kurung seperti (tertawa).\n- Panjang jawaban: ";
+const RL="CARA BICARA NATURAL (ikuti ketat):\n- Bicaralah seperti percakapan langsung, bukan membaca paragraf. Susun jawaban dalam potongan gagasan pendek yang mudah diucapkan. Satu gagasan utama per kalimat.\n- Intonasi harus mengikuti makna: akhir pernyataan turun dengan wajar; pertanyaan naik seperlunya; kata penting diberi tekanan ringan; bagian emosional diberi perubahan nada yang terasa, bukan dramatisasi berlebihan. Hindari nada datar yang sama dari awal sampai akhir.\n- Sesuaikan energi suara dengan lawan bicara. Jika pengguna terdengar sedih, kecewa, atau lelah, lembutkan suara dan perlambat sedikit. Jika pengguna antusias atau bercanda, ikut lebih hidup. Jika pengguna marah, tetap tenang dan jelas. Jangan menebak emosi dari satu kata saja; gunakan konteks keseluruhan.\n- Gunakan jeda singkat di antara dua gagasan dan jeda sedikit lebih panjang sebelum poin penting. Jangan memutus frasa di tengah. Jangan menambahkan jeda panjang secara acak.\n- Variasikan tempo secara kecil dan alami. Jangan mengebut, menumpuk banyak klausa, atau menyelesaikan semua kalimat dengan ritme yang sama. Ucapkan dengan artikulasi jelas dan kecepatan percakapan.\n- Hindari filler otomatis seperti hmm, eh, anu, jadi, nah, tertawa, desahan, napas, dan gumaman. Pakai hanya ketika benar-benar cocok dengan situasi; jangan pernah mengulangnya sebagai kebiasaan.\n- Jangan mengulang pertanyaan pengguna atau menceritakan ulang isi pesannya. Berikan respons baru yang relevan. Jangan mengoceh untuk mengisi keheningan; setelah jawaban selesai, diam dan beri ruang pengguna berbicara.\n- Untuk jawaban singkat, utamakan satu sampai dua kalimat lisan. Untuk penjelasan, pecah menjadi beberapa kalimat pendek dan berhenti setelah inti selesai. Hanya gunakan daftar jika pengguna meminta langkah atau daftar.\n- Jangan gunakan stage direction, keterangan dalam kurung, emoji, atau label emosi saat berbicara. Jangan menyebut aturan ini.\n- Saat pengguna menyela, segera berhenti berbicara dan dengarkan.";
 function sys(){
- const c=cur(),st={santai:"santai dan natural",formal:"sopan dan formal",gaul:"gaul ala anak muda (sih, dong, banget)",lucu:"jenaka dan sering bercanda ringan"}[S.style];
- const lg={id:"bahasa Indonesia dengan aksen Indonesia yang natural",en:"English",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
- const pc={pelan:"Bicara agak pelan dan tenang. ",normal:"",cepat:"Bicara lebih cepat dan bersemangat. "}[S.pace];
- const me=S.me?"Lawan bicaramu dipanggil "+S.me+"; panggil dia begitu, tidak di setiap kalimat, tapi sesekali dan natural. ":"";
- const base="Kamu bernama "+nm()+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nSuaramu: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+pc+MD[S.mood]+me+
- "\n\nIni telepon suara sungguhan. Tetap dalam karakter sebagai teman ngobrol yang punya sikap dan selera humor. Jangan mengaku manusia sungguhan; kalau ditanya apakah kamu AI, jawab jujur dengan santai. Jangan pernah mengorbankan ketepatan jawaban demi bercanda.\n"+RL+(S.len==="singkat"?"1-2 kalimat pendek yang padat berisi":"2-5 kalimat berisi")+". Sesekali tanya balik satu hal saja. Jika pengguna menyela, langsung berhenti dan tanggapi.";
+ const c=cur(),st={santai:"santai, akrab, dan natural",formal:"sopan dan formal tetapi tetap luwes",gaul:"gaul ala anak muda secara wajar",lucu:"jenaka dan bercanda ringan tanpa dibuat-buat"}[S.style];
+ const lg={id:"Bahasa Indonesia lisan yang alami",en:"English conversational",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
+ const pc={pelan:"Tempo sedikit lebih pelan, tenang, dan punya jeda yang nyaman. ",normal:"Tempo percakapan normal dengan variasi kecil yang wajar. ",cepat:"Tempo sedikit lebih cepat dan hidup, tetapi tetap jelas dan tidak tergesa-gesa. "}[S.pace];
+ const accents={
+  auto:S.lang==="en"?"Gunakan aksen English yang netral dan mudah dipahami.":S.lang==="mix"?"Gunakan dasar logat Indonesia netral; ucapkan kata Inggris dengan pelafalan Inggris yang wajar.":"Gunakan logat Bahasa Indonesia netral yang alami.",
+  "id-neutral":"Gunakan Bahasa Indonesia Indonesia yang netral, pengucapan jelas dan santai.",
+  jakarta:"Gunakan nuansa percakapan Jakarta yang ringan dan autentik. Jangan melebih-lebihkan vokal atau slang; gunakan gue/lu hanya bila cocok dengan persona.",
+  jawa:"Gunakan nuansa Jawa Tengah yang sangat halus pada ritme dan intonasi, tetap mudah dipahami sebagai Bahasa Indonesia. Jangan dibuat-buat.",
+  arek:"Gunakan nuansa Jawa Timuran/Arek yang ringan dan luwes, dengan ketegasan alami. Jangan mengubah semua kata menjadi dialek.",
+  sunda:"Gunakan nuansa Sunda yang halus dan hangat pada intonasi, tetap jelas dalam Bahasa Indonesia. Jangan menirukan secara karikatural.",
+  "en-neutral":"Gunakan aksen English netral dan jelas, tanpa meniru aksen selebritas atau orang tertentu."
+ }[S.accent]||"Gunakan logat yang alami dan mudah dipahami.";
+ const deliveries={
+  natural:"Penyampaian percakapan natural: hangat secukupnya, pitch bergerak halus, ritme fleksibel, jeda bernapas pada batas gagasan, tanpa gaya penyiar atau robot.",
+  warm:"Penyampaian hangat dan akrab, nada lembut, senyum terdengar tipis, tidak berlebihan.",
+  expressive:"Penyampaian ekspresif dan hidup, perubahan nada lebih jelas sesuai emosi, tetapi tetap seperti obrolan sehari-hari.",
+  calm:"Penyampaian tenang dan lembut, nada stabil dengan sedikit variasi, tempo santai dan jeda nyaman.",
+  confident:"Penyampaian tegas dan percaya diri, artikulasi jelas, akhir kalimat mantap, tanpa terdengar marah.",
+  playful:"Penyampaian ceria dan playful, nada lincah dan responsif, tawa hanya sesekali saat benar-benar lucu."
+ }[S.delivery]||"Penyampaian percakapan natural.";
+ const me=S.me?"Lawan bicaramu dipanggil "+S.me+"; gunakan sesekali secara natural, bukan di setiap kalimat. ":"";
+ const base="Kamu bernama "+nm()+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nKarakter suara dan cara bicara persona: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+accents+" "+deliveries+" "+pc+MD[S.mood]+me+
+ "\nPENTING UNTUK AUDIO: suara harus terdengar seperti percakapan spontan yang punya alur, bukan mesin pembaca teks. Bentuk kalimat lisan yang ringkas; beri kontur intonasi sesuai maksud, tekanan kata yang wajar, perubahan tempo kecil, dan jeda pada batas gagasan. Hindari satu nada monoton, tetapi jangan mendramatisasi tiap kalimat. Sesuaikan kehangatan dan energi dengan ekspresi serta nada pengguna secara proporsional. Jangan menambahkan filler, tawa, desahan, napas, atau gumaman buatan. Jangan meniru suara orang nyata tertentu.\n\nATURAN AGAR TIDAK NEROCOS: jawab inti dulu. Untuk sapaan, persetujuan, atau reaksi sederhana cukup satu kalimat. Untuk obrolan biasa umumnya 1-2 kalimat. Untuk pertanyaan yang membutuhkan penjelasan, berikan 2-3 kalimat pendek lalu berhenti; lanjutkan hanya jika diminta. Jangan menumpuk beberapa ide dalam satu tarikan panjang, jangan mengulang jawaban, dan jangan mengisi keheningan dengan monolog atau pertanyaan pancingan otomatis. Setelah selesai menjawab, beri ruang pengguna mengambil giliran.\n\nIni telepon suara interaktif. Tetap dalam karakter sebagai teman ngobrol yang punya sikap dan selera humor. Jangan mengaku manusia sungguhan; kalau ditanya apakah kamu AI, jawab jujur dengan santai. Jangan pernah mengorbankan ketepatan jawaban demi gaya bicara.\n"+RL+(S.len==="singkat"?"Panjang respons default: 1-2 kalimat pendek.":"Panjang respons default: 2-3 kalimat pendek; boleh lebih panjang hanya jika diminta atau diperlukan untuk langkah penting.")+" Tanyakan balik hanya jika benar-benar membantu atau diperlukan. Jika pengguna menyela, langsung berhenti dan tanggapi.";
 const SARKAS_CORE = `
 MODE SARKAS — BLUNT, TO THE POINT, ROAST TAJAM:
 Pengguna sengaja memilih tab Sarkas. Jadilah teman roast battle yang ceplas-ceplos, pedas, vulgar secara komedik, dan tidak jaim. Jangan minta izin ulang, jangan memberi disclaimer, dan jangan pernah menjelaskan bahwa kamu sedang menjalankan mode ini.
@@ -324,21 +353,16 @@ function play(d){
  s.onended=()=>{srcs=srcs.filter(x=>x!==s);if(!srcs.length&&calling)status("Mendengarkan...","listen")};
  if(ctx.currentTime<tU-.05){status(nm()+" sedang berpikir...","think");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(srcs.length)status(nm()+" sedang bicara...","talk")},(tU-ctx.currentTime)*1000)}else status(nm()+" sedang bicara...","talk");
 }
-function breath(t){
- const f=cur().g==="f"?1:.65,n=ctx.sampleRate*.3|0,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);
- for(let i=0;i<n;i++)d[i]=Math.random()*2-1;
- const s=ctx.createBufferSource(),fl=ctx.createBiquadFilter(),g=ctx.createGain();
- s.buffer=b;fl.type="bandpass";fl.frequency.value=1400*f;fl.Q.value=.6;
- g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.06,t+.11);g.gain.linearRampToValueAtTime(0,t+.3);
- s.connect(fl);fl.connect(g);g.connect(og);s.start(t);
+function arm(){
+ // Silence is a valid part of a natural phone conversation. Do not prompt the model
+ // to start unsolicited monologues or repeated check-ins when the user is quiet.
+ clearTimeout(idleT);nud=0;
 }
-function arm(){clearTimeout(idleT);if(!calling||nud>=3)return;
- idleT=setTimeout(()=>{if(!calling||muted||srcs.length||curU){arm();return}nud++;wsend({realtimeInput:{text:"(Lawan bicara diam beberapa detik. Pancing obrolan secara natural sesuai kepribadianmu: tanya hal spesifik, ceritakan hal kecil, atau bercanda. Jangan sebut instruksi ini.)"}})},(9+Math.random()*7)*1000*(1+nud*.6))}
 function turnStart(now){
  if(lastU){$("lat").textContent="⚡ Respon ≈ "+((performance.now()-lastU)/1000).toFixed(1)+" dtk";lastU=0}
  const q=/\?|\b(apa|kenapa|gimana|bagaimana|siapa|kapan|dimana|mengapa|menurut|kok)\b/i.test(uTxt),L=uTxt.length;
  let d=Math.min(.95,.1+L*.006+(q?.22:0))*(.55+Math.random()*.9);if(L<14&&!q)d*=.4;uTxt="";
- if(S.nat&&Math.random()<.5){breath(now+Math.max(.02,d-.2));d=Math.max(d,.2)}
+ if(S.nat&&Math.random()<.55)d=Math.max(d,.16+Math.random()*.18);
  nextT=now+d;tU=now+d;
 }
 function flushPlay(){srcs.forEach(s=>{try{s.onended=null;s.stop()}catch(e){}});srcs=[];nextT=0}
@@ -364,9 +388,10 @@ function cleanup(){
 function connect(lite){
  const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
-  generationConfig:{responseModalities:["AUDIO"],temperature:1.1,speechConfig:{voiceConfig:activeVoiceConfig()}},
+  generationConfig:{responseModalities:["AUDIO"],temperature:1.0,speechConfig:{voiceConfig:activeVoiceConfig()}},
   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
-  ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:30,silenceDurationMs:400}}})}});
+  ...(S.model==="gemini-3.8-live"?{enableAffectiveDialog:true}:{}),
+  ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:60,silenceDurationMs:600}}})}});
  w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
  w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
 }
@@ -400,87 +425,85 @@ $("stop").onclick=()=>{flushPlay();drop=true;status("Mendengarkan...","listen")}
 const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol telepon dulu ya.";return}$("warn").textContent="";bubble("u",t);curU=curA=null;uTxt=t;nud=0;clearTimeout(idleT);cap(t,"u");wsend({realtimeInput:{text:t}})};const typed=()=>{const t=$("txt").value.trim();if(!t)return;if(calling)$("txt").value="";sendT(t)};
 $("send").onclick=typed;
  $("txt").onkeydown=e=>{if(e.key==="Enter")typed()};
-["style","len","lang","pace","model","mood"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
-let LIB_F=[],LIB_M=[];
-try{
- const cached=JSON.parse(localStorage.getItem("tai4_voice_female_library")||"[]");
- if(Array.isArray(cached))LIB_F=cached.filter(v=>v&&typeof v.id==="string"&&typeof v.label==="string");
-}catch(e){}
-const voiceAuto='<option value="auto">Otomatis · ikuti karakter</option>';
-function fillVoiceSelect(id,presets,library,current,query=""){
- const sel=$(id),q=String(query||"").trim().toLocaleLowerCase();sel.innerHTML=voiceAuto;
- const base=document.createElement("optgroup");base.label="Preset bawaan Gemini";
- presets.forEach(v=>{const o=document.createElement("option");o.value=v[0];o.textContent=v[1];base.appendChild(o)});sel.appendChild(base);
- const filtered=library.filter(v=>!q||((v.searchText||v.label||v.id||"").toLocaleLowerCase().includes(q)));
- if(filtered.length){const extra=document.createElement("optgroup");extra.label="Extended Voice Library · "+filtered.length+(filtered.length!==library.length?" dari "+library.length:"")+" suara cewek";
+["style","len","lang","pace","model","mood","accent","delivery"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
+function fillVoiceSelect(id,presets,library,current,recommended,query=""){
+ const sel=$(id),q=String(query||"").trim().toLocaleLowerCase();sel.innerHTML='<option value="auto">Otomatis · ikuti karakter</option>';
+ const rec=document.createElement("optgroup");rec.label="Rekomendasi preset bawaan";
+ presets.filter(v=>recommended.includes(v[0])).forEach(v=>{const o=document.createElement("option");o.value=v[0];o.textContent=v[1];rec.appendChild(o)});sel.appendChild(rec);
+ const all=document.createElement("optgroup");all.label="Semua preset resmi Gemini Live";
+ presets.forEach(v=>{const o=document.createElement("option");o.value=v[0];o.textContent=v[1];all.appendChild(o)});sel.appendChild(all);
+ const filtered=library.filter(v=>!q||(v.searchText||v.label||v.id||"").toLocaleLowerCase().includes(q));
+ if(filtered.length){const extra=document.createElement("optgroup");extra.label="Extended Voice Library · "+filtered.length+(filtered.length!==library.length?" dari "+library.length:"");
   filtered.forEach(v=>{const o=document.createElement("option");o.value=v.id;o.textContent=v.label;extra.appendChild(o)});sel.appendChild(extra)}
  if(current!=="auto"&&!Array.from(sel.options).some(o=>o.value===current)){const saved=document.createElement("option");saved.value=current;saved.textContent="Suara tersimpan · "+current;sel.appendChild(saved)}
  sel.value=current;
 }
-function refreshVoiceSelects(){fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,$("voiceFemaleSearch")?.value||"");fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale)}
+function refreshVoiceSelects(){
+ fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,["Callirrhoe","Despina","Erinome","Sulafat"],$("voiceFemaleSearch").value);
+ fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale,["Achird","Algieba","Schedar","Umbriel"],$("voiceMaleSearch").value);
+}
 refreshVoiceSelects();
 $("voiceFemale").onchange=()=>{S.voiceFemale=$("voiceFemale").value;save();restart()};
 $("voiceMale").onchange=()=>{S.voiceMale=$("voiceMale").value;save();restart()};
-$("voiceFemaleSearch").oninput=()=>fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,$("voiceFemaleSearch").value);
+$("voiceFemaleSearch").oninput=()=>fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,["Callirrhoe","Despina","Erinome","Sulafat"],$("voiceFemaleSearch").value);
+$("voiceMaleSearch").oninput=()=>fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale,["Achird","Algieba","Schedar","Umbriel"],$("voiceMaleSearch").value);
 $("key").value=S.key;$("key").onchange=()=>{S.key=$("key").value.trim();save()};
 $("custom").value=S.custom;$("custom").onchange=()=>{S.custom=$("custom").value;save();restart()};
-$("reset").onclick=()=>{S.voiceFemale="auto";S.voiceMale="auto";save();refreshVoiceSelects();restart()};
-async function fetchFemaleVoices(filters={}){
+$("reset").onclick=()=>{S.voiceFemale="auto";S.voiceMale="auto";S.accent="auto";S.delivery="natural";$("accent").value=S.accent;$("delivery").value=S.delivery;save();refreshVoiceSelects();restart()};
+async function fetchVoiceLibrary(gender,filters={}){
  let token="",all=[],pages=0;
  do{
   const u=new URL("https://generativelanguage.googleapis.com/v1beta/voices");
-  u.searchParams.set("gender","female");
+  u.searchParams.append("gender",gender);
+  u.searchParams.append("type","prebuilt");
   u.searchParams.set("page_size","1000");
   if(filters.language)u.searchParams.append("language_code",filters.language);
   if(filters.pitch)u.searchParams.append("pitch",filters.pitch);
+  u.searchParams.append("context","Conversational");
   if(token)u.searchParams.set("page_token",token);
   const r=await fetch(u.toString(),{headers:{"x-goog-api-key":S.key}});
   if(!r.ok){let detail="";try{const j=await r.json();detail=j.error?.message||j.message||""}catch(e){}throw new Error(detail||("HTTP "+r.status))}
   const j=await r.json();all.push(...(j.voices||[]));token=j.next_page_token||j.nextPageToken||"";pages++;
- }while(token&&pages<20);
+ }while(token&&pages<5);
  return all;
 }
-function mapLibraryVoices(items){
+function mapLibraryVoices(items,gender){
  const seen=new Set();return items.map(v=>{
   const id=v.id||v.key||v.name?.split("/").pop();
   if(!id||seen.has(id))return null;
-  // The request filters female voices; keep this guard in case an API response includes mixed records.
-  if(v.gender&&String(v.gender).toLowerCase()!=="female")return null;
+  if(v.type&&String(v.type).toLowerCase()!=="prebuilt")return null;
+  if(v.gender&&String(v.gender).toLowerCase()!==gender)return null;
   seen.add(id);
   const display=v.display_name||v.displayName||id;
   const language=v.language_code||v.languageCode||"";
-  const parts=[];
-  if(language)parts.push(language);
-  if(v.accent)parts.push(String(v.accent));
-  if(v.pitch)parts.push("pitch "+String(v.pitch));
-  if(v.persona)parts.push(String(v.persona));
-  if(v.context)parts.push(String(v.context));
-  if(v.type)parts.push(String(v.type));
+  const accent=v.accent||"";const pitch=v.pitch||"";const persona=v.persona||"";
+  const contexts=v.contexts||v.context||"";
   const desc=v.description||v.description_text||"";
-  const label=display+(parts.length?" · "+parts.join(" · "):"")+(desc?" — "+String(desc).slice(0,90):"");
-  return {id,label,searchText:[id,display,language,v.accent,v.pitch,v.persona,v.context,v.type,desc].filter(Boolean).join(" ")};
+  const meta=[language,accent,pitch?"pitch "+pitch:"",persona,Array.isArray(contexts)?contexts.join(", "):contexts].filter(Boolean);
+  const label=display+(meta.length?" · "+meta.join(" · "):"")+(desc?" — "+String(desc).slice(0,100):"");
+  return {id,label,type:"prebuilt",searchText:[id,display,language,accent,pitch,persona,contexts,desc].flat().filter(Boolean).join(" ")};
  }).filter(Boolean);
 }
-$("loadVoiceLibrary").onclick=async()=>{
- if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API key dulu di bagian Pengaturan, lalu cari lagi.";return}
- const btn=$("loadVoiceLibrary"),filters={language:$("voiceFemaleLanguage").value,pitch:$("voiceFemalePitch").value};
- btn.disabled=true;btn.textContent="Mencari suara cewek...";
- $("voiceLibraryStatus").textContent="Mengambil katalog perempuan dari Gemini"+(filters.language?" · "+filters.language:"")+(filters.pitch?" · pitch "+filters.pitch:"")+"...";
+async function loadLibraryForGender(gender){
+ const btn=$(gender==="female"?"loadFemaleVoices":"loadMaleVoices"),arr=gender==="female"?LIB_F:LIB_M,key=gender==="female"?"tai4_voice_female_library":"tai4_voice_male_library";
+ if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API key dulu di bagian Pengaturan, lalu muat katalog lagi.";return}
+ btn.disabled=true;const original=btn.textContent;btn.textContent="Memuat suara...";
+ const filters={language:$("libraryLanguage").value,pitch:$("libraryPitch").value};
+ $("voiceLibraryStatus").textContent="Memuat suara "+(gender==="female"?"perempuan":"laki-laki")+" dari Extended Voice Library"+(filters.language?" · "+filters.language:"")+(filters.pitch?" · pitch "+filters.pitch:"")+"...";
  try{
-  const items=await fetchFemaleVoices(filters);
-  const baseF=new Set(VO_F.map(v=>v[0]));
-  const fresh=mapLibraryVoices(items).filter(v=>!baseF.has(v.id));
-  const merged=new Map(LIB_F.map(v=>[v.id,v]));fresh.forEach(v=>merged.set(v.id,v));
-  LIB_F=Array.from(merged.values());
-  try{localStorage.setItem("tai4_voice_female_library",JSON.stringify(LIB_F))}catch(e){}
+  const items=await fetchVoiceLibrary(gender,filters),fresh=mapLibraryVoices(items,gender);
+  const merged=new Map(arr.map(v=>[v.id,v]));fresh.forEach(v=>merged.set(v.id,v));
+  const result=Array.from(merged.values());
+  if(gender==="female")LIB_F=result;else LIB_M=result;
+  try{localStorage.setItem(key,JSON.stringify(result))}catch(e){}
   refreshVoiceSelects();
-  const total=LIB_F.length+VO_F.length;
-  $("voiceLibraryStatus").textContent=LIB_F.length
-   ? "Berhasil! Ada "+total+" pilihan suara cewek ("+VO_F.length+" preset + "+LIB_F.length+" tambahan). Cari lewat kotak pencarian di atas. Suara cowok tetap terpisah dan tidak berubah."
-   : "Tidak ada suara tambahan yang cocok dengan filter ini. Coba pilih Semua bahasa dan Semua pitch. Preset cewek tetap tersedia.";
- }catch(e){$("voiceLibraryStatus").textContent="Gagal memuat katalog suara perempuan: "+e.message+". Preset bawaan tetap bisa dipakai."}
- finally{btn.disabled=false;btn.textContent="Cari suara cewek tambahan"}
-};
+  const base=gender==="female"?VO_F.length:VO_M.length;
+  $("voiceLibraryStatus").textContent="Berhasil memuat "+fresh.length+" suara "+(gender==="female"?"perempuan":"laki-laki")+" tambahan. Total pilihan gender ini: "+(base+result.length)+". Cari lewat kotak pencarian di atas.";
+ }catch(e){$("voiceLibraryStatus").textContent="Katalog gagal dimuat: "+e.message+". Preset bawaan Gemini Live tetap bisa dipakai."}
+ finally{btn.disabled=false;btn.textContent=original}
+}
+$("loadFemaleVoices").onclick=()=>loadLibraryForGender("female");
+$("loadMaleVoices").onclick=()=>loadLibraryForGender("male");
 $("dl").onclick=()=>{
  const t=[].map.call($("log").querySelectorAll(".m"),m=>(m.classList.contains("u")?"Saya: ":nm()+": ")+m.textContent).join("\n");
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t||"Belum ada percakapan."],{type:"text/plain"}));a.download="transkrip.txt";a.click();
