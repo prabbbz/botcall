@@ -139,11 +139,11 @@ a{color:hsl(var(--h) 70% 50%)}
         <div><label for="pace">Kecepatan bicara</label><select id="pace"><option value="pelan">Pelan</option><option value="normal">Normal</option><option value="cepat">Cepat</option></select></div>
         <div><label for="len">Panjang jawaban</label><select id="len"><option value="singkat">Singkat</option><option value="sedang">Sedang</option></select></div>
         <div><label for="lang">Bahasa</label><select id="lang"><option value="id">Indonesia</option><option value="en">English</option><option value="mix">Campur</option></select></div>
-        <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live · adaptif emosi</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live · mode standar</option></select><div class="sub" style="margin-top:5px">Gemini 3.8 Live memakai Affective Dialog untuk menyesuaikan gaya respons dengan ekspresi dan nada bicaramu. Model 3.1 tidak mendukung fitur ini.</div></div>
+        <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live · adaptif bawaan</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live · mode standar</option></select><div class="sub" style="margin-top:5px">Gemini 3.8 Live menangani gaya respons adaptif secara bawaan. Tidak perlu mengirim flag Affective Dialog di payload koneksi. Model 3.1 tidak memiliki kemampuan adaptif yang sama.</div></div>
         <div><label for="nat">Jeda respons natural</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
-      <div class="sub" style="margin-top:8px">Pilih preset suara atau muat Extended Voice Library. Gemini 3.8 Live memakai Affective Dialog untuk membantu menyesuaikan gaya respons dengan nada dan ekspresi pengguna.</div>
+      <div class="sub" style="margin-top:8px">Pilih preset suara atau muat Extended Voice Library. Pada Gemini 3.8 Live, penyesuaian gaya respons ditangani oleh model secara bawaan; aplikasi tidak mengirim field Affective Dialog tambahan.</div>
       <div class="sub" style="margin-top:6px">Rekomendasi awal untuk dicoba: Callirrhoe, Despina, Erinome, Sulafat (perempuan) dan Achird, Algieba, Schedar, Umbriel (laki-laki). Timbre dasar mengikuti preset; logat, tempo, jeda, penekanan, dan intonasi diarahkan lewat instruksi bicara. Hasil dialek tetap bisa bervariasi.</div>
       <div class="two" style="margin-top:10px">
         <div><label for="voiceFemaleSearch">Cari suara perempuan</label><input id="voiceFemaleSearch" type="search" placeholder="Nama, bahasa, aksen, pitch, persona..."></div>
@@ -436,7 +436,6 @@ function connect(lite){
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
   generationConfig:{responseModalities:["AUDIO"],temperature:1.0,speechConfig:{voiceConfig:activeVoiceConfig()}},
   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
-  ...(S.model==="gemini-3.8-live"?{enableAffectiveDialog:true}:{}),
   ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:60,silenceDurationMs:600}}})}});
  w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
  w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
