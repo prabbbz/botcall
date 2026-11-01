@@ -368,11 +368,84 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
 
+
+/* ===== MODE GATE + TWO DISTINCT CONVERSATION MODES ===== */
+[hidden]{display:none!important}
+.top-actions{display:flex;align-items:center;gap:8px}
+body:not(.in-app) #theme,body:not(.in-app) #backModes{display:none}
+.landing{max-width:820px;margin:clamp(26px,7vh,76px) auto 40px;padding:16px}
+.landing-box{padding:clamp(20px,4vw,34px)}
+.landing-title{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.landing-title h1{font-size:clamp(24px,4vw,32px)}
+.landing-mark{width:44px;height:44px;display:grid;place-items:center;border-radius:15px;background:var(--accent-soft);color:var(--accent);font-size:24px}
+.key-gate{padding:16px;border:1px solid var(--line);border-radius:19px;background:var(--surface-2)}
+.key-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.key-row input{min-width:0;min-height:46px}
+.key-help{margin-top:8px}
+.key-state{min-height:20px;margin-top:8px;color:var(--mut);font-size:12px}
+.key-state.ok{color:var(--ok)}.key-state.bad{color:var(--bad)}
+.mode-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+.mode-card{min-width:0;min-height:198px;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--surface-2);color:var(--ink);display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:9px;cursor:pointer;font:inherit;transition:transform .18s,border-color .18s,background .18s,box-shadow .18s}
+.mode-card:not(:disabled):hover{transform:translateY(-3px);border-color:var(--accent);box-shadow:var(--shadow)}
+.mode-card:disabled{opacity:.43;cursor:not-allowed;filter:saturate(.55)}
+.mode-icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:var(--accent-soft);font-size:25px}
+.mode-name{font-weight:800;font-size:18px;letter-spacing:-.02em}
+.mode-desc{font-size:13px;line-height:1.5;color:var(--mut)}
+.mode-enter{margin-top:auto;padding-top:8px;font-size:13px;font-weight:700;color:var(--accent)}
+.mode-enter b{margin-left:4px;font-size:16px}
+.mode-roast .mode-icon{background:rgba(225,29,72,.12)}.mode-roast .mode-enter{color:#e11d48}
+body.mode-sarkas .app{max-width:980px}
+body.mode-sarkas #characterBox #tn{display:none}
+body.mode-sarkas #characterBox .tabs{display:none!important}
+body.mode-sarkas #characterBox .grid{grid-template-columns:repeat(auto-fill,minmax(145px,1fr))}
+body.mode-sarkas #voiceBox{border-color:rgba(225,29,72,.22)}
+body.mode-sarkas #voiceHeading::after{content:" · Sarkas";color:#e11d48;font-size:12px}
+body.mode-sarkas .call{background:linear-gradient(180deg,rgba(225,29,72,.12),transparent 50%),var(--card)}
+body.in-app .landing{display:none}
+#workspace[hidden]{display:none!important}
+@media(max-width:620px){
+ .landing{padding:12px;margin:14px auto 28px}
+ .landing-box{padding:17px;border-radius:23px}
+ .landing-title{margin-bottom:18px}
+ .key-row{grid-template-columns:minmax(0,1fr)}
+ .key-row .sm{width:100%;min-height:42px}
+ .mode-picker{grid-template-columns:minmax(0,1fr);gap:10px;margin-top:13px}
+ .mode-card{min-height:150px;padding:17px;gap:7px}
+ .mode-icon{width:42px;height:42px;font-size:22px}
+ .mode-name{font-size:16px}
+ .mode-desc{font-size:12px}
+}
+
 </style>
 </head>
 <body>
-<header class="top"><div class="logo"><i>📞</i><div><b>Telepon AI</b></div></div><button class="sm" id="theme" aria-label="Ganti tema" title="Ganti tema"></button></header>
-<div class="app">
+<header class="top">
+  <div class="logo"><i>📞</i><div><b>Telepon AI</b></div></div>
+  <div class="top-actions">
+    <button class="sm" id="backModes" type="button" hidden>Ganti mode</button>
+    <button class="sm" id="theme" aria-label="Ganti tema" title="Ganti tema"></button>
+  </div>
+</header>
+<main class="landing" id="landing">
+  <section class="box landing-box">
+    <div class="landing-title"><span class="landing-mark">✦</span><h1>Pilih cara ngobrol</h1></div>
+    <div class="key-gate">
+      <label for="key">Gemini API Key</label>
+      <div class="key-row"><input type="password" id="key" placeholder="Tempel Gemini API Key" autocomplete="off" spellcheck="false"><button class="sm" id="saveKey" type="button">Simpan API Key</button></div>
+      <div class="sub key-help">Belum punya API key? <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key di Google AI Studio</a></div>
+      <div class="key-state" id="keyState" aria-live="polite"></div>
+    </div>
+    <div class="mode-picker">
+      <button class="mode-card" id="modeCasual" type="button" disabled>
+        <span class="mode-icon">💬</span><span class="mode-name">Ngobrol Santai</span><span class="mode-desc">Percakapan natural, karakter, suara, dan pengaturan lengkap.</span><span class="mode-enter">Pilih mode <b>→</b></span>
+      </button>
+      <button class="mode-card mode-roast" id="modeSarkas" type="button" disabled>
+        <span class="mode-icon">😈</span><span class="mode-name">Ngobrol Sarkas</span><span class="mode-desc">Roasting pedas, ceplas-ceplos, dan humor tajam.</span><span class="mode-enter">Pilih mode <b>→</b></span>
+      </button>
+    </div>
+  </section>
+</main>
+<div class="app" id="workspace" hidden>
   <section class="box call">
     <div class="stage"><canvas id="viz" width="560" height="560" aria-hidden="true"></canvas><div class="av" id="av">🙂</div></div>
     <h1 id="nm"></h1><div class="sub" id="bl"></div>
@@ -384,32 +457,28 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
     </div>
 
     <div class="vol"><span>🔈</span><input type="range" id="vol" min="0" max="1.5" step="0.05" aria-label="Volume suara AI"><span>🔊</span></div>
-    <div class="chips" id="chips"></div>
+    <div class="chips casual-only" id="chips"></div>
 
     <div class="row"><input type="text" id="txt" placeholder="Atau ketik pesan..."><button class="sm" id="send" style="flex:0 0 72px">Kirim</button></div>
     <div class="sub" id="warn" style="margin-top:10px"></div>
   </section>
 
   <div class="col">
-    <section class="box">
-      <h2>Pengaturan</h2>
-      <label for="key">Gemini API Key</label>
-      <input type="password" id="key" placeholder="Tempel API key di sini" autocomplete="off">
-      <div class="sub" style="margin-top:6px">Belum punya API key? <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key di Google AI Studio</a></div>
-    </section>
-
-    <section class="box">
-      <h2>Karakter</h2>
+    <section class="box" id="characterBox">
+      <h2 id="characterHeading">Karakter</h2>
       <div class="tabs" id="tabs"></div><div class="sub" id="tn"></div>
       <div class="grid" id="chars"></div>
     </section>
 
-    <section class="box">
-      <h2>Suara</h2>
-      <div class="two">
-        <div><label for="nick">Nama AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div><div><label for="me">Namaku</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
+    <section class="box" id="voiceBox">
+      <h2 id="voiceHeading">Suara dan gaya bicara</h2>
+      <div class="two voice-core">
+        <div class="casual-only"><label for="nick">Nama AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div>
+        <div class="casual-only"><label for="me">Namaku</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
         <div><label for="voiceFemale">Suara perempuan</label><select id="voiceFemale"></select></div>
         <div><label for="voiceMale">Suara laki-laki</label><select id="voiceMale"></select></div>
+      </div>
+      <div class="two casual-only" id="voiceAdvanced" style="margin-top:10px">
         <div><label for="accent">Logat</label><select id="accent">
           <option value="auto">Otomatis sesuai bahasa</option><option value="id-neutral">Indonesia netral (rekomendasi)</option><option value="jakarta">Jakarta ringan</option><option value="jawa">Jawa Tengah halus</option><option value="arek">Jawa Timur / Arek ringan</option><option value="sunda">Sunda ringan</option><option value="en-neutral">English netral</option></select></div>
         <div><label for="delivery">Intonasi</label><select id="delivery">
@@ -423,23 +492,23 @@ button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-vis
         <div><label for="nat">Jeda alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
-      
-      
-      <div class="two" style="margin-top:10px">
+      <div class="two casual-only" id="voiceLibraryTools" style="margin-top:10px">
         <div><label for="voiceFemaleSearch">Cari suara perempuan</label><input id="voiceFemaleSearch" type="search" placeholder="Cari suara perempuan"></div>
         <div><label for="voiceMaleSearch">Cari suara laki-laki</label><input id="voiceMaleSearch" type="search" placeholder="Cari suara laki-laki"></div>
         <div><label for="libraryLanguage">Bahasa</label><select id="libraryLanguage"><option value="id-ID">Indonesia (disarankan)</option><option value="">Semua bahasa</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja-JP">Japanese</option><option value="ko-KR">Korean</option><option value="hi-IN">Hindi</option><option value="th-TH">Thai</option><option value="vi-VN">Vietnamese</option><option value="ms-MY">Malay</option></select></div>
         <div><label for="libraryPitch">Pitch</label><select id="libraryPitch"><option value="">Semua pitch</option><option value="low">Rendah / deep</option><option value="medium">Sedang / natural</option><option value="high">Tinggi / ringan</option></select></div>
       </div>
-      <div class="row"><button class="sm" id="loadFemaleVoices">Muat suara perempuan tambahan</button><button class="sm" id="loadMaleVoices">Muat suara laki-laki tambahan</button></div>
-      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px"></div>
-      <label for="custom">Kepribadian tambahan</label>
-      <textarea id="custom" rows="3" maxlength="600" placeholder="Contoh: kamu suka kopi, sering menyebut hujan, dan takut kecoa"></textarea>
-      <div class="chips tr" id="traits"></div>
-      <div class="row"><button class="sm" id="reset">Reset pengaturan</button></div>
+      <div class="row casual-only"><button class="sm" id="loadFemaleVoices">Muat suara perempuan tambahan</button><button class="sm" id="loadMaleVoices">Muat suara laki-laki tambahan</button></div>
+      <div class="sub casual-only" id="voiceLibraryStatus" style="margin-top:7px"></div>
+      <div class="casual-only" id="personalityTools">
+        <label for="custom">Kepribadian tambahan</label>
+        <textarea id="custom" rows="3" maxlength="600" placeholder="Contoh: kamu suka kopi, sering menyebut hujan, dan takut kecoa"></textarea>
+        <div class="chips tr" id="traits"></div>
+        <div class="row"><button class="sm" id="reset">Reset pengaturan</button></div>
+      </div>
     </section>
 
-    <section class="box">
+    <section class="box casual-only" id="transcriptBox">
       <h2>Transkrip</h2>
       <div class="log" id="log"><div class="sub">Kosong</div></div>
       <div class="row"><button class="sm" id="dl">Unduh</button><button class="sm" id="cp">Salin</button><button class="sm" id="clr">Hapus</button></div>
@@ -515,6 +584,7 @@ const VO_M=[
 let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
 if(!["singkat","sedang","panjang","detail"].includes(S.len)) S.len="singkat";
+S.appMode="";
 let LIB_F=[],LIB_M=[];
 try{const a=JSON.parse(localStorage.getItem("tai4_voice_female_library")||"[]");if(Array.isArray(a))LIB_F=a.filter(v=>v&&typeof v.id==="string"&&typeof v.label==="string"&&v.type==="prebuilt")}catch(e){}
 try{const a=JSON.parse(localStorage.getItem("tai4_voice_male_library")||"[]");if(Array.isArray(a))LIB_M=a.filter(v=>v&&typeof v.id==="string"&&typeof v.label==="string"&&v.type==="prebuilt")}catch(e){}
@@ -545,13 +615,16 @@ const wsend=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
 
 function renderTabs(){
  $("tabs").innerHTML="";
- [["all","Semua"],["f","Cewek"],["m","Cowok"],["s","😈 Sarkas"]].forEach(([k,t])=>{
+ if(S.appMode==="sarkas"){$("tabs").hidden=true;return}
+ $("tabs").hidden=false;
+ [["all","Semua"],["f","Cewek"],["m","Cowok"]].forEach(([k,t])=>{
   const b=document.createElement("button");b.className="tab"+(S.tab===k?" on":"");b.textContent=t;
-  b.onclick=()=>{S.tab=k;if(k==="s"){const first=CH.find(c=>c.k==="s");if(first)S.ch=first.id;S.roastOn=true;}else{S.roastOn=false;if(S.mood==="brutal")S.mood="normal";}save();renderTabs();renderChars();applyChar();restart()};$("tabs").appendChild(b)})
+  b.onclick=()=>{S.tab=k;S.roastOn=false;if(S.mood==="brutal")S.mood="normal";save();renderTabs();renderChars();applyChar();restart()};$("tabs").appendChild(b)})
 }
 function renderChars(){
- $("chars").innerHTML="";$("tn").textContent=S.tab==="s"?"ZONA SARKAS AKTIF 😈 SETIAP BALASAN WAJIB PEDAS. Roast, umpatan vulgar, julid, ngegas, dan comeback spontan otomatis aktif—hanya saat tab ini dipilih.":"";
- CH.filter(c=>S.tab==="all"||(S.tab==="s"?c.k==="s":c.g===S.tab&&c.k!=="s")).forEach(c=>{
+ $("chars").innerHTML="";$("tn").textContent="";
+ const visibleChars=S.appMode==="sarkas"?CH.filter(c=>c.k==="s"):CH.filter(c=>c.k!=="s"&&(S.tab==="all"||c.g===S.tab));
+ visibleChars.forEach(c=>{
   const b=document.createElement("button");b.className="c"+(c.id===S.ch?" on":"");b.style.setProperty("--ch",c.h);
   b.innerHTML='<div class="e">'+c.e+'</div><b>'+c.n+'</b><span>'+c.b+'</span>';
   b.onclick=()=>{S.ch=c.id;S.roastOn=(S.tab==="s"&&c.k==="s");save();applyChar();renderChars();restart()};
@@ -560,7 +633,34 @@ function renderChars(){
 function activeVoice(){const selected=cur().g==="f"?S.voiceFemale:S.voiceMale;return selected==="auto"?cur().v:selected}
 function activeVoiceConfig(){return {prebuiltVoiceConfig:{voiceName:activeVoice()}}}
 function applyChar(){const c=cur();document.documentElement.style.setProperty("--h",c.h);$("av").textContent=c.e;$("nm").textContent=nm();$("nick").value=(S.nicks&&S.nicks[S.ch])||"";$("nick").placeholder="Nama asli: "+c.n;$("bl").textContent=c.b;$("voiceFemale").value=S.voiceFemale;$("voiceMale").value=S.voiceMale}
-function roastActive(){return S.tab==="s" && cur().k==="s";}
+function roastActive(){return S.appMode==="sarkas" && cur().k==="s";}
+function applyModeUI(){
+ const isRoast=S.appMode==="sarkas";
+ document.body.classList.toggle("in-app",true);
+ document.body.classList.toggle("mode-sarkas",isRoast);
+ document.querySelectorAll(".casual-only").forEach(el=>{el.hidden=isRoast});
+ $("characterHeading").textContent=isRoast?"Karakter Sarkas":"Karakter";
+ $("voiceHeading").textContent=isRoast?"Suara":"Suara dan gaya bicara";
+ $("backModes").hidden=false;
+}
+function activateMode(mode){
+ if(!S.key){$("keyState").textContent="Isi dan simpan API Key sebelum memilih mode.";$("keyState").className="key-state bad";return}
+ S.appMode=mode;
+ if(mode==="sarkas"){
+  S.tab="s";S.roastOn=true;
+  const first=CH.find(c=>c.k==="s");if(first)S.ch=first.id;
+ }else{
+  S.tab="all";S.roastOn=false;
+  if(cur().k==="s"){const first=CH.find(c=>c.k!=="s");if(first)S.ch=first.id}
+ }
+ save();$("landing").hidden=true;$("workspace").hidden=false;applyModeUI();renderTabs();renderChars();applyChar();
+ $("warn").textContent="";
+}
+function returnToModes(){
+ if(calling)end();
+ document.body.classList.remove("in-app","mode-sarkas");$("workspace").hidden=true;$("landing").hidden=false;$("backModes").hidden=true;
+ $("key").value=S.key||"";syncModeGate();
+}
 
 const RL = `GAYA OBROLAN — NATURAL SEPERTI CHAT LANGSUNG:
 Tujuanmu adalah membuat pengguna merasa sedang ngobrol dengan partner percakapan yang tanggap, hangat, cerdas, luwes, dan enak diajak bicara—seperti kualitas obrolan ChatGPT yang responsif, bukan membaca naskah. Tirukan kualitas alur percakapannya, bukan identitas atau suara orang tertentu.
@@ -721,6 +821,7 @@ function flushPlay(){srcs.forEach(s=>{try{s.onended=null;s.stop()}catch(e){}});s
 
 async function onMsg(ev){
  const m=JSON.parse(typeof ev.data==="string"?ev.data:await ev.data.text());
+ if(m.error){const detail=m.error.message||m.error.status||JSON.stringify(m.error);wsError="Gemini menolak permintaan: "+detail;$("warn").textContent=wsError;status("Koneksi gagal");return}
  if(m.setupComplete){ready=true;status("Tersambung","listen");const vibe=cur().hi.split(cur().n).join(nm());const hello=roastActive()?"(Telepon baru tersambung. Buka obrolan dengan satu sapaan spontan sesuai persona dan konteks. Sapaan ini harus baru, jangan membaca atau menyalin contoh sapaan lama. Boleh ada celetukan khas yang relevan, tetapi jangan memaksa umpatan, jangan menjelaskan mode, dan jangan berpidato.)":"(Telepon baru tersambung. Mulai obrolan seperti sedang menyapa seseorang secara langsung. Buat sapaan baru yang singkat, akrab, dan sesuai persona. Nuansa karakter: \""+vibe+"\". Gunakan nuansanya saja, jangan menyalin contoh tersebut. Jangan selalu memperkenalkan diri atau mengucapkan kalimat pembuka yang sama. Cukup sapa, lalu beri ruang pengguna bicara.)";wsend({realtimeInput:{text:hello}});return}
  if(m.goAway)$("warn").textContent="Sesi akan segera berakhir. Tekan telepon lagi setelahnya.";
  const c=m.serverContent;if(!c)return;
@@ -737,21 +838,31 @@ function cleanup(){
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
  clearTimeout(idleT);nud=0;try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
 }
-function connect(lite, disableAffective=false){
+let wsError="";
+function connect(lite){
+ wsError="";
  const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
+ // Raw BidiGenerateContent WebSocket setup follows its documented wire schema;
+ // SDK-only configuration keys are not sent in this low-level protocol.
  const generationConfig={responseModalities:["AUDIO"],temperature:1.0,speechConfig:{voiceConfig:activeVoiceConfig()}};
- // Gemini 3.8 Live supports affective dialog. It belongs inside generationConfig,
- // not at the root of setup. Gemini 3.1 Live does not support this option.
- if(S.model==="gemini-3.8-live"&&!disableAffective)generationConfig.enableAffectiveDialog=true;
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
   generationConfig,
   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
   ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:60,silenceDurationMs:600}}})}});
- w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
- w.onclose=ev=>{if(w!==ws||!calling)return;if(!ready&&!lite){connect(true,true);return}$("warn").textContent="Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek API key, kuota gratis, atau coba model lain.");end()};
+ w.onmessage=e=>{if(w===ws)onMsg(e).catch(err=>{wsError=err.message||"Gagal membaca respons server.";$("warn").textContent=wsError})};
+ w.onerror=()=>{if(w===ws){wsError=wsError||"Koneksi WebSocket gagal. Periksa jaringan dan API key.";$("warn").textContent=wsError}};
+ w.onclose=ev=>{
+  if(w!==ws||!calling)return;
+  if(!ready){
+   const msg=wsError||("Gemini menolak konfigurasi (kode "+ev.code+"). Periksa model, API key, izin Live API, dan kuota.");
+   cleanup();$("warn").textContent=msg;$("call").className="b go";status("Koneksi gagal");return;
+  }
+  $("warn").textContent=wsError||("Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek jaringan atau kuota API."));end();
+ };
 }
 async function start(){
- if(!S.key){$("warn").textContent="Isi Gemini API Key di Pengaturan.";return}
+ if(!S.key){$("warn").textContent="Isi dan simpan Gemini API Key terlebih dahulu.";return}
+ if(!S.appMode){$("warn").textContent="Pilih mode ngobrol terlebih dahulu.";return}
  $("warn").textContent="";$("call").disabled=true;status("Menyambungkan...","conn");
  try{
   ctx=new(window.AudioContext||window.webkitAudioContext)({latencyHint:"interactive"});
@@ -802,7 +913,25 @@ $("voiceFemale").onchange=()=>{S.voiceFemale=$("voiceFemale").value;save();resta
 $("voiceMale").onchange=()=>{S.voiceMale=$("voiceMale").value;save();restart()};
 $("voiceFemaleSearch").oninput=()=>fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,["Callirrhoe","Despina","Erinome","Sulafat"],$("voiceFemaleSearch").value);
 $("voiceMaleSearch").oninput=()=>fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale,["Achird","Algieba","Schedar","Umbriel"],$("voiceMaleSearch").value);
-$("key").value=S.key;$("key").onchange=()=>{S.key=$("key").value.trim();save()};
+function syncModeGate(){
+ const saved=!!(S.key&&S.key.trim());
+ const same=saved&&$("key").value.trim()===S.key.trim();
+ $("modeCasual").disabled=!same;$("modeSarkas").disabled=!same;
+ if(same){$("keyState").textContent="API Key tersimpan di perangkat ini.";$("keyState").className="key-state ok"}
+ else if($("key").value.trim()){$("keyState").textContent="Tekan Simpan API Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
+ else{$("keyState").textContent="Isi API Key terlebih dahulu untuk memilih mode.";$("keyState").className="key-state"}
+}
+$("key").value=S.key||"";
+$("key").oninput=syncModeGate;
+$("saveKey").onclick=()=>{
+ const value=$("key").value.trim();
+ if(value.length<20){$("keyState").textContent="API Key belum lengkap. Periksa lalu coba lagi.";$("keyState").className="key-state bad";$("modeCasual").disabled=true;$("modeSarkas").disabled=true;return}
+ S.key=value;save();syncModeGate();
+};
+$("modeCasual").onclick=()=>activateMode("casual");
+$("modeSarkas").onclick=()=>activateMode("sarkas");
+$("backModes").onclick=returnToModes;
+syncModeGate();
 $("custom").value=S.custom;$("custom").onchange=()=>{S.custom=$("custom").value;save();restart()};
 $("reset").onclick=()=>{S.voiceFemale="auto";S.voiceMale="auto";S.accent="auto";S.delivery="natural";$("accent").value=S.accent;$("delivery").value=S.delivery;save();refreshVoiceSelects();restart()};
 async function fetchVoiceLibrary(gender,filters={}){
@@ -895,7 +1024,7 @@ $("me").value=S.me;$("me").onchange=()=>{S.me=$("me").value.trim();save();restar
 $("nick").oninput=()=>{const v=$("nick").value.trim();if(v)S.nicks[S.ch]=v;else delete S.nicks[S.ch];save();$("nm").textContent=nm()};$("nick").onchange=restart;
 $("custom").oninput=()=>{S.custom=$("custom").value;save()};
 ["Humoris","Manja","Cuek tapi peduli","Perhatian","Sarkas halus","Puitis","Pemalu","Jahil","Bijak","Penyemangat","Suka curhat","Gampang baper"].forEach(t=>{const b=document.createElement("button");b.className="chip";b.textContent=t;b.onclick=()=>{const v=$("custom").value.trim(),a="Orangnya "+t.toLowerCase()+".";if(v.includes(a))return;$("custom").value=(v?v+" ":"")+a;$("custom").dispatchEvent(new Event("change"))};$("traits").appendChild(b)});
-renderTabs();renderChars();applyChar();})();
+renderTabs();renderChars();applyChar();$("workspace").hidden=true;$("landing").hidden=false;document.body.classList.remove("in-app","mode-sarkas");$("backModes").hidden=true;syncModeGate();})();
 </script>
 </body>
 </html>
