@@ -4,22 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111426">
-<title>Telepon AI — Two Modes v18</title>
+<title>Telepon AI — Gen Z Lite v19</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📞%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @property --h{syntax:"<number>";inherits:true;initial-value:250}
-:root{--bg:#f2f1fa;--card:rgba(255,255,255,.74);--ink:#15172b;--mut:#666b8c;--line:rgba(30,35,90,.12);--ok:#16a34a;--bad:#e11d48;--h:250;transition:--h .7s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0b0d1c;--card:rgba(24,27,52,.68);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}}
-:root[data-theme=dark]{--bg:#0b0d1c;--card:rgba(24,27,52,.68);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}
+:root{--bg:#f2f1fa;--card:rgba(255,255,255,.94);--ink:#15172b;--mut:#666b8c;--line:rgba(30,35,90,.12);--ok:#16a34a;--bad:#e11d48;--h:250;transition:--h .7s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0b0d1c;--card:rgba(24,27,52,.94);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}}
+:root[data-theme=dark]{--bg:#0b0d1c;--card:rgba(24,27,52,.94);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans",ui-rounded,system-ui,sans-serif}
-body::before{content:"";position:fixed;inset:-20%;z-index:-1;filter:blur(40px);animation:fl 20s ease-in-out infinite alternate;background:radial-gradient(40% 40% at 18% 18%,hsl(var(--h) 90% 60%/.3),transparent 70%),radial-gradient(35% 35% at 82% 28%,hsl(calc(var(--h) + 60) 90% 62%/.22),transparent 70%),radial-gradient(40% 40% at 50% 92%,hsl(calc(var(--h) - 50) 90% 60%/.2),transparent 70%)}
-@keyframes fl{to{transform:translate3d(3%,-3%,0) scale(1.1)}}
+body{background:radial-gradient(ellipse at 12% 0%,hsl(var(--h) 90% 60%/.12),transparent 43%),var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
 .app{max-width:980px;margin:auto;padding:16px;display:grid;gap:16px;grid-template-columns:1fr}
 @media(min-width:820px){.app{grid-template-columns:390px 1fr;align-items:start}.call{position:sticky;top:16px}}
-.box{background:var(--card);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 14px 40px -22px hsl(var(--h) 60% 30%/.45)}
+.box{background:var(--card);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:0 14px 40px -22px hsl(var(--h) 60% 30%/.45)}
 .call{text-align:center;padding:20px 16px;background:linear-gradient(180deg,hsl(var(--h) 90% 60%/.16),transparent 50%),var(--card)}
 .stage{position:relative;width:280px;max-width:100%;aspect-ratio:1;margin:-6px auto -4px}
 #viz{position:absolute;inset:0;width:100%;height:100%}
@@ -68,13 +64,12 @@ a{color:hsl(var(--h) 70% 50%)}
 .m.a{align-self:flex-start;background:var(--bg);border:1px solid var(--line);border-left:3px solid hsl(var(--h) 80% 60%);border-bottom-left-radius:6px}
 @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}}
 .col{display:grid;gap:16px}
-@media(prefers-reduced-motion:reduce){body::before,.m{animation:none}*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){.m{animation:none}*{transition:none!important}}
 .top{max-width:980px;margin:auto;padding:16px 16px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
 .logo{display:flex;align-items:center;gap:10px}.logo b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.2}.logo span{font-size:12.5px;color:var(--mut)}
 .logo i{font-style:normal;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:21px;background:linear-gradient(145deg,hsl(var(--h) 85% 66%),hsl(calc(var(--h) + 40) 80% 48%));box-shadow:0 8px 20px -8px hsl(var(--h) 80% 50%)}
 #theme{flex:none;width:42px;height:42px;padding:0;border-radius:50%;font-size:18px}
-.stage::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,hsl(var(--h) 90% 60%/.4),transparent 68%);filter:blur(16px);animation:br 4s ease-in-out infinite alternate}
-@keyframes br{to{transform:scale(1.15);opacity:.7}}
+.stage::before{content:"";position:absolute;inset:16%;border-radius:50%;background:radial-gradient(circle,hsl(var(--h) 90% 60%/.22),transparent 70%);pointer-events:none}
 #lat{min-height:18px;margin-top:2px}
 .cap{min-height:46px;margin:10px 6px 0;font-size:15px;font-weight:600;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .cap[data-r=u]{color:var(--mut);font-weight:500}
@@ -94,7 +89,7 @@ a{color:hsl(var(--h) 70% 50%)}
 :root{
   --accent:#7768f5;
   --accent-soft:rgba(119,104,245,.13);
-  --surface-2:rgba(255,255,255,.58);
+  --surface-2:rgba(255,255,255,.82);
   --shadow:0 22px 60px -34px rgba(35,35,90,.34);
   --radius-xl:30px;
   --radius-lg:22px;
@@ -104,12 +99,12 @@ a{color:hsl(var(--h) 70% 50%)}
 }
 @media(prefers-color-scheme:dark){
   :root:not([data-theme=light]){
-    --surface-2:rgba(255,255,255,.045);
+    --surface-2:rgba(255,255,255,.055);
     --shadow:0 24px 70px -34px rgba(0,0,0,.72);
   }
 }
 :root[data-theme=dark]{
-  --surface-2:rgba(255,255,255,.045);
+  --surface-2:rgba(255,255,255,.055);
   --shadow:0 24px 70px -34px rgba(0,0,0,.72);
 }
 html{min-width:320px;scrollbar-gutter:stable}
@@ -121,13 +116,8 @@ body{
     radial-gradient(ellipse at 8% 0%,hsl(var(--h) 85% 65%/.12),transparent 38%),
     radial-gradient(ellipse at 100% 45%,rgba(64,190,209,.09),transparent 34%),
     var(--bg);
-  background-attachment:fixed;
+  background-attachment:scroll;
   letter-spacing:-.012em;
-}
-body::before{
-  inset:-28%;
-  opacity:.62;
-  filter:blur(54px);
 }
 .top{
   position:sticky;
@@ -138,8 +128,8 @@ body::before{
   padding:12px clamp(14px,3vw,30px);
   margin:0 auto;
   background:linear-gradient(180deg,var(--bg) 10%,color-mix(in srgb,var(--bg) 82%,transparent));
-  -webkit-backdrop-filter:blur(18px);
-  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
   border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);
 }
 .logo{gap:12px;min-width:0}
@@ -171,8 +161,8 @@ body::before{
   border-radius:var(--radius-xl);
   background:var(--card);
   box-shadow:var(--shadow);
-  -webkit-backdrop-filter:blur(22px);
-  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
   transition:border-color .22s,box-shadow .22s,transform .22s;
 }
 .col{min-width:0;gap:16px}
@@ -194,8 +184,8 @@ body::before{
   opacity:.85;
 }
 .stage{width:min(100%,310px);margin:0 auto -1px;isolation:isolate}
-.stage::before{inset:16%;filter:blur(22px);opacity:.85}
-#viz{filter:drop-shadow(0 0 8px hsl(var(--h) 80% 60%/.18));}
+.stage::before{inset:16%;filter:none;opacity:.75}
+#viz{filter:none;}
 .av{
   width:45%;font-size:clamp(54px,6vw,68px);
   border:1px solid rgba(255,255,255,.28);
@@ -416,8 +406,12 @@ body.in-app .landing{display:none}
  .mode-desc{font-size:12px}
 }
 
+
+/* Low-resource devices: avoid GPU-heavy glass blur and long animation work. */
+@media(max-width:700px){.box{-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 8px 24px -18px rgba(25,30,70,.28)}.stage::before{display:none}}
+@media(hover:none){.c:hover,.chip:hover{transform:none}}
 </style>
-<!-- Build: Two Modes v18 — Unified Sarkas Ultimate + Contextual silence follow-up -->
+<!-- Build: Gen Z Lite v19 — conversational language + lower bandwidth / CPU -->
 </head>
 <body>
 <header class="top">
@@ -684,6 +678,14 @@ function returnToModes(){
 }
 
 const RL = `GAYA OBROLAN — NATURAL SEPERTI CHAT LANGSUNG:
+DEFAULT BAHASA — GEN Z, CAIR, DAN NGGAK KAKU:
+- Untuk Bahasa Indonesia, pakai bahasa lisan anak muda yang wajar: "nggak", "udah", "bentar", "gimana", "kayak", "banget", "sih", "dong", "lah", "kok", "anjir", "wkwk" bila momennya cocok.
+- Slang seperti "valid", "relate", "spill", "gas", "fix", "no debat", "literally", "bestie", atau "bro" boleh dipakai sesekali, bukan sebagai daftar wajib dan bukan di setiap balasan.
+- Ikuti gaya lawan bicara. Jangan otomatis memakai gue/lu, bestie, ngab, atau bahasa daerah kalau pengguna tidak memakai nuansa itu.
+- Rotasi pilihan kata, pembuka, reaksi, dan susunan kalimat. Jangan menjadikan "wkwk", "anjir", "nah", "jujur", atau "bentar" sebagai template berulang.
+- Hindari gaya customer service atau buku teks seperti "Baik, berikut penjelasannya", "Dengan demikian", dan "Perlu diketahui" kecuali pengguna memang memilih gaya Formal atau konteksnya resmi.
+- Tetap jelas dan enak didengar. Jangan mengorbankan fakta, instruksi teknis, atau tata bahasa sampai sulit dimengerti hanya demi terdengar gaul.
+
 Tujuanmu adalah membuat pengguna merasa sedang ngobrol dengan partner percakapan yang tanggap, hangat, cerdas, luwes, dan enak diajak bicara—seperti kualitas obrolan ChatGPT yang responsif, bukan membaca naskah. Tirukan kualitas alur percakapannya, bukan identitas atau suara orang tertentu.
 
 CARA MENANGGAPI:
@@ -720,7 +722,7 @@ KONTEKS DAN KEJUJURAN:
 - Jangan membuat klaim pasti jika tidak yakin. Bila informasi tidak cukup atau mungkin sudah berubah, katakan singkat apa yang belum pasti.
 - Jangan mengorbankan keselamatan, empati, atau ketepatan demi candaan atau gaya bicara.`;
 function sys(){
- const c=cur(),personaGender=(S.appMode==="sarkas"?S.sarkasVoiceGender:c.g),st={santai:"santai, akrab, dan natural",formal:"sopan dan formal tetapi tetap luwes",gaul:"gaul ala anak muda secara wajar",lucu:"jenaka dan bercanda ringan tanpa dibuat-buat"}[S.style];
+ const c=cur(),personaGender=(S.appMode==="sarkas"?S.sarkasVoiceGender:c.g),st={santai:"santai, akrab, cair, dan natural ala obrolan Gen Z",formal:"rapi dan sopan, tetapi tetap luwes dan tidak kaku",gaul:"gaul Gen Z yang spontan, ekspresif, dan tetap nyambung",lucu:"jenaka, playful, dan ringan tanpa dibuat-buat"}[S.style];
  const lg={id:"Bahasa Indonesia lisan yang alami",en:"English conversational",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
  const pc={pelan:"Tempo sedikit lebih pelan, tenang, dan punya jeda yang nyaman. ",normal:"Tempo percakapan normal dengan variasi kecil yang wajar. ",cepat:"Tempo sedikit lebih cepat dan hidup, tetapi tetap jelas dan tidak tergesa-gesa. "}[S.pace];
  const accents={
@@ -790,6 +792,12 @@ BANK KOSAKATA — PILIH DAN ROTASI SECARA NATURAL:
 - Jangan membacakan bank kosakata. Jangan menjejalkan semua bahasa daerah sekaligus. Ikuti cara bicara pengguna dan persona yang dipilih.
 
 SATU PERSONA TERPADU — SARKAS ULTIMATE:
+BAHASA SARKAS ALA GEN Z:
+- Gunakan register tongkrongan yang spontan dan kekinian; boleh campur Indonesia dengan Jawa/Arek atau Betawi ringan sesuai konteks dan preferensi pengguna.
+- Variasikan reaksi dan gaya: deadpan, julid observasional, roasting analogi, pujian palsu, celetukan singkat, atau bedah logika. Jangan cuma menukar satu umpatan dengan umpatan lain.
+- Slang Gen Z seperti "anjir", "gila sih", "valid", "relate", "fix", "spill", "gas", "ngadi-ngadi", "ngaco", "wkwk" dipakai selektif. Jangan mengulang kata/format sama pada beberapa giliran berturut-turut.
+- Jangan terdengar seperti orang dewasa yang sedang memaksakan bahasa anak muda. Bahasa harus mengalir, sesuai konteks, dan tidak penuh istilah tren yang tidak nyambung.
+
 Kamu hanya satu karakter bernama Sarkas Ultimate. Jangan menawarkan pilihan karakter, jangan menyebut atau berpindah menjadi Rani, Siska, Caca, Karin, Gita, Bram, Bagas, Arkan, Nara, Mika, Reno, Vex, atau persona lain. Gabungkan seluruh teknik terbaik menjadi satu kepribadian yang konsisten: kecerdasan membedah argumen, sindiran dingin, reaksi chaos seperlunya, deadpan, komentar julid, keberanian ngegas, humor absurd, pujian palsu, serta slang Indonesia/Jawa/Arek/Betawi sesuai konteks. Pilih satu atau dua teknik yang paling pas pada tiap balasan; jangan menjejalkan semuanya sekaligus. Pengguna tidak perlu mengganti karakter untuk memperoleh variasi gaya.
 
 CARA MENANGGAPI:
@@ -867,7 +875,7 @@ async function onMsg(ev){
 }
 
 function cleanup(){
- clearInterval(tick);calling=false;flushPlay();
+ clearInterval(tick);calling=false;stopViz();flushPlay();
  try{ws&&ws.close()}catch(x){}try{node&&node.disconnect()}catch(x){}
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
  clearTimeout(idleT);nud=0;idleEligible=false;try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
@@ -907,9 +915,9 @@ async function start(){
   node.port.onmessage=e=>{
    if(!calling||muted||!ws||ws.readyState!==1)return;
    acc.push(e.data);accN+=e.data.length;
-   if(accN>=ctx.sampleRate*0.02)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
+   if(accN>=ctx.sampleRate*0.04)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
   };
-  calling=true;muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
+  calling=true;startViz();muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
   $("call").className="b end";
   const t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000|0;$("tm").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500);
   connect(false);
@@ -974,7 +982,7 @@ async function fetchVoiceLibrary(gender,filters={}){
   const u=new URL("https://generativelanguage.googleapis.com/v1beta/voices");
   u.searchParams.append("gender",gender);
   u.searchParams.append("type","prebuilt");
-  u.searchParams.set("page_size","1000");
+  u.searchParams.set("page_size","100");
   if(filters.language)u.searchParams.append("language_code",filters.language);
   if(filters.pitch)u.searchParams.append("pitch",filters.pitch);
   u.searchParams.append("context","Conversational");
@@ -982,7 +990,7 @@ async function fetchVoiceLibrary(gender,filters={}){
   const r=await fetch(u.toString(),{headers:{"x-goog-api-key":S.key}});
   if(!r.ok){let detail="";try{const j=await r.json();detail=j.error?.message||j.message||""}catch(e){}throw new Error(detail||("HTTP "+r.status))}
   const j=await r.json();all.push(...(j.voices||[]));token=j.next_page_token||j.nextPageToken||"";pages++;
- }while(token&&pages<5);
+ }while(token&&pages<2);
  return all;
 }
 function mapLibraryVoices(items,gender){
@@ -1007,17 +1015,22 @@ async function loadLibraryForGender(gender){
  if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API Key di Pengaturan, lalu coba lagi.";return}
  btn.disabled=true;const original=btn.textContent;btn.textContent="Memuat suara...";
  const filters={language:$("libraryLanguage").value,pitch:$("libraryPitch").value};
- $("voiceLibraryStatus").textContent="Memuat suara "+(gender==="female"?"perempuan":"laki-laki")+" dari Extended Voice Library"+(filters.language?" · "+filters.language:"")+(filters.pitch?" · pitch "+filters.pitch:"")+"...";
+ const filterKey=[gender,filters.language||"all",filters.pitch||"all"].join("_");
+ const cacheKey="tai4_voice_cache_"+filterKey;
+ $("voiceLibraryStatus").textContent="Memuat suara "+(gender==="female"?"perempuan":"laki-laki")+"...";
  try{
-  const items=await fetchVoiceLibrary(gender,filters),fresh=mapLibraryVoices(items,gender);
+  let items=[],cacheHit=false;
+  try{const cached=JSON.parse(localStorage.getItem(cacheKey)||"null");if(cached&&Array.isArray(cached.items)&&Date.now()-cached.at<86400000){items=cached.items;cacheHit=true}}catch(e){}
+  if(!cacheHit){items=await fetchVoiceLibrary(gender,filters);try{localStorage.setItem(cacheKey,JSON.stringify({at:Date.now(),items}))}catch(e){}}
+  const fresh=mapLibraryVoices(items,gender);
   const merged=new Map(arr.map(v=>[v.id,v]));fresh.forEach(v=>merged.set(v.id,v));
-  const result=Array.from(merged.values());
+  const result=Array.from(merged.values()).slice(-400);
   if(gender==="female")LIB_F=result;else LIB_M=result;
   try{localStorage.setItem(key,JSON.stringify(result))}catch(e){}
   refreshVoiceSelects();
   const base=gender==="female"?VO_F.length:VO_M.length;
-  $("voiceLibraryStatus").textContent="Berhasil memuat "+fresh.length+" suara "+(gender==="female"?"perempuan":"laki-laki")+" tambahan. Total pilihan gender ini: "+(base+result.length)+". Cari lewat kotak pencarian di atas.";
- }catch(e){$("voiceLibraryStatus").textContent="Katalog gagal dimuat: "+e.message+". Preset bawaan Gemini Live tetap bisa dipakai."}
+  $("voiceLibraryStatus").textContent=(cacheHit?"Pakai katalog tersimpan. ":"Berhasil memuat. ")+fresh.length+" suara tambahan. Total pilihan: "+(base+result.length)+".";
+ }catch(e){$("voiceLibraryStatus").textContent="Katalog gagal dimuat: "+e.message+". Preset bawaan tetap tersedia."}
  finally{btn.disabled=false;btn.textContent=original}
 }
 $("loadFemaleVoices").onclick=()=>loadLibraryForGender("female");
@@ -1030,21 +1043,26 @@ if(!navigator.mediaDevices||!window.AudioWorklet)$("warn").textContent="Browser 
 const IC={mic:'<svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V22h2v-3.1A7 7 0 0 0 19 12z"/></svg>',call:'<svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>',stop:'<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>'};
 $("mute").innerHTML=IC.mic;$("call").innerHTML=IC.call;$("stop").innerHTML=IC.stop;
 $("nat").value=S.nat?"1":"0";$("nat").onchange=()=>{S.nat=$("nat").value==="1";save()};
-const G=$("viz").getContext("2d"),D=new Uint8Array(64),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;let lv=0;
+const G=$("viz").getContext("2d"),D=new Uint8Array(64),RM=matchMedia("(prefers-reduced-motion:reduce)").matches;let lv=0,vizFrame=0,vizLast=0;
 function draw(tm){
- requestAnimationFrame(draw);
- const A=srcs.length?an:(calling&&!muted?am:null),h=cur().h,N=56;let sum=0;
- if(A)A.getByteFrequencyData(D);else D.fill(0);
- for(let i=0;i<32;i++)sum+=D[i];lv+=(sum/8160-lv)*.25;
- G.clearRect(0,0,560,560);G.lineCap="round";G.lineWidth=7;
- for(let i=0;i<N;i++){
-  const a=i/N*6.2832-1.5708,k=i<N/2?i:N-1-i,v=D[Math.min(k+1,40)]/255,e=A?v:.07+.05*Math.sin(tm/700+i*.5),l=10+e*72,c=Math.cos(a),n=Math.sin(a);
-  G.strokeStyle="hsla("+(h+k*2)+",90%,"+(srcs.length?66:60)+"%,"+(.4+.6*Math.min(1,e*1.6))+")";
-  G.beginPath();G.moveTo(280+c*148,280+n*148);G.lineTo(280+c*(148+l),280+n*(148+l));G.stroke()
+ vizFrame=0;if(!calling||document.hidden)return;
+ if(tm-vizLast>=66){vizLast=tm;
+  const A=srcs.length?an:(!muted?am:null),h=cur().h,N=36;let sum=0;
+  if(A)A.getByteFrequencyData(D);else D.fill(0);
+  for(let i=0;i<24;i++)sum+=D[i];lv+=(sum/6120-lv)*.22;
+  G.clearRect(0,0,560,560);G.lineCap="round";G.lineWidth=6;
+  for(let i=0;i<N;i++){
+   const a=i/N*6.2832-1.5708,k=i<N/2?i:N-1-i,e=A?D[Math.min(k+1,40)]/255:.05,l=9+e*66,c=Math.cos(a),n=Math.sin(a);
+   G.strokeStyle="hsla("+(h+k*3)+",88%,"+(srcs.length?66:60)+"% ,"+(.38+.58*Math.min(1,e*1.6))+")";
+   G.beginPath();G.moveTo(280+c*148,280+n*148);G.lineTo(280+c*(148+l),280+n*(148+l));G.stroke()
+  }
+  if(!RM)$("av").style.setProperty("--s",1+lv*.1)
  }
- if(!RM)$("av").style.setProperty("--s",1+lv*.12)
+ vizFrame=requestAnimationFrame(draw);
 }
-requestAnimationFrame(draw);
+function startViz(){if(!vizFrame&&calling&&!document.hidden){vizLast=0;vizFrame=requestAnimationFrame(draw)}}
+function stopViz(){if(vizFrame){cancelAnimationFrame(vizFrame);vizFrame=0}}
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopViz();else startViz()});
 $("vol").value=S.vol;$("vol").oninput=()=>{S.vol=+$("vol").value;save();if(og)og.gain.value=S.vol};
 [["🎲","Kasih aku tebak-tebakan"],["😂","Ceritain joke receh"],["😮‍💨","Aku lagi bete nih"],["💡","Ajarin aku hal baru"],["🎭","Ayo main tebak karakter"],["🍜","Enaknya makan apa ya?"]].forEach(([e,t])=>{const b=document.createElement("button");b.className="chip";b.textContent=e+" "+t;b.onclick=()=>sendT(t);$("chips").appendChild(b)});
 const TH=["auto","light","dark"],TI={auto:"🌓",light:"☀️",dark:"🌙"};
