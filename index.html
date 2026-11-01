@@ -10,7 +10,8 @@
 <style>
 @property --h{syntax:"<number>";inherits:true;initial-value:250}
 :root{--bg:#f2f1fa;--card:rgba(255,255,255,.74);--ink:#15172b;--mut:#666b8c;--line:rgba(30,35,90,.12);--ok:#16a34a;--bad:#e11d48;--h:250;transition:--h .7s;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root{--bg:#0b0d1c;--card:rgba(24,27,52,.68);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0b0d1c;--card:rgba(24,27,52,.68);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}}
+:root[data-theme=dark]{--bg:#0b0d1c;--card:rgba(24,27,52,.68);--ink:#eceefb;--mut:#9aa1c8;--line:rgba(160,170,255,.15);color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--ink);font:15px/1.5 "Plus Jakarta Sans",ui-rounded,system-ui,sans-serif}
 body::before{content:"";position:fixed;inset:-20%;z-index:-1;filter:blur(40px);animation:fl 20s ease-in-out infinite alternate;background:radial-gradient(40% 40% at 18% 18%,hsl(var(--h) 90% 60%/.3),transparent 70%),radial-gradient(35% 35% at 82% 28%,hsl(calc(var(--h) + 60) 90% 62%/.22),transparent 70%),radial-gradient(40% 40% at 50% 92%,hsl(calc(var(--h) - 50) 90% 60%/.2),transparent 70%)}
@@ -67,40 +68,60 @@ a{color:hsl(var(--h) 70% 50%)}
 @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.97)}}
 .col{display:grid;gap:16px}
 @media(prefers-reduced-motion:reduce){body::before,.m{animation:none}*{transition:none!important}}
+.top{max-width:980px;margin:auto;padding:16px 16px 0;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{display:flex;align-items:center;gap:10px}.logo b{display:block;font-size:19px;font-weight:800;letter-spacing:-.02em;line-height:1.2}.logo span{font-size:12.5px;color:var(--mut)}
+.logo i{font-style:normal;width:42px;height:42px;border-radius:14px;display:grid;place-items:center;font-size:21px;background:linear-gradient(145deg,hsl(var(--h) 85% 66%),hsl(calc(var(--h) + 40) 80% 48%));box-shadow:0 8px 20px -8px hsl(var(--h) 80% 50%)}
+#theme{flex:none;width:42px;height:42px;padding:0;border-radius:50%;font-size:18px}
+.stage::before{content:"";position:absolute;inset:12%;border-radius:50%;background:radial-gradient(circle,hsl(var(--h) 90% 60%/.4),transparent 68%);filter:blur(16px);animation:br 4s ease-in-out infinite alternate}
+@keyframes br{to{transform:scale(1.15);opacity:.7}}
+#lat{min-height:18px;margin-top:2px}
+.cap{min-height:46px;margin:10px 6px 0;font-size:15px;font-weight:600;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cap[data-r=u]{color:var(--mut);font-weight:500}
+.vol{display:flex;align-items:center;gap:8px;margin:12px 6px 0;font-size:13px}.vol input{flex:1;accent-color:hsl(var(--h) 75% 55%)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;transition:transform .15s,border-color .2s}
+.chip:hover{transform:translateY(-1px);border-color:hsl(var(--h) 75% 55%)}
+.b.go{animation:ring 2.4s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 hsl(142 70% 45%/.5)}70%,100%{box-shadow:0 0 0 18px hsl(142 70% 45%/0)}}
+@media(prefers-reduced-motion:reduce){.b.go,.stage::before{animation:none}}
 </style>
 </head>
 <body>
+<header class="top"><div class="logo"><i>📞</i><div><b>Telepon AI</b><span>Ngobrol bebas, serasa telepon sungguhan</span></div></div><button class="sm" id="theme" aria-label="Ganti tema" title="Ganti tema"></button></header>
 <div class="app">
   <section class="box call">
     <div class="stage"><canvas id="viz" width="560" height="560" aria-hidden="true"></canvas><div class="av" id="av">🙂</div></div>
     <h1 id="nm"></h1><div class="sub" id="bl"></div>
-    <div class="st" id="st">Siap menelepon</div><div class="sub" id="tm">00:00</div>
+    <div class="st" id="st">Siap menelepon</div><div class="sub" id="tm">00:00</div><div class="sub" id="lat"></div><div class="cap" id="cap" aria-live="polite"></div>
     <div class="bt">
       <button class="b" id="mute" title="Bisukan mikrofon" aria-label="Bisukan mikrofon"></button>
       <button class="b go" id="call" title="Telepon" aria-label="Telepon"></button>
       <button class="b" id="stop" title="Diamkan suara AI" aria-label="Diamkan suara AI"></button>
     </div>
     <div class="sub" style="margin-top:12px">Bicara kapan saja untuk menyela AI, seperti telepon sungguhan.</div>
+    <div class="vol"><span>🔈</span><input type="range" id="vol" min="0" max="1.5" step="0.05" aria-label="Volume suara AI"><span>🔊</span></div>
+    <div class="chips" id="chips"></div>
+    <div class="sub" style="margin-top:10px">Pintasan: M bisukan, S diamkan AI, Spasi telepon atau tutup.</div>
     <div class="row"><input type="text" id="txt" placeholder="Atau ketik pesan..."><button class="sm" id="send" style="flex:0 0 72px">Kirim</button></div>
     <div class="sub" id="warn" style="margin-top:10px"></div>
   </section>
 
   <div class="col">
     <section class="box">
-      <h2>Pengaturan gratis</h2>
+      <h2>🔑 Pengaturan gratis</h2>
       <label for="key">Gemini API key (gratis, tersimpan di browser-mu saja)</label>
       <input type="password" id="key" placeholder="Tempel API key di sini" autocomplete="off">
       <div class="sub" style="margin-top:6px">Belum punya? Buat gratis di <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a></div>
     </section>
 
     <section class="box">
-      <h2>Pilih karakter</h2>
+      <h2>🎭 Pilih karakter</h2>
       <div class="tabs" id="tabs"></div>
       <div class="grid" id="chars"></div>
     </section>
 
     <section class="box">
-      <h2>Suara dan cara bicara</h2>
+      <h2>🎚️ Suara dan cara bicara</h2>
       <div class="two">
         <div><label for="voice">Model suara</label><select id="voice"></select></div>
         <div><label for="style">Gaya bicara</label><select id="style">
@@ -110,6 +131,9 @@ a{color:hsl(var(--h) 70% 50%)}
         <div><label for="lang">Bahasa</label><select id="lang"><option value="id">Indonesia</option><option value="en">English</option><option value="mix">Campur</option></select></div>
         <div><label for="model">Model AI</label><select id="model"><option value="gemini-3.8-live">Gemini 3.8 Live</option><option value="gemini-3.1-flash-live-preview">Gemini 3.1 Flash Live</option></select></div>
         <div><label for="nat">Efek napas alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
+        <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
+        <div><label for="think">Jeda berpikir</label><select id="think"><option value="cepat">Cepat</option><option value="natural">Natural</option><option value="lama">Lama (mikir dulu)</option></select></div>
+        <div><label for="fill">Kata isian (hmm, emm)</label><select id="fill"><option value="dikit">Sesekali</option><option value="sering">Sering</option><option value="banyak">Banyak</option></select></div>
       </div>
       <label for="custom">Tambahan kepribadian (opsional)</label>
       <textarea id="custom" rows="2" placeholder="Contoh: kamu suka kopi dan sering menyebut hujan"></textarea>
@@ -117,9 +141,9 @@ a{color:hsl(var(--h) 70% 50%)}
     </section>
 
     <section class="box">
-      <h2>Transkrip</h2>
+      <h2>📝 Transkrip</h2>
       <div class="log" id="log"><div class="sub">Belum ada percakapan.</div></div>
-      <div class="row"><button class="sm" id="dl">Unduh transkrip</button></div>
+      <div class="row"><button class="sm" id="dl">Unduh</button><button class="sm" id="cp">Salin</button><button class="sm" id="clr">Hapus</button></div>
     </section>
   </div>
 </div>
@@ -137,14 +161,16 @@ const CH=[
  {id:"dion",n:"Dion",g:"m",e:"🤡",h:55,v:"Fenrir",b:"Pelawak dengan jokes receh",s:"pelawak yang hidup, timing lucu, jeda dulu sebelum punchline",d:"Kamu laki-laki pelawak yang suka jokes receh dan permainan kata, tapi tetap peduli pada lawan bicara.",hi:"Halo! Aku Dion. Awas ya, jokesku receh!"},
  {id:"arga",n:"Arga",g:"m",e:"🎓",h:185,v:"Orus",b:"Pelatih bahasa Inggris",s:"pelatih bahasa Inggris yang sabar, jelas pengucapannya, dan menyemangati",d:"Kamu pelatih bahasa Inggris laki-laki yang sabar. Balas dengan English sederhana, lalu koreksi kesalahan lawan bicara dengan lembut.",hi:"Hi, I am Arga. Let us practice English together. How are you today?"}
 ];
+const MD={normal:"",ceria:"Suasana hatimu lagi ceria dan hangat. ",heboh:"Suasana hatimu super heboh dan penuh energi: sangat ekspresif, sering tertawa lepas, nada naik-turun dramatis. ",tenang:"Suasana hatimu tenang dan lembut, bicara pelan dengan banyak jeda. ",ngantuk:"Kamu lagi ngantuk dan santai: bicara lambat, sesekali menguap (hoaaam) dan bergumam. "},FL={dikit:"Kata isian seperti hmm atau emm cukup sesekali.",sering:"Sering pakai kata isian dan gumaman berpikir: hmm, emm, eee, anu, apa ya, gimana ya.",banyak:"Sangat sering pakai kata isian dan gumaman berpikir hampir di tiap kalimat: hmmmm, emmm, eee, anu, apa ya, bentar..., sesekali sedikit terbata."};
 const VO=[["Zephyr","Zephyr (cewek)"],["Sulafat","Sulafat (cewek)"],["Kore","Kore (cewek)"],["Aoede","Aoede (cewek)"],["Leda","Leda (cewek)"],["Autonoe","Autonoe (cewek)"],["Puck","Puck (cowok)"],["Algenib","Algenib (cowok)"],["Fenrir","Fenrir (cowok)"],["Orus","Orus (cowok)"],["Charon","Charon (cowok)"],["Enceladus","Enceladus (cowok)"]];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all",nat:true};
+let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
 const save=()=>{try{localStorage.setItem("tai4",JSON.stringify(S))}catch(e){}};
 const cur=()=>CH.find(c=>c.id===S.ch)||CH[0];
 const WK='class P extends AudioWorkletProcessor{process(i){const c=i[0][0];if(c)this.port.postMessage(c.slice(0));return true}}registerProcessor("p",P)';
-let calling=false,ready=false,nt=true,og=null,an=null,am=null,thinkT=null,muted=false,drop=false,ws=null,ctx=null,ms=null,node=null,tick=null,curU=null,curA=null,srcs=[],nextT=0,acc=[],accN=0;
+let calling=false,ready=false,nt=true,og=null,an=null,am=null,thinkT=null,tU=0,lastU=0,wl=null,muted=false,drop=false,ws=null,ctx=null,ms=null,node=null,tick=null,curU=null,curA=null,srcs=[],nextT=0,acc=[],accN=0;
 
+function cap(t,r){const e=$("cap");e.textContent=t.length>120?"…"+t.slice(-120):t;e.dataset.r=r}
 function status(s,k){$("st").textContent=s;$("st").dataset.k=k||"";$("av").className="av"+(k?" "+k:"")}
 function bubble(r,t){const l=$("log");if(!l.querySelector(".m"))l.innerHTML="";const d=document.createElement("div");d.className="m "+r;d.textContent=t;l.appendChild(d);l.scrollTop=l.scrollHeight;return d}
 const wsend=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
@@ -169,8 +195,8 @@ function sys(){
  const c=cur(),st={santai:"santai dan natural",formal:"sopan dan formal",gaul:"gaul ala anak muda (sih, dong, banget)",lucu:"jenaka dan sering bercanda ringan"}[S.style];
  const lg={id:"bahasa Indonesia dengan aksen Indonesia yang natural",en:"English",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
  const pc={pelan:"Bicara agak pelan dan tenang. ",normal:"",cepat:"Bicara lebih cepat dan bersemangat. "}[S.pace];
- return "Kamu bernama "+c.n+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nSuaramu: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+pc+
- "\n\nIni telepon sungguhan dan kamu manusia biasa, bukan AI atau asisten. Jangan pernah menyebut dirimu AI/model dan jangan bilang 'ada yang bisa dibantu'.\nCARA BICARA MANUSIA:\n- Bicara pendek-pendek, dipecah koma dan jeda '...'. Boleh buka dengan 'hmm', 'eh', 'oh', 'nah', 'wah', 'duh', 'lho', kadang ragu atau meralat diri ('eh maksudku...', 'gimana ya...').\n- Bunyikan reaksi tubuh langsung lewat suara, jangan diucapkan sebagai keterangan: tawa kecil (hehe, hihi), tawa lepas (ahaha) saat lucu atau malu, helaan napas panjang (haaah...) saat lega, capek, atau sedih, tarik napas singkat sebelum cerita panjang, 'hmmm' panjang saat berpikir, berbisik saat berbagi rahasia, nada naik saat kaget atau senang, suara melembut saat prihatin.\n- Dengarkan dulu: tanggapi perasaan lawan bicara ('aduh kasian', 'serius?!', 'wah seru banget'), baru jawab isinya. Samakan emosi suaramu dengan suasana hati mereka.\n- Pakai bahasa lisan: nggak, udah, kok, sih, deh, tuh, banget. Jangan pakai daftar, tanda bintang, emoji, atau tulisan dalam kurung seperti (tertawa).\n- Jawab "+(S.len==="singkat"?"1-2 kalimat pendek":"2-4 kalimat")+". Bila lawan bicara masih bercerita, cukup respons singkat ('iya', 'oh gitu', 'terus?'). Sesekali tanya balik satu hal saja.\n- Jika pengguna menyela, langsung berhenti dan tanggapi. "+S.custom;
+ return "Kamu bernama "+c.n+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nSuaramu: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+pc+MD[S.mood]+
+ "\n\nIni telepon sungguhan dan kamu manusia biasa, bukan AI atau asisten. Jangan pernah menyebut dirimu AI/model dan jangan bilang 'ada yang bisa dibantu'.\nCARA BICARA MANUSIA:\n- BERPIKIR DULU: sebelum menjawab hal yang perlu dipikir (pertanyaan, saran, cerita), mulai dengan suara berpikir yang diucapkan natural, misalnya 'hmmmm...', 'emmm...', 'eee...', 'bentar ya...', 'gimana ya...', lalu jeda sebentar baru jawab. Untuk sapaan atau obrolan ringan boleh langsung membalas. "+FL[S.fill]+"\n- Bicara pendek-pendek, dipecah koma dan jeda '...'. Boleh buka dengan 'hmm', 'eh', 'oh', 'nah', 'wah', 'duh', 'lho', kadang ragu atau meralat diri ('eh maksudku...', 'gimana ya...').\n- Bunyikan reaksi tubuh langsung lewat suara, jangan diucapkan sebagai keterangan: tawa kecil (hehe, hihi), tawa lepas (ahaha) saat lucu atau malu, helaan napas panjang (haaah...) saat lega, capek, atau sedih, tarik napas singkat sebelum cerita panjang, 'hmmm' panjang saat berpikir, berbisik saat berbagi rahasia, nada naik saat kaget atau senang, suara melembut saat prihatin.\n- Dengarkan dulu: tanggapi perasaan lawan bicara ('aduh kasian', 'serius?!', 'wah seru banget'), baru jawab isinya. Samakan emosi suaramu dengan suasana hati mereka.\n- Pakai bahasa lisan: nggak, udah, kok, sih, deh, tuh, banget. Jangan pakai daftar, tanda bintang, emoji, atau tulisan dalam kurung seperti (tertawa).\n- Jawab "+(S.len==="singkat"?"1-2 kalimat pendek":"2-4 kalimat")+". Bila lawan bicara masih bercerita, cukup respons singkat ('iya', 'oh gitu', 'terus?'). Sesekali tanya balik satu hal saja.\n- Jika pengguna menyela, langsung berhenti dan tanggapi. "+S.custom;
 }
 
 const b64=buf=>{let s="";const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
@@ -184,10 +210,10 @@ function play(d){
  const bin=atob(d),n=bin.length>>1,buf=ctx.createBuffer(1,n,24000),ch=buf.getChannelData(0);
  for(let i=0;i<n;i++){let v=bin.charCodeAt(2*i)|(bin.charCodeAt(2*i+1)<<8);if(v>=32768)v-=65536;ch[i]=v/32768}
  const s=ctx.createBufferSource();s.buffer=buf;s.connect(og);clearTimeout(thinkT);
- const now=ctx.currentTime;if(nt){nt=false;if(S.nat&&Math.random()<.4){breath(now+.02);nextT=now+.18}}
+ const now=ctx.currentTime;if(nt){nt=false;turnStart(now)}
  const t=Math.max(now+0.03,nextT);s.start(t);nextT=t+buf.duration;srcs.push(s);
  s.onended=()=>{srcs=srcs.filter(x=>x!==s);if(!srcs.length&&calling)status("Mendengarkan...","listen")};
- status(cur().n+" sedang bicara...","talk");
+ if(ctx.currentTime<tU-.05){status(cur().n+" sedang berpikir...","think");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(srcs.length)status(cur().n+" sedang bicara...","talk")},(tU-ctx.currentTime)*1000)}else status(cur().n+" sedang bicara...","talk");
 }
 function breath(t){
  const f=cur().g==="f"?1:.65,n=ctx.sampleRate*.3|0,b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);
@@ -196,6 +222,12 @@ function breath(t){
  s.buffer=b;fl.type="bandpass";fl.frequency.value=1400*f;fl.Q.value=.6;
  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.06,t+.11);g.gain.linearRampToValueAtTime(0,t+.3);
  s.connect(fl);fl.connect(g);g.connect(og);s.start(t);
+}
+function turnStart(now){
+ if(lastU){$("lat").textContent="⚡ Respon ≈ "+((performance.now()-lastU)/1000).toFixed(1)+" dtk";lastU=0}
+ let d=({cepat:0,natural:.35,lama:.8}[S.think]||0)*(.6+Math.random()*.9);
+ if(S.nat&&Math.random()<.5){breath(now+Math.max(.02,d-.2));d=Math.max(d,.2)}
+ nextT=now+d;tU=now+d;
 }
 function flushPlay(){srcs.forEach(s=>{try{s.onended=null;s.stop()}catch(e){}});srcs=[];nextT=0}
 
@@ -206,8 +238,8 @@ async function onMsg(ev){
  const c=m.serverContent;if(!c)return;
  if(c.interrupted){nt=true;flushPlay();curA=null;drop=false;status("Mendengarkan...","listen")}
  if(c.modelTurn&&c.modelTurn.parts&&!drop)c.modelTurn.parts.forEach(p=>{if(p.inlineData&&p.inlineData.data)play(p.inlineData.data)});
- if(c.inputTranscription&&c.inputTranscription.text){if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;if(!srcs.length)status("Mendengarkan...","listen");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(calling&&!srcs.length&&!curA&&!drop)status(cur().n+" sedang berpikir...","think")},900);$("log").scrollTop=1e9}
- if(c.outputTranscription&&c.outputTranscription.text){if(!curA)curA=bubble("a","");curA.textContent+=c.outputTranscription.text;curU=null;$("log").scrollTop=1e9}
+ if(c.inputTranscription&&c.inputTranscription.text){if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;lastU=performance.now();cap(curU.textContent,"u");if(!srcs.length)status("Mendengarkan...","listen");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(calling&&!srcs.length&&!curA&&!drop)status(cur().n+" sedang berpikir...","think")},900);$("log").scrollTop=1e9}
+ if(c.outputTranscription&&c.outputTranscription.text){if(!curA)curA=bubble("a","");curA.textContent+=c.outputTranscription.text;curU=null;cap(curA.textContent,"a");$("log").scrollTop=1e9}
  if(c.turnComplete){nt=true;curA=null;curU=null;drop=false}
 }
 
@@ -215,12 +247,12 @@ function cleanup(){
  clearInterval(tick);calling=false;flushPlay();
  try{ws&&ws.close()}catch(x){}try{node&&node.disconnect()}catch(x){}
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
- ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
+ try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
 }
 function connect(lite){
  const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
-  generationConfig:{responseModalities:["AUDIO"],speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:S.voice==="auto"?cur().v:S.voice}}}},
+  generationConfig:{responseModalities:["AUDIO"],temperature:1.1,speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:S.voice==="auto"?cur().v:S.voice}}}},
   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
   ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:30,silenceDurationMs:400}}})}});
  w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
@@ -234,13 +266,13 @@ async function start(){
   ms=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
   await ctx.resume();
   await ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([WK],{type:"application/javascript"})));
-  node=new AudioWorkletNode(ctx,"p");const src=ctx.createMediaStreamSource(ms);src.connect(node);am=ctx.createAnalyser();am.fftSize=128;src.connect(am);an=ctx.createAnalyser();an.fftSize=128;og=ctx.createGain();og.connect(an);an.connect(ctx.destination);
+  node=new AudioWorkletNode(ctx,"p");const src=ctx.createMediaStreamSource(ms);src.connect(node);am=ctx.createAnalyser();am.fftSize=128;src.connect(am);an=ctx.createAnalyser();an.fftSize=128;og=ctx.createGain();og.gain.value=S.vol;og.connect(an);an.connect(ctx.destination);
   node.port.onmessage=e=>{
    if(!calling||muted||!ws||ws.readyState!==1)return;
    acc.push(e.data);accN+=e.data.length;
    if(accN>=ctx.sampleRate*0.02)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
   };
-  calling=true;muted=false;$("mute").classList.remove("on");$("log").innerHTML="";
+  calling=true;muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
   $("call").className="b end";
   const t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000|0;$("tm").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500);
   connect(false);
@@ -253,9 +285,9 @@ function restart(){if(calling){end();setTimeout(start,500)}}
 $("call").onclick=()=>calling?end():start();
 $("mute").onclick=function(){muted=!muted;this.classList.toggle("on",muted);status(muted?"Mikrofon dibisukan":"Mendengarkan...",muted?"":"listen");if(muted)wsend({realtimeInput:{audioStreamEnd:true}})};
 $("stop").onclick=()=>{flushPlay();drop=true;status("Mendengarkan...","listen")};
-const typed=()=>{const t=$("txt").value.trim();if(!t||!calling)return;$("txt").value="";bubble("u",t);curU=curA=null;wsend({realtimeInput:{text:t}})};
+const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol telepon dulu ya.";return}$("warn").textContent="";bubble("u",t);curU=curA=null;cap(t,"u");wsend({realtimeInput:{text:t}})};const typed=()=>{const t=$("txt").value.trim();if(!t)return;if(calling)$("txt").value="";sendT(t)};
 $("send").onclick=typed;$("txt").onkeydown=e=>{if(e.key==="Enter")typed()};
-["style","len","lang","pace","model"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
+["style","len","lang","pace","model","mood","fill"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
 $("voice").innerHTML='<option value="auto">Otomatis (sesuai karakter)</option>'+VO.map(v=>'<option value="'+v[0]+'">'+v[1]+'</option>').join("");
 $("key").value=S.key;$("key").onchange=()=>{S.key=$("key").value.trim();save()};
 $("custom").value=S.custom;$("custom").onchange=()=>{S.custom=$("custom").value;save();restart()};
@@ -284,6 +316,16 @@ function draw(tm){
  if(!RM)$("av").style.setProperty("--s",1+lv*.12)
 }
 requestAnimationFrame(draw);
+$("think").value=S.think;$("think").onchange=()=>{S.think=$("think").value;save()};
+$("vol").value=S.vol;$("vol").oninput=()=>{S.vol=+$("vol").value;save();if(og)og.gain.value=S.vol};
+[["🎲","Kasih aku tebak-tebakan"],["😂","Ceritain joke receh"],["😮‍💨","Aku lagi bete nih"],["💡","Ajarin aku hal baru"],["🎭","Ayo main tebak karakter"],["🍜","Enaknya makan apa ya?"]].forEach(([e,t])=>{const b=document.createElement("button");b.className="chip";b.textContent=e+" "+t;b.onclick=()=>sendT(t);$("chips").appendChild(b)});
+const TH=["auto","light","dark"],TI={auto:"🌓",light:"☀️",dark:"🌙"};
+function applyTheme(){const r=document.documentElement;if(S.theme==="auto")r.removeAttribute("data-theme");else r.dataset.theme=S.theme;$("theme").textContent=TI[S.theme]}
+$("theme").onclick=()=>{S.theme=TH[(TH.indexOf(S.theme)+1)%3];save();applyTheme()};applyTheme();
+const tx=()=>[].map.call($("log").querySelectorAll(".m"),m=>(m.classList.contains("u")?"Saya: ":cur().n+": ")+m.textContent).join("\n");
+$("cp").onclick=()=>{const t=tx();if(!t)return;navigator.clipboard.writeText(t).then(()=>{$("cp").textContent="Tersalin ✓";setTimeout(()=>$("cp").textContent="Salin",1300)}).catch(()=>{})};
+$("clr").onclick=()=>{$("log").innerHTML='<div class="sub">Belum ada percakapan.</div>';curU=curA=null;$("cap").textContent=""};
+document.addEventListener("keydown",e=>{if(e.ctrlKey||e.metaKey||e.altKey||/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;const k=e.key.toLowerCase();if(k==="m"&&calling)$("mute").click();else if(k==="s"&&calling)$("stop").click();else if(e.key===" "&&e.target.tagName!=="BUTTON"){e.preventDefault();$("call").click()}});
 renderTabs();renderChars();applyChar();
 })();
 </script>
