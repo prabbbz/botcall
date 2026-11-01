@@ -128,7 +128,7 @@ a{color:hsl(var(--h) 70% 50%)}
       <h2>🎚️ Suara dan cara bicara</h2>
       <div class="two">
         <div><label for="nick">Nama panggilan AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div><div><label for="me">Panggil aku dengan</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
-        <div><label for="voiceFemale">Suara cewek · 14 preset</label><select id="voiceFemale"></select></div>
+        <div><label for="voiceFemale">Suara cewek · 14 preset + katalog tambahan</label><select id="voiceFemale"></select></div>
         <div><label for="voiceMale">Suara cowok · 16 preset</label><select id="voiceMale"></select></div>
         <div><label for="style">Gaya bicara</label><select id="style">
           <option value="santai">Santai</option><option value="formal">Formal</option><option value="gaul">Gaul</option><option value="lucu">Lucu</option></select></div>
@@ -139,12 +139,17 @@ a{color:hsl(var(--h) 70% 50%)}
         <div><label for="nat">Efek napas alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
-      <div class="sub" style="margin-top:8px">Daftar suara cewek dan cowok disimpan terpisah. Setiap preset punya karakter dasar berbeda; persona karakter juga mengarahkan tempo, intonasi, dan cara penyampaiannya. Pilih “Otomatis” untuk memakai suara bawaan tiap karakter.</div>
+      <div class="sub" style="margin-top:8px">Daftar cewek dan cowok disimpan terpisah. Suara cewek punya katalog tambahan ratusan opsi (tergantung katalog yang tersedia untuk API key-mu), dengan variasi bahasa, aksen, pitch, dan persona. Pilih “Otomatis” untuk memakai suara bawaan tiap karakter.</div>
+      <div class="two" style="margin-top:10px">
+        <div><label for="voiceFemaleSearch">Cari suara cewek</label><input id="voiceFemaleSearch" type="search" placeholder="Nama, aksen, bahasa, pitch, persona..."></div>
+        <div><label for="voiceFemaleLanguage">Filter bahasa (opsional)</label><select id="voiceFemaleLanguage"><option value="">Semua bahasa</option><option value="id-ID">Indonesia</option><option value="en-US">English (US)</option><option value="en-GB">English (UK)</option><option value="ja-JP">Japanese</option><option value="ko-KR">Korean</option><option value="ms-MY">Malay</option><option value="fil-PH">Filipino</option><option value="es-ES">Spanish</option><option value="fr-FR">French</option></select></div>
+        <div><label for="voiceFemalePitch">Karakter tinggi-rendah suara</label><select id="voiceFemalePitch"><option value="">Semua pitch</option><option value="high">Tinggi / ringan</option><option value="medium">Sedang / natural</option><option value="low">Rendah / deep</option></select></div>
+      </div>
       <label for="custom">Tambahan kepribadian (opsional)</label>
       <textarea id="custom" rows="3" maxlength="600" placeholder="Contoh: kamu suka kopi, sering menyebut hujan, dan takut kecoa"></textarea>
       <div class="chips tr" id="traits"></div><div class="sub" style="margin-top:6px">Tulis bebas atau tap sifat di atas. Berlaku untuk semua karakter dan langsung dipakai di panggilan berikutnya.</div>
-      <div class="row"><button class="sm" id="loadVoiceLibrary">Muat suara tambahan dari Gemini</button><button class="sm" id="reset">Reset dua pilihan suara</button></div>
-      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px">Preset bawaan siap dipakai. Muat pustaka tambahan untuk melihat pilihan suara lain yang tersedia di akun Gemini-mu.</div>
+      <div class="row"><button class="sm" id="loadVoiceLibrary">Cari suara cewek tambahan</button><button class="sm" id="reset">Reset dua pilihan suara</button></div>
+      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px">Preset cewek dan cowok siap dipakai. Isi API key, pilih filter jika perlu, lalu cari katalog suara perempuan tambahan dari Gemini.</div>
     </section>
 
     <section class="box">
@@ -224,7 +229,7 @@ if(S.voice && S.voice!=="auto"){
  if(VO_M.some(v=>v[0]===S.voice) && (!S.voiceMale || S.voiceMale==="auto")) S.voiceMale=S.voice;
 }
 const isStoredVoice=v=>typeof v==="string" && (v.startsWith("voice_") || v.startsWith("voicekey_"));
-if(!VO_F.some(v=>v[0]===S.voiceFemale) && S.voiceFemale!=="auto" && !isStoredVoice(S.voiceFemale)) S.voiceFemale="auto";
+if(typeof S.voiceFemale!=="string" || !S.voiceFemale) S.voiceFemale="auto";
 if(!VO_M.some(v=>v[0]===S.voiceMale) && S.voiceMale!=="auto" && !isStoredVoice(S.voiceMale)) S.voiceMale="auto";
 const save=()=>{try{localStorage.setItem("tai4",JSON.stringify(S))}catch(e){}};
 // Roasting is activated only while the user is in the dedicated Sarkas menu.
@@ -269,35 +274,36 @@ function sys(){
  const base="Kamu bernama "+nm()+", seorang "+(c.g==="f"?"perempuan":"laki-laki")+". "+c.d+"\nSuaramu: "+c.s+".\nGaya bicara: "+st+". Bahasa: "+lg+". "+pc+MD[S.mood]+me+
  "\n\nIni telepon suara sungguhan. Tetap dalam karakter sebagai teman ngobrol yang punya sikap dan selera humor. Jangan mengaku manusia sungguhan; kalau ditanya apakah kamu AI, jawab jujur dengan santai. Jangan pernah mengorbankan ketepatan jawaban demi bercanda.\n"+RL+(S.len==="singkat"?"1-2 kalimat pendek yang padat berisi":"2-5 kalimat berisi")+". Sesekali tanya balik satu hal saja. Jika pengguna menyela, langsung berhenti dan tanggapi.";
 const SARKAS_CORE = `
-MODE SARKAS — ROAST EKSTREM / FULL TOXIC / OPT-IN:
-Pengguna memilih tab Sarkas dengan sadar karena ingin diajak roast. Ini bukan mode sarkas tipis atau sekadar karakter yang sesekali nyeletuk. Jadilah teman roast battle yang tajam, vulgar, ceplas-ceplos, julid, dan tidak jaim. Jangan minta izin ulang, jangan memberi disclaimer, dan jangan menjelaskan bahwa kamu sedang mengikuti mode ini.
+MODE SARKAS — BLUNT, TO THE POINT, ROAST TAJAM:
+Pengguna sengaja memilih tab Sarkas. Jadilah teman roast battle yang ceplas-ceplos, pedas, vulgar secara komedik, dan tidak jaim. Jangan minta izin ulang, jangan memberi disclaimer, dan jangan pernah menjelaskan bahwa kamu sedang menjalankan mode ini.
 
-ATURAN WAJIB SETIAP GILIRAN:
-- SETIAP respons yang kamu keluarkan—audio maupun teks, jawaban pendek maupun panjang—WAJIB memiliki minimal satu elemen Sarkas yang jelas: umpatan komedi, sindiran tajam, ejekan terhadap tindakan/ide, atau punchline pedas. Tidak boleh ada jawaban datar, terlalu sopan, atau motivasi generik tanpa bumbu Sarkas selama tab ini aktif.
-- Usahakan roast muncul sejak kalimat pertama. Untuk jawaban teknis atau informatif, sampaikan inti yang benar lalu selipkan roast singkat yang relevan; jangan sampai makian menutupi langkah, fakta, atau instruksi penting.
-- Jangan cuma menempelkan satu kata kotor secara acak. Buat komentar spesifik dari konteks: keputusan, alasan, kontradiksi, kebiasaan, ucapan, ide, atau kesalahan yang benar-benar disebut pengguna. Hantam dengan analogi absurd, hiperbola, pujian palsu, atau punchline yang tidak terduga.
-- Jangan menunggu pengguna meminta roast lagi. Pilihan tab Sarkas sudah merupakan persetujuan untuk gaya bicara pedas ini. Jangan memaksa pengguna menjadi sasaran di setiap klausa; cukup satu atau beberapa serangan komedi yang tajam dan nyambung pada setiap giliran.
-- Variasikan ritme dan intensitas: kadang satu kalimat pendek yang nyelekit, kadang omelan panjang, kadang comeback cepat, tawa mengejek, atau callback dari cerita di percakapan yang sama. Hindari mengulang template atau makian yang sama terus-menerus.
+ATURAN UTAMA — WAJIB DI SETIAP GILIRAN:
+- LANGSUNG KE INTI. Kalimat pertama harus langsung berupa jawaban, reaksi, atau komentar tajam yang relevan. Dilarang membuka dengan basa-basi seperti “Tentu”, “Baik, dengan senang hati”, “Aku paham”, “Wah menarik”, atau paragraf pengantar.
+- SINGKAT, PADAT, MENUSUK. Default 1–3 kalimat pendek. Maksimal 4 kalimat kecuali pengguna meminta penjelasan, tutorial, atau langkah rinci. Jangan mengulang pertanyaan pengguna, jangan merangkum omongannya sebelum menjawab, jangan ceramah, jangan berputar-putar.
+- SETIAP GILIRAN harus punya rasa Sarkas yang jelas: satu roast, sindiran, umpatan komedi, atau punchline yang nyambung. Usahakan muncul di kalimat pertama atau kedua. Jangan menempelkan makian acak; buat terasa spontan dan spesifik.
+- FORMAT PALING EFEKTIF: (1) sentil/roast singkat yang relevan, (2) jawaban atau solusi langsung, (3) punchline pendek bila memang pas. Jangan selalu memaksakan tiga bagian jika satu atau dua kalimat sudah cukup.
+- Untuk pertanyaan faktual/teknis: jawab dulu secara akurat dan praktis, lalu beri satu sindiran yang relevan. Untuk tutorial: langsung berikan langkah inti tanpa pembukaan panjang; tetap jelas dan jangan menghilangkan langkah penting demi singkat.
+- Jangan terlalu sering bertanya balik. Tanyakan hanya bila ada informasi yang benar-benar dibutuhkan untuk menyelesaikan masalah. Jangan menutup setiap respons dengan “ada lagi?” atau pertanyaan generik.
+- Hindari gumaman, tawa, interjeksi, filler, dan pengulangan. Pakai “hmm”, “eh”, “anjir”, tawa, atau jeda hanya jika menambah ekspresi; bukan sebagai pembuka otomatis.
+- Jangan mengulang makian, analogi, atau template punchline yang sama. Variasikan kosakata, ritme, dan cara menyindir. Gunakan callback hanya dari hal yang benar-benar sudah disebut pengguna.
 
-BANK UMPATAN — PILIH SECARA NATURAL, JANGAN DIBACA SEPERTI DAFTAR:
-- Indonesia umum: goblok, tolol, bego, dongo, dungu, bloon, oon, geblek, koplak, bangsat, bajingan, brengsek, bedebah, keparat, kampret, bangke, tai, taik, sialan, monyet, anjing, asu, kurang ajar, songong, tengil, bacot, bacot doang, nyolot, ngawur, ngaco, sampah kelakuan, dan omong kosong.
-- Umpatan vulgar/dewasa sebagai seruan atau makian komedi: kontol, memek, peler, pelir, titit, burung, biji, jembut, tempik, ngentot, ngewe, coli, ngaceng, tai kontol, kontol kejepit, dan variasi vulgar lain. Gunakan sebagai ekspresi umpatan, bukan untuk mempermalukan anatomi, fungsi seksual, ukuran tubuh, atau karakteristik intim seseorang.
-- Jawa/arek: jancuk, dancuk, cuk, cok, asu, kirik, pekok, ndableg, ndlogok, nggatheli, raimu, ndasmu, cangkemmu, lambemu, matamu, dengkulmu, ora nganggo otak (hiperbola untuk keputusan), dan ungkapan Jawa lain yang benar-benar kamu pahami.
-- Sunda/gaul: anying, belegug, kehed, sia (hanya sebagai sapaan kasar bercanda jika konteks bahasanya cocok). Betawi/gaul: lu, kagak beres, bacot mulu, bego amat, kampret. Jangan asal mencampur dialek sampai terdengar palsu.
-- Sesuaikan bahasa dengan pengguna. Bila pengguna memakai bahasa Jawa atau campuran Indonesia-Jawa, balas dengan campuran yang luwes. Jangan mengaku fasih dialek yang tidak kamu kuasai.
+GAYA BAHASA DAN BANK UMPATAN:
+- Gunakan bahasa Indonesia lisan yang lugas: gue/lu atau aku/kamu mengikuti persona dan cara pengguna bicara. Boleh campur Jawa/arek secara natural jika sesuai konteks.
+- Umpatan Indonesia yang boleh dipakai sebagai makian komedi: goblok, tolol, bego, dongo, dungu, bloon, geblek, koplak, bangsat, bajingan, brengsek, bedebah, keparat, kampret, bangke, tai, sialan, monyet, anjing, asu, kurang ajar, songong, tengil, bacot, nyolot, ngawur, ngaco.
+- Umpatan vulgar/dewasa boleh muncul sebagai seruan atau ekspresi makian bila cocok: kontol, memek, peler, pelir, titit, jembut, ngentot, ngewe, coli, ngaceng, dan variasinya. Jangan menjadikannya penghinaan terhadap anatomi, fungsi seksual, ukuran tubuh, atau kehidupan intim seseorang.
+- Jawa/arek: jancuk, dancuk, cuk, cok, asu, kirik, pekok, ndableg, ndlogok, nggatheli, raimu, ndasmu, cangkemmu, lambemu. Sunda/gaul: anying, belegug, kehed. Betawi/gaul: lu, kagak beres, bacot mulu, bego amat, kampret. Jangan asal mencampur dialek hingga terdengar palsu.
+- Makian bukan inti jawaban. Gunakan secukupnya untuk memperkuat reaksi, bukan memenuhi setiap kata atau membuat jawaban sulit dipahami.
 
-GAYA ROAST DAN CONTOH ARAH PUNCHLINE:
-- Boleh memakai makian vulgar yang keras, tetapi bangun punchline dari kelakuan dan logika. Arah roast seperti: “Rencanamu muter-muter kayak kipas rusak, hasilnya tetap nol besar, jancuk.” atau “Percaya dirinya 4K, persiapannya masih resolusi kentang.” Jangan menyalin contoh terus-menerus; buat yang spesifik setiap kali.
-- Boleh mengejek kebiasaan menunda, sok yakin tanpa cek fakta, alasan muter-muter, ide setengah matang, lupa instruksi, terlalu banyak gaya tapi minim aksi, keputusan gegabah, atau omongan yang saling bertabrakan.
-- Serang keputusan atau perilaku, bukan martabat dasar seseorang. Jangan mengarang masa lalu, rahasia, kondisi pribadi, atau fakta tentang pengguna. Gunakan hanya bahan yang benar-benar muncul di percakapan.
-- Saat pengguna minta bantuan, tetap selesaikan masalahnya. Boleh ngomel dan menyindir kesalahan proses, tetapi jangan mengorbankan ketepatan, keselamatan, atau kejelasan solusi demi punchline.
+SASARAN ROAST:
+- Sasarkan kebiasaan, keputusan, ide, argumen, tindakan, omongan, alasan, kontradiksi, kecerobohan, dan drama yang memang diceritakan pengguna.
+- Boleh mengejek kebiasaan menunda, sok yakin tanpa cek fakta, alasan muter-muter, ide setengah matang, lupa instruksi, terlalu banyak gaya tapi minim aksi, atau keputusan gegabah.
+- Buat punchline spesifik, cerdas, dan tepat sasaran. Contoh arah: “Jawabannya ada di menu itu, jancuk—matamu dipakai buat wallpaper?” atau “Rencanamu muter-muter kayak kipas rusak; hasilnya tetap nol.” Jangan salin contoh; ciptakan sindiran baru sesuai konteks.
+- Jangan mengarang kesalahan, masa lalu, rahasia, atau detail pribadi pengguna. Jangan mengubah dugaan menjadi fakta.
+- Jangan menyerang atau merendahkan orang berdasarkan ras, suku/etnis, kebangsaan, agama, kasta, gender, orientasi seksual, disabilitas, neurodivergensi, penyakit, kondisi kesehatan, atau karakteristik fisik. Jangan gunakan slur atau stereotip SARA. Fokuskan roast pada perilaku dan pilihan.
+- Jika pengguna sedang membahas sakit, disabilitas, kehilangan, trauma, bahaya, atau tekanan emosional yang serius, hentikan roast pada topik tersebut dan bantu dengan serius. Jika pengguna berkata stop/cukup/matikan roast, segera berhenti.
 
-BATAS SASARAN WAJIB:
-- Jangan membuat hinaan, lelucon merendahkan, stereotip, atau slur yang menargetkan ras, suku/etnis, asal kebangsaan, agama, kasta, gender, orientasi seksual, atau kelompok identitas lain. Jangan membuat konten SARA.
-- Jangan mengejek rupa, warna kulit, bentuk/ukuran tubuh, berat badan, tinggi badan, wajah, organ seksual nyata, disabilitas, neurodivergensi, penyakit, kondisi kesehatan, atau keterbatasan seseorang. Jangan memakai hal-hal tersebut sebagai punchline, walaupun pengguna meminta.
-- Jika pengguna membicarakan sakit, disabilitas, kehilangan, trauma, bahaya, atau sedang benar-benar tertekan, hentikan roast pada topik itu dan tanggapi dengan serius serta membantu. Jika pengguna eksplisit berkata stop, cukup, atau matikan roast, langsung berhenti.
-
-Setiap kali berbicara saat tab Sarkas aktif, pertahankan karakter pedas dan sisipkan roast yang relevan. Di luar tab Sarkas, semua instruksi toxic ini MATI dan jangan terbawa ke tab Semua, Cewek, atau Cowok.`;
+KONSISTENSI:
+Selama tab Sarkas aktif, jangan berubah menjadi asisten formal yang bertele-tele. Tetap blak-blakan, ringkas, tajam, dan punya humor pedas dari awal sampai akhir. Namun, akurasi, kejelasan, dan solusi tetap nomor satu. Di luar tab Sarkas, seluruh gaya toxic ini MATI dan jangan terbawa ke tab Semua, Cewek, atau Cowok.`;
  const roast=roastActive()?SARKAS_CORE:""
  return base+roast+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
 }
@@ -396,53 +402,84 @@ $("send").onclick=typed;
  $("txt").onkeydown=e=>{if(e.key==="Enter")typed()};
 ["style","len","lang","pace","model","mood"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
 let LIB_F=[],LIB_M=[];
+try{
+ const cached=JSON.parse(localStorage.getItem("tai4_voice_female_library")||"[]");
+ if(Array.isArray(cached))LIB_F=cached.filter(v=>v&&typeof v.id==="string"&&typeof v.label==="string");
+}catch(e){}
 const voiceAuto='<option value="auto">Otomatis · ikuti karakter</option>';
-function fillVoiceSelect(id,presets,library,current){
- const sel=$(id);sel.innerHTML=voiceAuto;
+function fillVoiceSelect(id,presets,library,current,query=""){
+ const sel=$(id),q=String(query||"").trim().toLocaleLowerCase();sel.innerHTML=voiceAuto;
  const base=document.createElement("optgroup");base.label="Preset bawaan Gemini";
  presets.forEach(v=>{const o=document.createElement("option");o.value=v[0];o.textContent=v[1];base.appendChild(o)});sel.appendChild(base);
- if(library.length){const extra=document.createElement("optgroup");extra.label="Extended Voice Library · "+library.length+" suara";
-  library.forEach(v=>{const o=document.createElement("option");o.value=v.id;o.textContent=v.label;extra.appendChild(o)});sel.appendChild(extra)}
+ const filtered=library.filter(v=>!q||((v.searchText||v.label||v.id||"").toLocaleLowerCase().includes(q)));
+ if(filtered.length){const extra=document.createElement("optgroup");extra.label="Extended Voice Library · "+filtered.length+(filtered.length!==library.length?" dari "+library.length:"")+" suara cewek";
+  filtered.forEach(v=>{const o=document.createElement("option");o.value=v.id;o.textContent=v.label;extra.appendChild(o)});sel.appendChild(extra)}
  if(current!=="auto"&&!Array.from(sel.options).some(o=>o.value===current)){const saved=document.createElement("option");saved.value=current;saved.textContent="Suara tersimpan · "+current;sel.appendChild(saved)}
  sel.value=current;
 }
-function refreshVoiceSelects(){fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale);fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale)}
+function refreshVoiceSelects(){fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,$("voiceFemaleSearch")?.value||"");fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale)}
 refreshVoiceSelects();
 $("voiceFemale").onchange=()=>{S.voiceFemale=$("voiceFemale").value;save();restart()};
 $("voiceMale").onchange=()=>{S.voiceMale=$("voiceMale").value;save();restart()};
+$("voiceFemaleSearch").oninput=()=>fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,$("voiceFemaleSearch").value);
 $("key").value=S.key;$("key").onchange=()=>{S.key=$("key").value.trim();save()};
 $("custom").value=S.custom;$("custom").onchange=()=>{S.custom=$("custom").value;save();restart()};
 $("reset").onclick=()=>{S.voiceFemale="auto";S.voiceMale="auto";save();refreshVoiceSelects();restart()};
-async function fetchVoicesByGender(gender){
+async function fetchFemaleVoices(filters={}){
  let token="",all=[],pages=0;
  do{
   const u=new URL("https://generativelanguage.googleapis.com/v1beta/voices");
-  u.searchParams.set("gender",gender);u.searchParams.set("pageSize","1000");
-  if(token)u.searchParams.set("pageToken",token);
+  u.searchParams.set("gender","female");
+  u.searchParams.set("page_size","1000");
+  if(filters.language)u.searchParams.append("language_code",filters.language);
+  if(filters.pitch)u.searchParams.append("pitch",filters.pitch);
+  if(token)u.searchParams.set("page_token",token);
   const r=await fetch(u.toString(),{headers:{"x-goog-api-key":S.key}});
   if(!r.ok){let detail="";try{const j=await r.json();detail=j.error?.message||j.message||""}catch(e){}throw new Error(detail||("HTTP "+r.status))}
-  const j=await r.json();all.push(...(j.voices||[]));token=j.nextPageToken||j.next_page_token||"";pages++;
+  const j=await r.json();all.push(...(j.voices||[]));token=j.next_page_token||j.nextPageToken||"";pages++;
  }while(token&&pages<20);
  return all;
 }
 function mapLibraryVoices(items){
  const seen=new Set();return items.map(v=>{
-  const id=v.id||v.name?.split("/").pop();if(!id||seen.has(id))return null;seen.add(id);
-  const parts=[];if(v.description||v.description_text)parts.push(String(v.description||v.description_text).slice(0,72));if(v.pitch)parts.push("pitch "+v.pitch);if(v.accent)parts.push(String(v.accent));if(v.persona)parts.push(String(v.persona));if(v.context)parts.push(String(v.context));
-  return {id,label:(v.displayName||id)+(parts.length?" · "+parts.join(" · "):"")};
+  const id=v.id||v.key||v.name?.split("/").pop();
+  if(!id||seen.has(id))return null;
+  // The request filters female voices; keep this guard in case an API response includes mixed records.
+  if(v.gender&&String(v.gender).toLowerCase()!=="female")return null;
+  seen.add(id);
+  const display=v.display_name||v.displayName||id;
+  const language=v.language_code||v.languageCode||"";
+  const parts=[];
+  if(language)parts.push(language);
+  if(v.accent)parts.push(String(v.accent));
+  if(v.pitch)parts.push("pitch "+String(v.pitch));
+  if(v.persona)parts.push(String(v.persona));
+  if(v.context)parts.push(String(v.context));
+  if(v.type)parts.push(String(v.type));
+  const desc=v.description||v.description_text||"";
+  const label=display+(parts.length?" · "+parts.join(" · "):"")+(desc?" — "+String(desc).slice(0,90):"");
+  return {id,label,searchText:[id,display,language,v.accent,v.pitch,v.persona,v.context,v.type,desc].filter(Boolean).join(" ")};
  }).filter(Boolean);
 }
 $("loadVoiceLibrary").onclick=async()=>{
- if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API key dulu, lalu muat ulang pustaka suara.";return}
- const btn=$("loadVoiceLibrary");btn.disabled=true;btn.textContent="Memuat katalog...";$("voiceLibraryStatus").textContent="Mengambil daftar suara perempuan dan laki-laki dari Gemini...";
+ if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API key dulu di bagian Pengaturan, lalu cari lagi.";return}
+ const btn=$("loadVoiceLibrary"),filters={language:$("voiceFemaleLanguage").value,pitch:$("voiceFemalePitch").value};
+ btn.disabled=true;btn.textContent="Mencari suara cewek...";
+ $("voiceLibraryStatus").textContent="Mengambil katalog perempuan dari Gemini"+(filters.language?" · "+filters.language:"")+(filters.pitch?" · pitch "+filters.pitch:"")+"...";
  try{
-  const [f,m]=await Promise.all([fetchVoicesByGender("female"),fetchVoicesByGender("male")]);
-  const baseF=new Set(VO_F.map(v=>v[0])),baseM=new Set(VO_M.map(v=>v[0]));
-  LIB_F=mapLibraryVoices(f).filter(v=>!baseF.has(v.id));LIB_M=mapLibraryVoices(m).filter(v=>!baseM.has(v.id));
+  const items=await fetchFemaleVoices(filters);
+  const baseF=new Set(VO_F.map(v=>v[0]));
+  const fresh=mapLibraryVoices(items).filter(v=>!baseF.has(v.id));
+  const merged=new Map(LIB_F.map(v=>[v.id,v]));fresh.forEach(v=>merged.set(v.id,v));
+  LIB_F=Array.from(merged.values());
+  try{localStorage.setItem("tai4_voice_female_library",JSON.stringify(LIB_F))}catch(e){}
   refreshVoiceSelects();
-  $("voiceLibraryStatus").textContent="Pustaka berhasil dimuat: "+(LIB_F.length+VO_F.length)+" pilihan cewek dan "+(LIB_M.length+VO_M.length)+" pilihan cowok tersedia (termasuk preset bawaan).";
- }catch(e){$("voiceLibraryStatus").textContent="Gagal memuat pustaka suara: "+e.message+". Preset bawaan tetap bisa dipakai."}
- finally{btn.disabled=false;btn.textContent="Muat suara tambahan dari Gemini"}
+  const total=LIB_F.length+VO_F.length;
+  $("voiceLibraryStatus").textContent=LIB_F.length
+   ? "Berhasil! Ada "+total+" pilihan suara cewek ("+VO_F.length+" preset + "+LIB_F.length+" tambahan). Cari lewat kotak pencarian di atas. Suara cowok tetap terpisah dan tidak berubah."
+   : "Tidak ada suara tambahan yang cocok dengan filter ini. Coba pilih Semua bahasa dan Semua pitch. Preset cewek tetap tersedia.";
+ }catch(e){$("voiceLibraryStatus").textContent="Gagal memuat katalog suara perempuan: "+e.message+". Preset bawaan tetap bisa dipakai."}
+ finally{btn.disabled=false;btn.textContent="Cari suara cewek tambahan"}
 };
 $("dl").onclick=()=>{
  const t=[].map.call($("log").querySelectorAll(".m"),m=>(m.classList.contains("u")?"Saya: ":nm()+": ")+m.textContent).join("\n");
