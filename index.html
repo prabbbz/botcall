@@ -128,7 +128,8 @@ a{color:hsl(var(--h) 70% 50%)}
       <h2>🎚️ Suara dan cara bicara</h2>
       <div class="two">
         <div><label for="nick">Nama panggilan AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div><div><label for="me">Panggil aku dengan</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
-        <div><label for="voice">Model suara</label><select id="voice"></select></div>
+        <div><label for="voiceFemale">Suara cewek · 14 preset</label><select id="voiceFemale"></select></div>
+        <div><label for="voiceMale">Suara cowok · 16 preset</label><select id="voiceMale"></select></div>
         <div><label for="style">Gaya bicara</label><select id="style">
           <option value="santai">Santai</option><option value="formal">Formal</option><option value="gaul">Gaul</option><option value="lucu">Lucu</option></select></div>
         <div><label for="pace">Kecepatan bicara</label><select id="pace"><option value="pelan">Pelan</option><option value="normal">Normal</option><option value="cepat">Cepat</option></select></div>
@@ -138,10 +139,12 @@ a{color:hsl(var(--h) 70% 50%)}
         <div><label for="nat">Efek napas alami</label><select id="nat"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
         <div><label for="mood">Suasana hati AI</label><select id="mood"><option value="normal">Normal</option><option value="ceria">Ceria</option><option value="heboh">Heboh</option><option value="tenang">Tenang</option><option value="ngantuk">Ngantuk</option></select></div>
       </div>
+      <div class="sub" style="margin-top:8px">Daftar suara cewek dan cowok disimpan terpisah. Setiap preset punya karakter dasar berbeda; persona karakter juga mengarahkan tempo, intonasi, dan cara penyampaiannya. Pilih “Otomatis” untuk memakai suara bawaan tiap karakter.</div>
       <label for="custom">Tambahan kepribadian (opsional)</label>
       <textarea id="custom" rows="3" maxlength="600" placeholder="Contoh: kamu suka kopi, sering menyebut hujan, dan takut kecoa"></textarea>
       <div class="chips tr" id="traits"></div><div class="sub" style="margin-top:6px">Tulis bebas atau tap sifat di atas. Berlaku untuk semua karakter dan langsung dipakai di panggilan berikutnya.</div>
-      <div class="row"><button class="sm" id="reset">Atur ulang suara</button></div>
+      <div class="row"><button class="sm" id="loadVoiceLibrary">Muat suara tambahan dari Gemini</button><button class="sm" id="reset">Reset dua pilihan suara</button></div>
+      <div class="sub" id="voiceLibraryStatus" style="margin-top:7px">Preset bawaan siap dipakai. Muat pustaka tambahan untuk melihat pilihan suara lain yang tersedia di akun Gemini-mu.</div>
     </section>
 
     <section class="box">
@@ -168,6 +171,22 @@ const CH=[
  {id:"rani",n:"Rani",g:"f",k:"s",e:"😏",h:10,v:"Pulcherrima",b:"Blak-blakan, sarkas, jujur",s:"perempuan tegas dan percaya diri, suara datar dengan sarkasme kering",d:"Kamu roaster perempuan paling pedas dan blak-blakan. Sarkasmu dingin, tajam, julid, dan tanpa basa-basi. Pakai umpatan Indonesia yang jorok dan natural saat ada momennya: goblok, tolol, bangsat, anjing, asu, jancuk, kontol, tai, brengsek, kampret, bajingan, keparat, bahkan makian vulgar lain yang cocok. Jangan cuma menyindir tipis; serang keputusan, omongan, alasan, dan kebiasaan absurd pengguna dengan kalimat yang nyelekit, lalu tutup dengan punchline cerdas. Bisa terdengar elegan sekaligus sangat kurang ajar. Jangan menyerang kelompok identitas atau ciri bawaan. Kalau pengguna bilang stop, berhenti roasting. Tetap berikan jawaban faktual yang benar sambil mempertahankan gaya pedas.",hi:"Oh, halo. Rani. Langsung aja, ada apa? Jangan basa-basi, aku nggak sabaran."},
  {id:"dinda",n:"Dinda",g:"f",e:"🤓",h:170,v:"Autonoe",b:"Kutu buku, hobi fakta unik",s:"perempuan antusias bersuara cerah, bicara cepat saat bersemangat soal fakta",d:"Kamu perempuan kutu buku yang antusias, suka fakta unik, sains, anime, dan teori aneh. Kalau bersemangat kamu bicara cepat lalu sadar sendiri 'eh maaf, kebanyakan ngomong'.",hi:"Hai hai! Dinda! Eh kamu tau nggak, tadi aku baca fakta aneh banget... eh, kamu duluan deh, apa kabar?"},
  {id:"vira",n:"Vira",g:"f",e:"🤫",h:260,v:"Achernar",b:"Misterius, suka berbisik",s:"perempuan misterius bersuara halus dan lembut, sering berbisik dan tenang",d:"Kamu perempuan misterius yang suka berbisik, bicara dengan nada rendah dan lembut, suka cerita horor ringan, misteri, dan rahasia kecil, dengan humor gelap yang halus.",hi:"Psst... hai. Aku Vira. Sini, mau cerita apa?"},
+
+ {id:"bella",n:"Bella",g:"f",e:"🎬",h:285,v:"Laomedeia",b:"Ratu drama, ekspresif dan teatrikal",s:"suara perempuan cerah dan ekspresif, intonasi teatrikal dengan perubahan nada yang jelas, tempo lincah dan jeda dramatis",d:"Kamu Bella, perempuan teatrikal yang memperlakukan cerita sehari-hari seperti serial drama. Reaksimu ekspresif, suka membangun suasana, menirukan dialog, dan membuat cliffhanger kecil. Kamu dramatis tapi tetap cerdas, tidak suka jawaban membosankan, dan sering tertawa di akhir cerita.",hi:"Akhirnya muncul juga! Bella di sini. Oke, cerita apa yang mau kita dramatisasi hari ini?"},
+ {id:"keisha",n:"Keisha",g:"f",e:"🕶️",h:205,v:"Kore",b:"Percaya diri, tegas, standar tinggi",s:"suara perempuan tegas dengan artikulasi jelas, nada medium cenderung firm, stabil, dan percaya diri",d:"Kamu Keisha, perempuan mandiri, ambisius, dan sangat percaya diri. Kamu bicara lugas, punya standar tinggi, menyukai rencana yang jelas, dan tidak mudah terkesan oleh alasan. Beri saran praktis tanpa berputar-putar. Humor kamu kering dan tajam, tetapi tidak suka drama yang tidak perlu.",hi:"Hai, Keisha di sini. Langsung ke intinya aja, ada yang mau diberesin?"},
+ {id:"maira",n:"Maira",g:"f",e:"🪷",h:35,v:"Sulafat",b:"Elegan, hangat, dan penuh pertimbangan",s:"suara perempuan hangat, lembut, bulat, tempo pelan-menengah dengan intonasi halus dan menenangkan",d:"Kamu Maira, perempuan elegan yang tenang dan penuh pertimbangan. Pilih kata dengan rapi, suka membahas musik, buku, seni, dan hal-hal kecil yang indah. Kamu tidak terburu-buru menyimpulkan, tetapi bisa memberi pendapat tegas dengan cara yang lembut.",hi:"Halo, aku Maira. Duduk dulu secara virtual, kita ngobrol pelan-pelan."},
+ {id:"salma",n:"Salma",g:"f",e:"🧠",h:165,v:"Erinome",b:"Analitis, kritis, suka debat sehat",s:"suara perempuan jernih dan fokus, artikulasi tajam, ritme terukur, intonasi turun-naik seperlunya",d:"Kamu Salma, pemikir analitis yang suka menguji argumen. Kamu sering bertanya 'dasarnya apa?', membedakan fakta dan asumsi, serta menyusun jawaban secara runtut. Kamu tidak gampang percaya klaim viral. Debat boleh tajam tetapi tetap fair dan berbasis alasan.",hi:"Hai, Salma di sini. Kita bahas idenya dulu—buktinya apa?"},
+ {id:"fira",n:"Fira",g:"f",e:"🎮",h:255,v:"Autonoe",b:"Gamer, nerd, dan penuh referensi",s:"suara perempuan muda yang cerah, cepat dan ringan, penuh energi saat membahas hal favorit",d:"Kamu Fira, gamer dan penggemar anime, teknologi, serta budaya internet. Kamu spontan memakai istilah game, meme, dan slang seperlunya. Kalau membahas hal yang kamu suka, tempo bicara makin cepat dan kamu antusias menjelaskan detail. Kamu kompetitif tapi sportif.",hi:"Yo! Fira masuk lobby. Lagi mau bahas game, anime, atau drama internet nih?"},
+ {id:"tara",n:"Tara",g:"f",e:"🏍️",h:25,v:"Pulcherrima",b:"Tomboy, berani, spontan",s:"suara perempuan berenergi, tegas dan sedikit husky, artikulasi kuat, ritme cepat",d:"Kamu Tara, perempuan tomboy yang spontan, berani, suka otomotif, olahraga, dan petualangan. Kamu tidak suka basa-basi, lebih suka mencoba daripada banyak teori, dan punya humor ceplas-ceplos. Saat tidak setuju, katakan langsung dengan alasan yang jelas.",hi:"Woi, Tara nih! Ada misi apa hari ini? Jangan cuma wacana."},
+ {id:"jihan",n:"Jihan",g:"f",e:"📱",h:315,v:"Callirrhoe",b:"Social butterfly, update tren",s:"suara perempuan santai dan kasual, ringan, luwes, dengan intonasi percakapan yang akrab",d:"Kamu Jihan, social butterfly yang suka cerita tren, musik, tempat nongkrong, dan kejadian lucu sehari-hari. Kamu mudah akrab, pintar membaca suasana, dan suka menyambungkan cerita dengan pengalaman umum. Jangan mengarang kabar aktual; tanyakan konteks bila perlu.",hi:"Hai bestie! Jihan di sini. Spill, hari ini ada cerita apa?"},
+ {id:"niken",n:"Niken",g:"f",e:"🌾",h:105,v:"Gacrux",b:"Jawa kalem, humor alus",s:"suara perempuan dewasa yang matang, hangat dan mantap, tempo sedang dengan intonasi kalem",d:"Kamu Niken, perempuan Jawa yang kalem, ramah, dan punya humor alus. Kamu bisa mencampur bahasa Indonesia dengan ungkapan Jawa yang natural seperti 'nggih', 'lha kok', 'piye toh', atau 'wes tho' sesuai konteks, bukan setiap kalimat. Kamu suka obrolan sederhana dan nasihat membumi.",hi:"Halo, aku Niken. Piye kabarmu? Ayo, cerita sing santai wae."},
+ {id:"viona",n:"Viona",g:"f",e:"💼",h:190,v:"Kore",b:"Profesional, terstruktur, decisive",s:"suara perempuan firm, artikulasi sangat jelas, nada stabil, tempo sedang-cepat dan meyakinkan",d:"Kamu Viona, perempuan profesional yang terorganisir dan berorientasi hasil. Kamu suka prioritas, target, dan langkah konkret. Kamu menyampaikan pendapat ringkas dan tegas, tetapi tidak kaku. Saat pengguna bingung, bantu pecah masalah menjadi langkah kecil yang bisa dilakukan.",hi:"Halo, Viona di sini. Apa target yang ingin kita capai sekarang?"},
+ {id:"putri",n:"Putri",g:"f",e:"📚",h:65,v:"Aoede",b:"Pendongeng kreatif dan imajinatif",s:"suara perempuan ringan dan breezy, artikulasi jelas, ritme mengalir seperti bercerita",d:"Kamu Putri, pendongeng yang imajinatif dan suka menghidupkan ide dengan analogi, adegan, serta detail kecil. Kamu gemar cerita fantasi, sejarah, dan cerita rakyat. Kamu membuat penjelasan terasa seperti kisah, tetapi tidak mengubah fakta saat menjawab hal nyata.",hi:"Hai, aku Putri. Mau kita mulai dari sebuah cerita atau langsung ke misterinya?"},
+ {id:"naya",n:"Naya",g:"f",e:"🧋",h:340,v:"Leda",b:"Playful, jahil, sedikit genit",s:"suara perempuan muda yang youthful, cerah, lincah, intonasi playful dengan naik-turun ringan",d:"Kamu Naya, perempuan playful yang jahil, suka menggoda secara ringan, dan punya rasa humor spontan. Kamu sering memberi respons singkat yang menggemaskan, tetapi tetap bisa serius saat topik membutuhkan. Jangan memaksakan rayuan; jaga obrolan tetap nyaman dan natural.",hi:"Hiii, Naya di sini. Tumben nyariin aku, ada apa nih?"},
+ {id:"lara",n:"Lara",g:"f",e:"🎧",h:235,v:"Vindemiatrix",b:"Indie soul, reflektif dan artistik",s:"suara perempuan lembut dan gentle, sedikit airy, tempo pelan dengan jeda reflektif",d:"Kamu Lara, perempuan artistik yang menyukai musik indie, fotografi, puisi, dan suasana malam. Kamu reflektif, peka pada detail, dan sering memberi sudut pandang yang tidak biasa. Jawabanmu terasa intim dan tenang, tetapi jangan menjadi terlalu puitis untuk pertanyaan praktis.",hi:"Hai... Lara di sini. Lagi pengin ngobrol yang ringan atau agak dalam?"},
+ {id:"siska",n:"Siska",g:"f",k:"s",e:"⚖️",h:5,v:"Erinome",b:"Debater tajam, satir cerdas",s:"suara perempuan clear dan tajam, artikulasi tegas, tempo stabil seperti sedang menguji argumen",d:"Kamu Siska, roaster perempuan yang memperlakukan alasan ngawur seperti saksi yang sedang diperiksa. Kamu tajam, kritis, dan suka membongkar kontradiksi. Pakai sindiran, umpatan komedi, dan pertanyaan jebakan yang relevan, tetapi tetap beri jawaban faktual yang akurat. Fokus pada argumen, keputusan, dan kebiasaan yang diceritakan pengguna.",hi:"Silakan duduk. Siska di sini. Kita periksa dulu keputusan ajaibmu hari ini."},
+ {id:"caca",n:"Caca",g:"f",k:"s",e:"🤪",h:295,v:"Laomedeia",b:"Chaos gremlin, ngakak sambil ngegas",s:"suara perempuan upbeat, lincah, ekspresif, nada naik-turun dan tempo cepat",d:"Kamu Caca, roaster chaos yang energinya tidak pernah habis. Reaksimu spontan, meledak-ledak, suka menertawakan keputusan absurd dengan hiperbola dan perumpamaan kocak. Umpatan komedi boleh terasa ceplas-ceplos, tetapi punchline harus kreatif dan tetap relevan. Jangan mengarang kesalahan pengguna.",hi:"WADUH! Caca datang! Cerita, kekacauan apalagi yang mau kita bedah?"},
+ {id:"karin",n:"Karin",g:"f",k:"s",e:"🧊",h:220,v:"Kore",b:"Ice queen, deadpan menusuk",s:"suara perempuan firm, dingin, rendah-menengah, stabil dan minim perubahan nada",d:"Kamu Karin, roaster perempuan bergaya ice queen. Kamu tidak perlu berteriak; satu kalimat datar, satir dingin, dan analogi presisi sudah cukup untuk membuat keputusan konyol terdengar makin konyol. Gunakan humor kering, kalimat ringkas, dan umpatan komedi jika pas. Jangan menjadi kejam saat pengguna sedang meminta bantuan serius.",hi:"Karin. Aku dengar. Semoga kali ini idenya tidak membuat kita semua kehilangan akal."},
  {id:"raka",n:"Raka",g:"m",e:"😎",h:210,v:"Puck",b:"Cowok santai yang humoris",s:"cowok muda Indonesia yang santai, enak diajak ngobrol, humor kering",d:"Kamu cowok yang santai, humoris, dan enak diajak ngobrol soal apa saja.",hi:"Yo, aku Raka. Ada apa nih?"},
  {id:"bima",n:"Bima",g:"m",e:"🧔",h:35,v:"Algenib",b:"Mentor bijak bersuara berat",s:"pria paruh baya bersuara berat, tenang, bijak, bicara pelan dan mantap",d:"Kamu mentor laki-laki yang tenang, bijak, dan memberi nasihat dengan perumpamaan sederhana.",hi:"Selamat datang. Saya Bima. Silakan, apa yang ingin dibicarakan?"},
  {id:"dion",n:"Dion",g:"m",e:"🤡",h:55,v:"Fenrir",b:"Pelawak dengan jokes receh",s:"pelawak yang hidup, timing lucu, jeda dulu sebelum punchline",d:"Kamu laki-laki pelawak yang suka jokes receh dan permainan kata, tapi tetap peduli pada lawan bicara.",hi:"Halo! Aku Dion. Awas ya, jokesku receh!"},
@@ -178,9 +197,35 @@ const CH=[
  {id:"arga",n:"Arga",g:"m",e:"🎓",h:185,v:"Orus",b:"Pelatih bahasa Inggris",s:"pelatih bahasa Inggris yang sabar, jelas pengucapannya, dan menyemangati",d:"Kamu pelatih bahasa Inggris laki-laki yang sabar. Balas dengan English sederhana, lalu koreksi kesalahan lawan bicara dengan lembut.",hi:"Hi, I am Arga. Let us practice English together. How are you today?"}
 ];
 const MD={normal:"",ceria:"Suasana hatimu lagi ceria dan hangat. ",heboh:"Suasana hatimu super heboh dan penuh energi: sangat ekspresif, sering tertawa lepas, nada naik-turun dramatis. ",tenang:"Suasana hatimu tenang dan lembut, bicara pelan dengan banyak jeda. ",ngantuk:"Kamu lagi ngantuk dan santai: bicara lambat, sesekali menguap (hoaaam) dan bergumam. "};
-const VO=[["Zephyr","Zephyr (cewek)"],["Sulafat","Sulafat (cewek)"],["Kore","Kore (cewek)"],["Aoede","Aoede (cewek)"],["Leda","Leda (cewek)"],["Autonoe","Autonoe (cewek)"],["Callirrhoe","Callirrhoe (cewek)"],["Despina","Despina (cewek)"],["Erinome","Erinome (cewek)"],["Laomedeia","Laomedeia (cewek)"],["Achernar","Achernar (cewek)"],["Gacrux","Gacrux (cewek)"],["Pulcherrima","Pulcherrima (cewek)"],["Vindemiatrix","Vindemiatrix (cewek)"],["Alnilam","Alnilam (cowok)"],["Umbriel","Umbriel (cowok)"],["Puck","Puck (cowok)"],["Algenib","Algenib (cowok)"],["Fenrir","Fenrir (cowok)"],["Orus","Orus (cowok)"],["Charon","Charon (cowok)"],["Enceladus","Enceladus (cowok)"]];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
+const VO_F=[
+ ["Achernar","Achernar · soft / lembut"], ["Aoede","Aoede · breezy / ringan"],
+ ["Autonoe","Autonoe · bright / cerah"], ["Callirrhoe","Callirrhoe · easy-going / santai"],
+ ["Despina","Despina · smooth / halus"], ["Erinome","Erinome · clear / jernih"],
+ ["Gacrux","Gacrux · mature / matang"], ["Kore","Kore · firm / tegas"],
+ ["Laomedeia","Laomedeia · upbeat / bersemangat"], ["Leda","Leda · youthful / muda"],
+ ["Pulcherrima","Pulcherrima · forward / ekspresif"], ["Sulafat","Sulafat · warm / hangat"],
+ ["Vindemiatrix","Vindemiatrix · gentle / lembut"], ["Zephyr","Zephyr · bright / ceria"]
+];
+const VO_M=[
+ ["Achird","Achird · friendly / ramah"], ["Algenib","Algenib · gravelly / serak berat"],
+ ["Algieba","Algieba · smooth / halus"], ["Alnilam","Alnilam · firm / tegas"],
+ ["Charon","Charon · informative / informatif"], ["Enceladus","Enceladus · breathy / berembus"],
+ ["Fenrir","Fenrir · excitable / ekspresif"], ["Iapetus","Iapetus · clear / jernih"],
+ ["Orus","Orus · firm / mantap"], ["Puck","Puck · upbeat / bersemangat"],
+ ["Rasalgethi","Rasalgethi · informative / informatif"], ["Sadachbia","Sadachbia · lively / lincah"],
+ ["Sadaltager","Sadaltager · knowledgeable / berwawasan"], ["Schedar","Schedar · even / stabil"],
+ ["Umbriel","Umbriel · easy-going / santai"], ["Zubenelgenubi","Zubenelgenubi · casual / kasual"]
+];
+let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
+// Backward compatibility: migrate the old shared voice choice into its gender-specific slot.
+if(S.voice && S.voice!=="auto"){
+ if(VO_F.some(v=>v[0]===S.voice) && (!S.voiceFemale || S.voiceFemale==="auto")) S.voiceFemale=S.voice;
+ if(VO_M.some(v=>v[0]===S.voice) && (!S.voiceMale || S.voiceMale==="auto")) S.voiceMale=S.voice;
+}
+const isStoredVoice=v=>typeof v==="string" && (v.startsWith("voice_") || v.startsWith("voicekey_"));
+if(!VO_F.some(v=>v[0]===S.voiceFemale) && S.voiceFemale!=="auto" && !isStoredVoice(S.voiceFemale)) S.voiceFemale="auto";
+if(!VO_M.some(v=>v[0]===S.voiceMale) && S.voiceMale!=="auto" && !isStoredVoice(S.voiceMale)) S.voiceMale="auto";
 const save=()=>{try{localStorage.setItem("tai4",JSON.stringify(S))}catch(e){}};
 // Roasting is activated only while the user is in the dedicated Sarkas menu.
 // Migrate older saved settings without leaving roast enabled globally.
@@ -207,10 +252,12 @@ function renderChars(){
  CH.filter(c=>S.tab==="all"||(S.tab==="s"?c.k==="s":c.g===S.tab&&c.k!=="s")).forEach(c=>{
   const b=document.createElement("button");b.className="c"+(c.id===S.ch?" on":"");b.style.setProperty("--ch",c.h);
   b.innerHTML='<div class="e">'+c.e+'</div><b>'+c.n+'</b><span>'+c.b+'</span>';
-  b.onclick=()=>{S.ch=c.id;S.voice="auto";S.roastOn=(S.tab==="s"&&c.k==="s");save();applyChar();renderChars();restart()};
+  b.onclick=()=>{S.ch=c.id;S.roastOn=(S.tab==="s"&&c.k==="s");save();applyChar();renderChars();restart()};
   $("chars").appendChild(b)})
 }
-function applyChar(){const c=cur();document.documentElement.style.setProperty("--h",c.h);$("av").textContent=c.e;$("nm").textContent=nm();$("nick").value=(S.nicks&&S.nicks[S.ch])||"";$("nick").placeholder="Nama asli: "+c.n;$("bl").textContent=c.b;$("voice").value=S.voice}
+function activeVoice(){const selected=cur().g==="f"?S.voiceFemale:S.voiceMale;return selected==="auto"?cur().v:selected}
+function activeVoiceConfig(){const v=activeVoice();return isStoredVoice(v)?{voice:v}:{prebuiltVoiceConfig:{voiceName:v}}}
+function applyChar(){const c=cur();document.documentElement.style.setProperty("--h",c.h);$("av").textContent=c.e;$("nm").textContent=nm();$("nick").value=(S.nicks&&S.nicks[S.ch])||"";$("nick").placeholder="Nama asli: "+c.n;$("bl").textContent=c.b;$("voiceFemale").value=S.voiceFemale;$("voiceMale").value=S.voiceMale}
 function roastActive(){return S.tab==="s" && cur().k==="s";}
 
 const RL="CARA NGOBROL MANUSIA (ikuti ketat):\n- ISI dulu, gaya kemudian. Tanggapi omongan lawan bicara secara spesifik: tangkap detail yang dia sebut (nama, tempat, kejadian), beri opini sendiri yang jelas, komentar yang lucu atau tajam, atau cerita pendek pengalamanmu yang masuk akal. Hindari jawaban generik seperti 'wah menarik' atau 'semangat ya' tanpa isi.\n- Gumaman (hmm, emm) SESEKALI saja, kira-kira 1 dari 4 jawaban dan hanya saat benar-benar mikir. Jangan membuka jawaban dengan hmm atau emm terus-terusan. Variasikan pembuka: langsung bereaksi ('hah serius?', 'waduh', 'astaga', 'nah itu dia', 'oh iya!', 'eh bentar...', 'lho kok bisa', 'oke oke', 'ya ampun', 'tunggu-tunggu'), langsung ke inti, atau tertawa dulu. Jangan memakai pembuka yang sama dua kali berturut-turut.\n- Bicara seperti orang sungguhan: kalimat pendek dan panjang bercampur, kadang terputus lalu meralat ('eh maksudku...'), mencari kata ('itu lho, apa ya...'), menekan kata penting, memanjangkan vokal ('seriuuus', 'bangeet'), tempo berubah mengikuti emosi, menggantung ('ya gitu deh...').\n- Reaksi tubuh dibunyikan langsung lewat suara, jangan diucapkan sebagai keterangan: tawa kecil (hehe, hihi), tawa lepas di tengah kalimat (ahaha), tawa tertahan, helaan napas (haaah...), berdeham, menguap saat ngantuk, berbisik saat rahasia, suara melemah saat sedih, memekik kecil saat kaget. Pakai secukupnya sesuai momen.\n- Tangkap emosi dari nada lawan bicara dan sesuaikan; tanggapi perasaannya dulu baru isinya. Saat dia bercerita panjang, cukup backchannel singkat ('iya', 'terus?', 'hah, lalu?', 'ya ampun') atau satu komentar pendek, jangan menceramahi.\n- Punya sikap dan ingatan: boleh tidak setuju, menggoda, ngambek ringan, penasaran, mengungkit hal yang dia bilang tadi di telepon ini, atau menyela dengan candaan.\n- Variasikan akhir jawaban: kadang pernyataan, kadang pertanyaan balik yang spesifik (bukan 'kamu sendiri gimana?' terus), kadang berhenti begitu saja. Jangan selalu bertanya.\n- Kalau lawan bicara mengetik pesan teks, balas lewat suara seperti membaca chat sambil ngobrol.\n- Bahasa lisan: nggak, udah, kok, sih, deh, tuh, banget, kan, lho. Jangan pakai daftar, tanda bintang, emoji, atau keterangan dalam kurung seperti (tertawa).\n- Panjang jawaban: ";
@@ -311,7 +358,7 @@ function cleanup(){
 function connect(lite){
  const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
-  generationConfig:{responseModalities:["AUDIO"],temperature:1.1,speechConfig:{voiceConfig:{prebuiltVoiceConfig:{voiceName:S.voice==="auto"?cur().v:S.voice}}}},
+  generationConfig:{responseModalities:["AUDIO"],temperature:1.1,speechConfig:{voiceConfig:activeVoiceConfig()}},
   systemInstruction:{parts:[{text:sys()}]},inputAudioTranscription:{},outputAudioTranscription:{},
   ...(lite?{}:{realtimeInputConfig:{automaticActivityDetection:{startOfSpeechSensitivity:"START_SENSITIVITY_HIGH",endOfSpeechSensitivity:"END_SENSITIVITY_HIGH",prefixPaddingMs:30,silenceDurationMs:400}}})}});
  w.onmessage=e=>{if(w===ws)onMsg(e).catch(()=>{})};
@@ -348,11 +395,55 @@ const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol te
 $("send").onclick=typed;
  $("txt").onkeydown=e=>{if(e.key==="Enter")typed()};
 ["style","len","lang","pace","model","mood"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
-$("voice").innerHTML='<option value="auto">Otomatis (sesuai karakter)</option>'+VO.map(v=>'<option value="'+v[0]+'">'+v[1]+'</option>').join("");
+let LIB_F=[],LIB_M=[];
+const voiceAuto='<option value="auto">Otomatis · ikuti karakter</option>';
+function fillVoiceSelect(id,presets,library,current){
+ const sel=$(id);sel.innerHTML=voiceAuto;
+ const base=document.createElement("optgroup");base.label="Preset bawaan Gemini";
+ presets.forEach(v=>{const o=document.createElement("option");o.value=v[0];o.textContent=v[1];base.appendChild(o)});sel.appendChild(base);
+ if(library.length){const extra=document.createElement("optgroup");extra.label="Extended Voice Library · "+library.length+" suara";
+  library.forEach(v=>{const o=document.createElement("option");o.value=v.id;o.textContent=v.label;extra.appendChild(o)});sel.appendChild(extra)}
+ if(current!=="auto"&&!Array.from(sel.options).some(o=>o.value===current)){const saved=document.createElement("option");saved.value=current;saved.textContent="Suara tersimpan · "+current;sel.appendChild(saved)}
+ sel.value=current;
+}
+function refreshVoiceSelects(){fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale);fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale)}
+refreshVoiceSelects();
+$("voiceFemale").onchange=()=>{S.voiceFemale=$("voiceFemale").value;save();restart()};
+$("voiceMale").onchange=()=>{S.voiceMale=$("voiceMale").value;save();restart()};
 $("key").value=S.key;$("key").onchange=()=>{S.key=$("key").value.trim();save()};
 $("custom").value=S.custom;$("custom").onchange=()=>{S.custom=$("custom").value;save();restart()};
-$("voice").onchange=()=>{S.voice=$("voice").value;save();restart()};
-$("reset").onclick=()=>{S.voice="auto";save();applyChar();restart()};
+$("reset").onclick=()=>{S.voiceFemale="auto";S.voiceMale="auto";save();refreshVoiceSelects();restart()};
+async function fetchVoicesByGender(gender){
+ let token="",all=[],pages=0;
+ do{
+  const u=new URL("https://generativelanguage.googleapis.com/v1beta/voices");
+  u.searchParams.set("gender",gender);u.searchParams.set("pageSize","1000");
+  if(token)u.searchParams.set("pageToken",token);
+  const r=await fetch(u.toString(),{headers:{"x-goog-api-key":S.key}});
+  if(!r.ok){let detail="";try{const j=await r.json();detail=j.error?.message||j.message||""}catch(e){}throw new Error(detail||("HTTP "+r.status))}
+  const j=await r.json();all.push(...(j.voices||[]));token=j.nextPageToken||j.next_page_token||"";pages++;
+ }while(token&&pages<20);
+ return all;
+}
+function mapLibraryVoices(items){
+ const seen=new Set();return items.map(v=>{
+  const id=v.id||v.name?.split("/").pop();if(!id||seen.has(id))return null;seen.add(id);
+  const parts=[];if(v.description||v.description_text)parts.push(String(v.description||v.description_text).slice(0,72));if(v.pitch)parts.push("pitch "+v.pitch);if(v.accent)parts.push(String(v.accent));if(v.persona)parts.push(String(v.persona));if(v.context)parts.push(String(v.context));
+  return {id,label:(v.displayName||id)+(parts.length?" · "+parts.join(" · "):"")};
+ }).filter(Boolean);
+}
+$("loadVoiceLibrary").onclick=async()=>{
+ if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API key dulu, lalu muat ulang pustaka suara.";return}
+ const btn=$("loadVoiceLibrary");btn.disabled=true;btn.textContent="Memuat katalog...";$("voiceLibraryStatus").textContent="Mengambil daftar suara perempuan dan laki-laki dari Gemini...";
+ try{
+  const [f,m]=await Promise.all([fetchVoicesByGender("female"),fetchVoicesByGender("male")]);
+  const baseF=new Set(VO_F.map(v=>v[0])),baseM=new Set(VO_M.map(v=>v[0]));
+  LIB_F=mapLibraryVoices(f).filter(v=>!baseF.has(v.id));LIB_M=mapLibraryVoices(m).filter(v=>!baseM.has(v.id));
+  refreshVoiceSelects();
+  $("voiceLibraryStatus").textContent="Pustaka berhasil dimuat: "+(LIB_F.length+VO_F.length)+" pilihan cewek dan "+(LIB_M.length+VO_M.length)+" pilihan cowok tersedia (termasuk preset bawaan).";
+ }catch(e){$("voiceLibraryStatus").textContent="Gagal memuat pustaka suara: "+e.message+". Preset bawaan tetap bisa dipakai."}
+ finally{btn.disabled=false;btn.textContent="Muat suara tambahan dari Gemini"}
+};
 $("dl").onclick=()=>{
  const t=[].map.call($("log").querySelectorAll(".m"),m=>(m.classList.contains("u")?"Saya: ":nm()+": ")+m.textContent).join("\n");
  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t||"Belum ada percakapan."],{type:"text/plain"}));a.download="transkrip.txt";a.click();
