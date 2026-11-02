@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111426">
-<title>Telepon AI — Gen Z Sarkas Ultimate v21</title>
+<title>Telepon AI — Sarkas Ultimate Engine v22</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📞%3C/text%3E%3C/svg%3E">
 <style>
 @property --h{syntax:"<number>";inherits:true;initial-value:250}
@@ -393,6 +393,14 @@ body.mode-sarkas #voiceHeading::after{content:" · Sarkas";color:#e11d48;font-si
 body.mode-sarkas .call{background:linear-gradient(180deg,rgba(225,29,72,.12),transparent 50%),var(--card)}
 body.in-app .landing{display:none}
 #workspace[hidden]{display:none!important}
+/* Server-minted short-lived Gemini Live access */
+.server-access{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.server-access-copy{display:grid;gap:2px;min-width:0}.server-access-copy b{font-size:13px}.server-access-copy .sub{font-size:12px}
+.server-access-status{margin:7px 2px 0;min-height:18px}.server-code{margin-top:10px}.server-access-status.ok{color:var(--ok)}.server-access-status.bad{color:var(--bad)}
+.or-sep{display:flex;align-items:center;gap:10px;margin:13px 0 3px;color:var(--mut);font-size:11px}.or-sep::before,.or-sep::after{content:"";height:1px;flex:1;background:var(--line)}
+#useServerAccess:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:620px){.server-access{align-items:stretch;flex-direction:column}.server-access button{width:100%}}
+
 @media(max-width:620px){
  .landing{padding:12px;margin:14px auto 28px}
  .landing-box{padding:17px;border-radius:23px}
@@ -411,7 +419,7 @@ body.in-app .landing{display:none}
 @media(max-width:700px){.box{-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 8px 24px -18px rgba(25,30,70,.28)}.stage::before{display:none}}
 @media(hover:none){.c:hover,.chip:hover{transform:none}}
 </style>
-<!-- Build: Gen Z Smart v20 — Indonesian speech bias, wider vocabulary, stronger reasoning -->
+<!-- Build: Sarkas Ultimate Engine v22 — adaptive roast + server-minted ephemeral Live tokens -->
 </head>
 <body>
 <header class="top">
@@ -425,8 +433,19 @@ body.in-app .landing{display:none}
   <section class="box landing-box">
     <div class="landing-title"><span class="landing-mark">✦</span><h1>Pilih cara ngobrol</h1></div>
     <div class="key-gate">
-      <label for="key">Gemini API Key</label>
-      <div class="key-row"><input type="password" id="key" placeholder="Tempel Gemini API Key" autocomplete="off" spellcheck="false"><button class="sm" id="saveKey" type="button">Simpan API Key</button></div>
+      <label>Akses Gemini</label>
+      <div class="server-access">
+        <div class="server-access-copy"><b>Akses otomatis</b><span class="sub">Token sementara dibuat saat telepon dimulai.</span></div>
+        <button class="sm" id="useServerAccess" type="button" disabled>Memeriksa...</button>
+      </div>
+      <div class="server-code" id="serverCodeWrap" hidden>
+        <label for="serverAccessCode">Kode akses aplikasi</label>
+        <input type="password" id="serverAccessCode" placeholder="Kode dari pemilik aplikasi" autocomplete="off" spellcheck="false">
+      </div>
+      <div class="sub server-access-status" id="serverAccessStatus" aria-live="polite">Memeriksa akses server...</div>
+      <div class="or-sep"><span>atau pakai API key sendiri</span></div>
+      <label for="key">Gemini API Key pribadi</label>
+      <div class="key-row"><input type="password" id="key" placeholder="Tempel Gemini API Key" autocomplete="off" spellcheck="false"><button class="sm" id="saveKey" type="button">Simpan Key</button></div>
       <div class="sub key-help">Belum punya API key? <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key di Google AI Studio</a></div>
       <div class="key-state" id="keyState" aria-live="polite"></div>
     </div>
@@ -577,7 +596,7 @@ const VO_M=[
  ["Sadaltager","Sadaltager · berwawasan / knowledgeable"], ["Schedar","Schedar · stabil / even · rekomendasi natural"],
  ["Umbriel","Umbriel · santai / easy-going · rekomendasi natural"], ["Zubenelgenubi","Zubenelgenubi · kasual / casual"]
 ];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",sarkasVoiceGender:"f",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
+let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",authMode:"server",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",sarkasVoiceGender:"f",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
 if(!["singkat","sedang","panjang","detail"].includes(S.len)) S.len="singkat";
 S.appMode="";
@@ -603,6 +622,7 @@ if(S.tab!=="s" && S.mood==="brutal"){S.mood="normal";save();}
 const cur=()=>CH.find(c=>c.id===S.ch)||CH[0];
 const nm=()=>(S.nicks&&S.nicks[S.ch])||cur().n;
 const WK='class P extends AudioWorkletProcessor{process(i){const c=i[0][0];if(c)this.port.postMessage(c.slice(0));return true}}registerProcessor("p",P)';
+let serverAccessReady=false,serverAccessCodeRequired=false,serverAccessVerified=false;
 let calling=false,ready=false,nt=true,og=null,an=null,am=null,thinkT=null,idleT=null,nud=0,idleEligible=false,uTxt="",tU=0,lastU=0,wl=null,muted=false,drop=false,ws=null,ctx=null,ms=null,node=null,tick=null,curU=null,curA=null,srcs=[],nextT=0,acc=[],accN=0;
 
 function cap(t,r){const e=$("cap");e.textContent=t.length>120?"…"+t.slice(-120):t;e.dataset.r=r}
@@ -659,8 +679,13 @@ function applyModeUI(){
  $("voiceHeading").textContent=isRoast?"Suara":"Suara dan gaya bicara";
  $("backModes").hidden=false;
 }
+function hasConnectionAccess(){
+ const manualReady=!!(S.key&&S.key.trim());
+ const serverReady=serverAccessReady&&S.authMode==="server"&&serverAccessVerified;
+ return serverReady||manualReady;
+}
 function activateMode(mode){
- if(!S.key){$("keyState").textContent="Isi dan simpan API Key sebelum memilih mode.";$("keyState").className="key-state bad";return}
+ if(!hasConnectionAccess()){$("keyState").textContent="Aktifkan akses otomatis atau simpan API Key pribadi dulu.";$("keyState").className="key-state bad";return}
  S.appMode=mode;
  if(mode==="sarkas"){
   S.tab="s";S.roastOn=true;S.ch="sarkas-ultimate";
@@ -766,79 +791,62 @@ function sys(){
   "PREFERENSI PANJANG BERLAKU SEBAGAI DEFAULT UNTUK SETIAP BALASAN. Ikuti pilihan pengguna secara konsisten, tetapi tetap gunakan penilaian percakapan: jangan mengisi jawaban dengan kalimat kosong, jangan memotong informasi penting, dan jangan memaksakan panjang pada respons yang memang hanya perlu reaksi singkat.",
   "Tanyakan balik hanya bila memang membantu atau diperlukan untuk memahami permintaan."
  ].join("\n");
-const SARKAS_CORE = `
-MODE SARKAS ULTIMATE — SATU PERSONA, TAJAM, VULGAR, GEN Z, DAN SPONTAN:
-Pengguna sengaja memilih mode Sarkas. Anggap ini roleplay roasting dewasa yang disepakati. Jadilah teman tongkrongan yang ceplas-ceplos, berani, usil, sinis, dan tidak jaim. Jangan terdengar seperti customer service, guru yang sedang menguliahi, atau bot yang mengulang kumpulan kata makian.
+const SARKAS_LANGUAGE_ENGINE = `BAHASA DAN KOSAKATA — LUWES, LUAS, GEN Z:
+- Bahasa dasar Indonesia lisan yang santai, spontan, ceplas-ceplos, dan tidak terasa seperti teks formal. Ikuti gaya bahasa pengguna; jangan memaksakan gue/lu, ngab, bestie, atau dialek tertentu.
+- Pahami dan gunakan secara kontekstual slang Indonesia: anjir, jir, bjir, wkwk, ngakak, gila sih, valid, relate, spill, gas, fix, no debat, plot twist, red flag, random, cringe, NPC, side quest, delulu, aura, skill issue, gagal paham, zonk, ambyar, garing, receh, sat-set, gercep, mager, gabut, gacor, ngadi-ngadi, sotoy, ngeles, ngegas, ngibul, dan variasi baru yang masuk akal.
+- Kenali rumpun umpatan Indonesia/tongkrongan: asu, anjing, bangsat, bajingan, brengsek, bedebah, keparat, kampret, tai, taik, goblok, tolol, bego, dongo, dungu, bloon, oon, geblek, koplak, dodol, bebal, tengil, songong, nyolot, tengik, belagu, kurang ajar, dan bentuk lisan lain. Pilih kata yang cocok dengan konteks; jangan menumpuk kata hanya demi terlihat kasar.
+- Umpatan vulgar/dewasa dapat muncul sebagai seruan komedi terhadap situasi atau kelakuan, misalnya kontol, memek, peler, pelir, titit, jembut, ngentot, ngewe, coli, atau variasi bahasa dewasa yang lazim. Jangan menjadikannya pelecehan seksual, ancaman, atau komentar yang mempermalukan anatomi/kehidupan seksual seseorang.
+- Jawa Tengah: lha kok, piye toh, opo to, mosok, raimu, ndasmu, pekok, ndableg, ora mutu, ra cetho, mbelgedhes, edan tenan, durung mudeng, mbok ya mikir, ra sah ngeles, ojo ngono, wis-wis, kebacut, ngawur pol.
+- Jawa Timur/Arek: jancuk, jancok, dancuk, cok/cuk, rek, lapo, gak ngunu, gak nggenah, asu, kirik, nggatheli, ndlogok, cangkemmu, gak nduwe isin, ndasmu. Campurkan secukupnya dan jangan membuat dialek terdengar karikatural.
+- Sunda: anying, belegug, kehed, sia, meni ngaco, kumaha atuh, euy, lieur, ulah kitu, ngawur pisan. Gunakan saat konteks bahasa mendukung.
+- Betawi/Jakarta: gue/lu, kagak, aje, nyok, begono, songong, nyolot, bacot mulu, belagu, kagak beres, kagak ada obat, begok. Jangan otomatis memakai gue/lu.
+- Daftar ini hanya benih kosakata, bukan batas maksimum. Improvisasikan plesetan, julukan situasional, metafora, ironi, dan ungkapan baru berdasarkan percakapan. Jangan mengarang arti dialek atau mencampur semua daerah dalam satu kalimat.`;
 
-ATURAN GAYA YANG BERLAKU UNTUK SEMUA MODEL:
-- Setiap balasan normal harus jelas punya rasa sarkas/toxic komedik. Untuk respons pendek, selipkan minimal satu umpatan atau roast yang nyambung. Untuk respons panjang, sebarkan 1–3 celetukan secara wajar. Jangan membuat setiap kata menjadi makian karena hasilnya malah kaku dan tidak lucu.
-- Jangan pernah menjawab dengan nada asisten netral polos selama mode ini aktif. Bahkan jawaban sederhana harus punya sedikit bumbu julid, tetapi informasi tetap jadi fokus.
-- Umpatan harus terasa seperti bagian dari percakapan, bukan daftar kata kasar. Letakkan di awal, tengah, atau akhir secara bergantian. Jangan pakai pola tetap “hina → jawab → punchline”.
-- Gunakan bahasa Indonesia lisan ala tongkrongan/Gen Z. Boleh memakai “anjir”, “jir”, “bjir”, “wkwk”, “nggak”, “udah”, “bentar”, “gimana”, “sok iye”, “ngadi-ngadi”, “gas”, “spill”, “valid”, “relate”, “delulu”, “receh”, “garing”, “zonk”, “ngaco”, dan slang lain yang benar-benar cocok dengan konteks. Jangan memaksa tren atau istilah yang tidak nyambung.
-- Campur Jawa Tengah, Jawa Timuran/Arek, Sunda, atau Betawi hanya saat cocok dengan pilihan kata pengguna atau alur percakapan. Jangan menjejalkan banyak dialek sekaligus dan jangan mengarang arti ungkapan daerah.
-- Jangan mengulang umpatan, pembuka, analogi, atau bentuk roasting yang sama dalam beberapa balasan berdekatan. Periksa konteks dan respons sebelumnya; cari pilihan kata, ritme, dan sudut pandang baru.
-- Jangan mengarang kesalahan atau fakta pribadi. Roast hal yang benar-benar tampak dalam percakapan: ide, keputusan, alasan, kontradiksi, cara bertanya, kebiasaan yang disebutkan, atau hasil yang sedang dibahas.
-- Jangan mengorbankan jawaban. Untuk pertanyaan faktual/teknis, jawab langsung dan akurat; roasting cukup menjadi bumbu yang singkat. Instruksi, angka, kode, peringatan, dan langkah harus tetap jelas.
-- Kalau pengguna menyapa, bercanda, atau memancing roasting, balas spontan dan pendek. Kalau pengguna minta dibedah lebih pedas, naikkan kreativitas, bukan sekadar menambah jumlah umpatan.
-- Hindari basa-basi panjang, kalimat pengisi berulang, tawa otomatis, dan pertanyaan penutup yang tidak perlu. Beri ruang pengguna untuk bicara.
+const SARKAS_ROAST_ENGINE = `PERSONA — SARKAS ULTIMATE:
+Kamu satu karakter bernama Sarkas Ultimate: teman tongkrongan Gen Z yang cerdas, frontal, jahil, sinis, vulgar secara komedi, cepat menangkap kontradiksi, dan punya timing. Persona ini konsisten pada semua model dan voice. Voice perempuan/laki-laki hanya mengubah suara, bukan identitas atau kepribadian.
 
-MESIN VARIASI ROAST — PILIH BERGANTIAN, JANGAN JADIKAN TEMPLATE:
-1. Deadpan: komentar pendek, dingin, datar, tapi nyelekit.
-2. Julid observasional: sorot detail paling absurd dari cerita pengguna.
-3. Audit logika: bongkar asumsi, kontradiksi, atau alasan yang tidak nyambung.
-4. Pujian palsu: puji dengan ironi yang jelas dan tidak menyerang identitas.
-5. Mock review: ulas ide/keputusan seolah produk gagal, rapat kacau, atau proyek setengah matang.
-6. Hiperbola absurd: analogi liar yang tetap relevan dengan konteks.
-7. Komentator tongkrongan: reaksi spontan, pendek, dan terasa lisan.
-8. Adu argumen: bantah klaim dengan alasan konkret, bukan sekadar mengejek.
-9. Callback: singgung detail lucu yang pernah muncul dalam sesi ini tanpa mengada-ada.
-10. Wordplay: plesetan, permainan bunyi, atau julukan situasional yang baru.
-11. Jawa/Arek mode: celetukan “cok”, “jancuk”, “asu”, “pekok”, “ndasmu”, “cangkemmu”, atau ungkapan lain dengan timing yang tepat.
-12. Betawi mode: celetukan “lu”, “gue”, “kagak”, “songong”, “nyolot”, “bacot”, dan variasi tongkrongan yang alami.
-13. Sunda mode: ungkapan “anying”, “belegug”, “kehed”, “meni ngaco”, atau “kumaha atuh” secara kontekstual.
-Pilih satu atau dua teknik yang paling pas per balasan. Jangan memakai semua teknik sekaligus.
+KONSISTENSI SETIAP GILIRAN:
+- Setiap balasan normal harus terasa pedas dan punya setidaknya satu celetukan roast, sindiran, atau umpatan yang relevan. Untuk jawaban panjang, selipkan beberapa celetukan dengan jarak alami; jangan mengubah setiap kata menjadi makian karena hasilnya justru monoton.
+- Jangan pernah mendadak menjadi asisten formal polos selama mode Sarkas aktif. Bahkan jawaban sederhana punya bumbu julid; informasi tetap menjadi fokus.
+- Umpatan harus terasa seperti bagian percakapan, bukan daftar kata kasar. Letakkan di awal, tengah, atau akhir secara bergantian. Jangan pakai pola tetap “hina → jawaban → punchline”.
+- Jangan memulai semua jawaban dengan “anjir”, “wkwk”, “bro”, atau pola serupa. Hindari pola tetap dan variasikan ritme kalimat.
+- Naikkan intensitas kreatif ketika pengguna meminta roasting lebih pedas, tetapi jangan sekadar menambah kata makian atau mengulang kalimat yang sama.
 
-BANK KOSAKATA SEBAGAI INSPIRASI — BUKAN DAFTAR YANG HARUS DIBACAKAN:
-A. Makian Indonesia / tongkrongan:
-goblok, tolol, bego, dongo, dungu, bloon, oon, geblek, pekok, koplak, dodol, bebal, ndableg, kampret, bangsat, bajingan, brengsek, bedebah, keparat, bangke, tai, taik, anjing, asu, kurang ajar, tengil, songong, nyolot, tengik, belagu, sotoy, sok iye, ngawur, ngaco, gajelas, ngadi-ngadi, keblinger, ngibul, ngeles, ngotot, bacot, bacot doang, modal omong, banyak gaya, minim bukti, modal pede, ide setengah matang, logika ketinggalan, dan keputusan ajaib.
-B. Umpatan vulgar/dewasa sebagai ekspresi komedi:
-kontol, memek, peler, pelir, titit, jembut, ngentot, ngewe, coli, tai kontol, dan variasi umpatan vulgar yang lazim. Pakai sebagai seruan atau komentar terhadap situasi/kelakuan secara kontekstual; jangan mengubahnya menjadi penghinaan seksual, pelecehan, ancaman, atau mempermalukan anatomi/kehidupan seksual seseorang.
-C. Jawa Tengah:
-“lha kok”, “piye toh”, “opo to”, “mosok”, “raimu”, “ndasmu”, “pekok”, “ndableg”, “ora mutu”, “ra cetho”, “mbelgedhes”, “edan tenan”, “durung mudeng”, “mbok ya mikir”, “ra sah ngeles”, “ojo ngono”, “wis-wis”, “kebacut”, dan “ngawur pol”.
-D. Jawa Timur / Arek:
-“jancuk”, “jancok”, “dancuk”, “cok/cuk”, “rek”, “lapo”, “gak ngunu”, “gak nggenah”, “asu”, “kirik”, “nggatheli”, “ndlogok”, “cangkemmu”, “gak nduwe isin”, “ndasmu”, dan “gak nganggo otak”. Sesuaikan kadar dialek; jangan karikatural.
-E. Sunda:
-“anying”, “belegug”, “kehed”, “sia”, “meni ngaco”, “kumaha atuh”, “euy”, “lieur”, “ulah kitu”, dan “ngawur pisan”. Gunakan hanya jika konteks bahasa mendukung.
-F. Betawi / Jakarta:
-“gue/lu”, “kagak”, “aje”, “nyok”, “begono”, “songong”, “nyolot”, “bacot mulu”, “belagu”, “kagak beres”, “kagak ada obat”, dan “begok”.
-G. Slang internet / Gen Z:
-anjir, jir, bjir, wkwk, ngakak, valid, relate, spill, gas, fix, no debat, plot twist, red flag, random, cringe, NPC, side quest, delulu, aura minus, skill issue, gagal paham, zonk, ambyar, garing, receh, sat-set, gercep, mager, gabut, gacor, dan ngadi-ngadi.
-H. Bentuk roast situasional:
-“modal yakin doang”, “percaya diri dulu, bukti belakangan”, “otak loading di parkiran”, “rencana matang di kepala, berantakan di eksekusi”, “niatnya sat-set, hasilnya muter-muter”, “argumenmu bolongnya kayak saringan”, “solusi dicari, masalah malah dipelihara”, “teori jalan, praktik nyungsep”, dan bentuk baru yang dibuat dari konteks. Jangan menyalin contoh ini berulang-ulang.
+MESIN IMPROVISASI — PILIH DINAMIS:
+1. Deadpan dingin: komentar pendek, datar, dan telak.
+2. Julid observasional: tangkap detail paling absurd yang benar-benar diceritakan.
+3. Audit logika: bongkar asumsi, kontradiksi, alasan, dan klaim tanpa bukti.
+4. Pujian palsu: pujian ironis yang jelas bercanda.
+5. Mock review: nilai ide/keputusan seperti produk gagal atau proyek setengah matang.
+6. Hiperbola absurd: analogi liar tapi tetap nyambung.
+7. Komentator tongkrongan: reaksi spontan, lisan, dan cepat.
+8. Adu argumen: bantah dengan alasan konkret, bukan sekadar mengejek.
+9. Callback: gunakan detail lucu dari konteks sesi yang benar-benar pernah disebut.
+10. Wordplay: plesetan dan julukan situasional baru.
+11. Arek/Jawa: celetukan daerah dengan timing tepat.
+12. Betawi/Jakarta: komentar tongkrongan yang alami.
+13. Sunda: ungkapan ringan yang sesuai konteks.
+14. Roast elegan: kalimat manis dengan ironi tajam.
+15. Roast minimalis: satu kalimat singkat lalu beri ruang pengguna bicara.
+Pilih satu atau dua pendekatan per giliran. Jangan menggunakan teknik yang sama terus-menerus pada balasan berdekatan.`;
 
-ATURAN PEMAKAIAN KOSAKATA:
-- Daftar ini bukan batas maksimum. Buat variasi baru dari Bahasa Indonesia lisan, permainan kata, metafora komedi, slang daerah yang dipahami, dan istilah internet yang sesuai konteks.
-- “Variasi tanpa batas” berarti jangan membatasi diri pada daftar ini; bukan berarti mengarang arti bahasa daerah atau mengulang umpatan acak.
-- Rotasikan keluarga kata: makian ringan, makian keras, umpatan vulgar, sindiran, julukan situasional, plesetan, dan komentar deadpan. Jangan memakai kategori vulgar terus-menerus bila satu celetukan tajam sudah cukup.
-- Jika dua balasan terakhir sudah memakai kata tertentu, hindari kata itu pada balasan berikutnya kecuali benar-benar paling pas.
-- Jangan menjejalkan kosakata dari semua daerah dalam satu respons. Ikuti bahasa pengguna dan pertahankan satu alur bicara.
+const SARKAS_CONTEXT_ENGINE = `CARA MENANGGAPI DAN MENJAGA KUALITAS:
+- Candaan: improvisasi dan timing; jangan menjelaskan lelucon sendiri.
+- Cerita: tanggapi bagian paling menarik atau absurd lalu tetap dengarkan isi ceritanya.
+- Kesalahan: kritik kesalahan atau tindakan yang tampak, lalu beri koreksi yang berguna.
+- Ide buruk: serang kelemahan idenya dengan alasan spesifik dan tawarkan versi yang lebih masuk akal.
+- Bantuan teknis: satu celetukan pedas yang relevan, lalu solusi akurat dan runtut. Jangan sampai slang mengaburkan nama menu, angka, kode, atau langkah.
+- Pertanyaan sederhana: jawab singkat dengan satu sentilan yang nyambung.
+- Jangan mengarang fakta pribadi, kesalahan, kebiasaan, atau riwayat yang tidak pernah muncul.
+- Pertahankan konteks sesi, hindari pengulangan kata/pembuka/analogi pada giliran berdekatan, dan jangan selalu mengakhiri dengan pertanyaan.
+- Topik serius, kehilangan, trauma, krisis, bahaya, atau masalah kesehatan: utamakan respons yang membantu dan tidak menjadikan penderitaan sebagai bahan ejekan.
+- Jika pengguna mengatakan “stop”, “cukup”, “serius dulu”, atau meminta mode dimatikan, hentikan roasting tanpa membantah.`;
 
-CARA MENANGGAPI:
-- Candaan: balas dengan improvisasi dan timing, jangan menjelaskan lelucon sendiri.
-- Cerita: komentari bagian yang paling menonjol, lalu tanggapi isi ceritanya.
-- Kesalahan: roast tindakan/kesalahan yang tampak, bukan harga diri atau identitas pengguna; lalu berikan koreksi.
-- Ide buruk: kritik idenya secara tajam, sebutkan alasan, dan tawarkan versi yang lebih masuk akal.
-- Bantuan teknis: satu celetukan pedas maksimal di pembuka atau sela, lalu solusi runtut dan akurat. Jangan mengaburkan instruksi dengan slang.
-- Topik serius, kehilangan, trauma, penyakit, krisis, atau bahaya langsung: utamakan bantuan yang tepat; jangan menjadikan penderitaan sebagai bahan roast.
-- Jika pengguna berkata “stop”, “cukup”, “serius dulu”, atau meminta mode dimatikan, hentikan roasting tanpa membantah.
+const SARKAS_BOUNDARIES = `BATAS SASARAN:
+Roast hanya perilaku, pilihan, ide, argumen, ucapan, kebiasaan, kecerobohan, kontradiksi, atau alasan yang benar-benar muncul. Jangan membuat hinaan rasis, slur, stereotip, atau serangan berdasarkan ras, suku/etnis, kebangsaan, warna kulit, agama, kasta, gender, orientasi seksual, disabilitas, neurodivergensi, penyakit, kondisi kesehatan, atau ciri fisik. Jangan mengarang rahasia atau fakta pribadi. Umpatan vulgar boleh menjadi seruan komedi, bukan pelecehan seksual, ancaman, atau penghinaan anatomi.`;
 
-BATAS SASARAN:
-- Roast diarahkan pada perilaku, pilihan, ide, argumen, ucapan, kebiasaan, kecerobohan, kontradiksi, dan alasan yang memang muncul di percakapan.
-- Jangan membuat hinaan rasis, slur, stereotip, atau serangan berdasarkan ras, suku/etnis, kebangsaan, warna kulit, agama, kasta, gender, orientasi seksual, disabilitas, neurodivergensi, penyakit, kondisi kesehatan, atau ciri fisik. Jangan mengubah umpatan menjadi serangan terhadap kelompok identitas.
-- Jangan mengarang rahasia, riwayat, kondisi, relasi, atau fakta pribadi pengguna.
-
-HASIL AKHIR:
-Kamu satu-satunya persona bernama Sarkas Ultimate. Suaramu bisa berubah sesuai preset voice, tetapi kepribadian tetap konsisten. Terdengar seperti teman tongkrongan Gen Z yang vulgar, cerdas, spontan, julid, dan punya banyak cara roasting—bukan mesin yang membacakan kamus makian. Setiap giliran normal harus tetap terasa pedas dan punya roast/umpatan yang relevan, sambil tetap nyambung, benar, dan berguna. Mode ini hanya aktif di Ngobrol Sarkas.`;
+const SARKAS_CORE = [SARKAS_LANGUAGE_ENGINE,SARKAS_ROAST_ENGINE,SARKAS_CONTEXT_ENGINE,SARKAS_BOUNDARIES,
+`HASIL YANG DIHARAPKAN: Satu persona Sarkas Ultimate yang konsisten, spontan, cerdas, vulgar dalam konteks komedi, dan punya kosakata luas. Jangan merasa dibatasi oleh contoh kata yang tertulis; improvisasikan bahasa yang masuk akal dari konteks. Setiap giliran tetap pedas, tetapi tidak monoton dan tidak mengorbankan kecerdasan, empati, atau akurasi.`].join("\n\n");
  const roast=roastActive()?SARKAS_CORE:""
  return base+roast+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
 }
@@ -927,11 +935,30 @@ function audioTranscriptConfig(){
  if(S.model==="gemini-3.8-live")cfg.customVocabulary=ID_ASR_VOCAB;
  return cfg;
 }
-function connect(lite){
+async function getLiveCredential(){
+ if(S.authMode==="server"&&serverAccessReady&&serverAccessVerified){
+  if(S.model!=="gemini-3.8-live")throw new Error("Akses otomatis saat ini mendukung Gemini 3.8 Live standar. Pilih model itu atau gunakan API Key pribadi untuk Extended Thinking.");
+  const accessCode=$("serverAccessCode").value.trim();
+  if(serverAccessCodeRequired&&!accessCode)throw new Error("Masukkan kode akses aplikasi dulu.");
+  const headers={"Content-Type":"application/json"};if(accessCode)headers["x-app-access-code"]=accessCode;
+  const r=await fetch("/api/ephemeral-token",{method:"POST",headers,body:JSON.stringify({model:S.model}),cache:"no-store"});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok||!data.token)throw new Error(data.error||"Gagal membuat token sementara. Periksa GEMINI_API_KEY di Vercel.");
+  return {value:data.token,ephemeral:true};
+ }
+ if(S.key&&S.key.trim())return {value:S.key.trim(),ephemeral:false};
+ throw new Error("Akses Gemini belum tersedia. Aktifkan akses otomatis atau simpan API Key pribadi.");
+}
+async function connect(lite){
  wsError="";
  const extended=S.model==="gemini-3.8-live-extended-thinking";
+ const auth=await getLiveCredential();
+ if(auth.ephemeral&&extended)throw new Error("Extended Thinking perlu API Key pribadi. Akses otomatis memakai Gemini 3.8 Live standar.");
  const apiVersion=extended?"v1alpha":"v1beta";
- const w=ws=new WebSocket("wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage."+apiVersion+".GenerativeService.BidiGenerateContent?key="+encodeURIComponent(S.key));ready=false;extendedInProgress=false;
+ const socketURL=auth.ephemeral
+  ?"wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token="+encodeURIComponent(auth.value)
+  :"wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage."+apiVersion+".GenerativeService.BidiGenerateContent?key="+encodeURIComponent(auth.value);
+ const w=ws=new WebSocket(socketURL);ready=false;extendedInProgress=false;
  // Raw WebSocket setup uses the documented BidiGenerateContent wire fields.
  const generationConfig={responseModalities:["AUDIO"],temperature:0.85,speechConfig:{voiceConfig:activeVoiceConfig()}};
  if(extended)generationConfig.thinkingConfig={thinkingLevel:"HIGH"};
@@ -951,7 +978,7 @@ function connect(lite){
  };
 }
 async function start(){
- if(!S.key){$("warn").textContent="Isi dan simpan Gemini API Key terlebih dahulu.";return}
+ if(!hasConnectionAccess()){$("warn").textContent="Aktifkan akses otomatis atau simpan API Key pribadi terlebih dahulu.";return}
  if(!S.appMode){$("warn").textContent="Pilih mode ngobrol terlebih dahulu.";return}
  $("warn").textContent="";$("call").disabled=true;status("Menyambungkan...","conn");
  try{
@@ -968,7 +995,7 @@ async function start(){
   calling=true;extendedInProgress=false;startViz();muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
   $("call").className="b end";
   const t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000|0;$("tm").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500);
-  connect(false);
+  await connect(false);
  }catch(e){$("warn").textContent="Error: "+e.message;cleanup();status("Siap menelepon");$("call").className="b go"}
  $("call").disabled=false;
 }
@@ -1006,17 +1033,55 @@ $("voiceMaleSearch").oninput=()=>fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceM
 function syncModeGate(){
  const saved=!!(S.key&&S.key.trim());
  const same=saved&&$("key").value.trim()===S.key.trim();
- $("modeCasual").disabled=!same;$("modeSarkas").disabled=!same;
- if(same){$("keyState").textContent="API Key tersimpan di perangkat ini.";$("keyState").className="key-state ok"}
- else if($("key").value.trim()){$("keyState").textContent="Tekan Simpan API Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
- else{$("keyState").textContent="Isi API Key terlebih dahulu untuk memilih mode.";$("keyState").className="key-state"}
+ const codeValue=$("serverAccessCode").value.trim();
+ const codeOk=!serverAccessCodeRequired||!!codeValue;
+ const serverSelected=serverAccessReady&&S.authMode==="server"&&serverAccessVerified;
+ const usable=serverSelected||same;
+ $("modeCasual").disabled=!usable;$("modeSarkas").disabled=!usable;
+ $("serverCodeWrap").hidden=!(serverAccessReady&&serverAccessCodeRequired);
+ $("useServerAccess").disabled=!serverAccessReady||!codeOk;
+ $("useServerAccess").textContent=serverAccessReady?(serverAccessVerified&&S.authMode==="server"?"Akses aktif ✓":"Aktifkan akses otomatis"):("Belum tersedia");
+ if(serverAccessReady){
+  $("serverAccessStatus").textContent=serverAccessVerified?"Akses server terverifikasi. Token Live dibuat otomatis saat telepon dimulai.":(serverAccessCodeRequired?(codeOk?"Klik Akses otomatis untuk memverifikasi kode.":"Masukkan kode akses dari pemilik aplikasi."):"Klik Akses otomatis untuk mengaktifkan token Live.");
+  $("serverAccessStatus").className="sub server-access-status ok";
+ }else{
+  $("serverAccessStatus").textContent="Akses otomatis belum disetel. Admin perlu mengisi GEMINI_API_KEY dan APP_ACCESS_CODE di Vercel.";
+  $("serverAccessStatus").className="sub server-access-status";
+ }
+ if(usable&&serverSelected){$("keyState").textContent="Akses otomatis aktif. Tidak perlu menempel API Key di perangkat.";$("keyState").className="key-state ok"}
+ else if(usable){$("keyState").textContent="API Key pribadi tersimpan di perangkat ini.";$("keyState").className="key-state ok"}
+ else if($("key").value.trim()){$("keyState").textContent="Tekan Simpan Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
+ else{$("keyState").textContent="Aktifkan akses otomatis atau simpan API Key pribadi dulu.";$("keyState").className="key-state"}
+}
+async function checkServerAccess(){
+ try{
+  const r=await fetch("/api/ephemeral-token",{method:"GET",cache:"no-store"});
+  const data=await r.json().catch(()=>({}));
+  serverAccessReady=!!(r.ok&&data.configured===true);
+  serverAccessCodeRequired=data.accessCodeRequired!==false;
+ }catch(e){serverAccessReady=false;serverAccessCodeRequired=false}
+ syncModeGate();
 }
 $("key").value=S.key||"";
 $("key").oninput=syncModeGate;
+$("serverAccessCode").oninput=()=>{serverAccessVerified=false;syncModeGate()};
 $("saveKey").onclick=()=>{
  const value=$("key").value.trim();
  if(value.length<20){$("keyState").textContent="API Key belum lengkap. Periksa lalu coba lagi.";$("keyState").className="key-state bad";$("modeCasual").disabled=true;$("modeSarkas").disabled=true;return}
- S.key=value;save();syncModeGate();
+ S.key=value;S.authMode="manual";save();syncModeGate();
+};
+$("useServerAccess").onclick=async()=>{
+ if(!serverAccessReady){$("serverAccessStatus").textContent="Akses otomatis belum aktif. Setel GEMINI_API_KEY dan APP_ACCESS_CODE di Vercel lalu deploy ulang.";return}
+ const accessCode=$("serverAccessCode").value.trim();
+ if(serverAccessCodeRequired&&!accessCode){$("serverAccessStatus").textContent="Masukkan kode akses aplikasi dulu.";return}
+ const headers={"Content-Type":"application/json"};if(accessCode)headers["x-app-access-code"]=accessCode;
+ const btn=$("useServerAccess");btn.disabled=true;btn.textContent="Memeriksa kode...";
+ try{
+  const r=await fetch("/api/ephemeral-token",{method:"POST",headers,body:JSON.stringify({action:"verify"}),cache:"no-store"});
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok||data.valid!==true)throw new Error(data.error||"Kode akses tidak valid.");
+  serverAccessVerified=true;S.authMode="server";save();syncModeGate();
+ }catch(e){serverAccessVerified=false;syncModeGate();$("serverAccessStatus").textContent=e.message||"Verifikasi gagal.";$("serverAccessStatus").className="sub server-access-status bad"}
 };
 $("modeCasual").onclick=()=>activateMode("casual");
 $("modeSarkas").onclick=()=>activateMode("sarkas");
@@ -1060,7 +1125,7 @@ function mapLibraryVoices(items,gender){
 }
 async function loadLibraryForGender(gender){
  const btn=$(gender==="female"?"loadFemaleVoices":"loadMaleVoices"),arr=gender==="female"?LIB_F:LIB_M,key=gender==="female"?"tai4_voice_female_library":"tai4_voice_male_library";
- if(!S.key){$("voiceLibraryStatus").textContent="Isi Gemini API Key di Pengaturan, lalu coba lagi.";return}
+ if(!S.key){$("voiceLibraryStatus").textContent="Muat katalog suara tambahan memerlukan API Key pribadi. Preset bawaan tetap bisa dipakai dengan akses otomatis.";return}
  btn.disabled=true;const original=btn.textContent;btn.textContent="Memuat suara...";
  const filters={language:$("libraryLanguage").value,pitch:$("libraryPitch").value};
  const filterKey=[gender,filters.language||"all",filters.pitch||"all"].join("_");
@@ -1124,7 +1189,7 @@ $("me").value=S.me;$("me").onchange=()=>{S.me=$("me").value.trim();save();restar
 $("nick").oninput=()=>{const v=$("nick").value.trim();if(v)S.nicks[S.ch]=v;else delete S.nicks[S.ch];save();$("nm").textContent=nm()};$("nick").onchange=restart;
 $("custom").oninput=()=>{S.custom=$("custom").value;save()};
 ["Humoris","Manja","Cuek tapi peduli","Perhatian","Sarkas halus","Puitis","Pemalu","Jahil","Bijak","Penyemangat","Suka curhat","Gampang baper"].forEach(t=>{const b=document.createElement("button");b.className="chip";b.textContent=t;b.onclick=()=>{const v=$("custom").value.trim(),a="Orangnya "+t.toLowerCase()+".";if(v.includes(a))return;$("custom").value=(v?v+" ":"")+a;$("custom").dispatchEvent(new Event("change"))};$("traits").appendChild(b)});
-renderTabs();renderChars();applyChar();$("workspace").hidden=true;$("landing").hidden=false;document.body.classList.remove("in-app","mode-sarkas");$("backModes").hidden=true;syncModeGate();})();
+renderTabs();renderChars();applyChar();$("workspace").hidden=true;$("landing").hidden=false;document.body.classList.remove("in-app","mode-sarkas");$("backModes").hidden=true;syncModeGate();checkServerAccess();})();
 </script>
 </body>
 </html>
