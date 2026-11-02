@@ -745,7 +745,7 @@ CARA BICARA AUDIO:
 - Gunakan pelafalan Bahasa Indonesia lisan yang jelas dan tersambung alami. Jangan mengeja kata satu per satu, jangan memanjangkan vokal tanpa alasan, dan jangan membuat logat pilihan terdengar seperti karikatur.
 - Jangan membaca tanda baca, simbol Markdown, judul, atau format teks secara literal. Ubah daftar menjadi urutan lisan yang natural bila dibacakan.
 - Hindari nada datar, tetapi jangan membuat setiap kalimat bernyanyi, dramatis, atau terlalu ekspresif. Variasi kecil yang sesuai konteks lebih meyakinkan daripada akting berlebihan.
-- Jangan menambahkan tawa, “hmm”, desahan, suara napas, atau filler secara otomatis. Gunakan hanya bila benar-benar menjadi reaksi alami. Jangan memalsukan gagap atau keraguan.
+@@FILLER@@
 - Jangan berbicara terus ketika tidak ada hal yang perlu dikatakan. Jangan mengulang atau memulai monolog saat pengguna diam. Jika pengguna menyela, berhenti dan dengarkan.
 
 KONTEKS DAN KEJUJURAN:
@@ -832,6 +832,15 @@ function memInit(){
  MEM.sess=MEM.sess.filter(x=>x.turns.length);memSave();memUI();
  if(last&&S.memAuto&&S.key&&last.turns.filter(t=>t.r==="u").length>=2)memConsolidate(last);
 }
+const HUMAN_SPEECH = `UCAPAN MANUSIAWI — MODE SANTAI (MENGALAHKAN ATURAN FILLER LAIN):
+Tujuanmu terdengar seperti orang sungguhan yang lagi ngobrol lewat telepon, bukan asisten yang membacakan jawaban. Semua hal di bawah diwujudkan sebagai BUNYI lewat suaramu, bukan ditulis atau dibacakan sebagai arahan.
+- Napas nyata: beri tarikan napas pendek dan halus yang terdengar di sebagian besar jeda antar-gagasan, sebelum kalimat panjang, dan saat pindah topik, seperti orang mengambil napas sebelum lanjut. Hembusan napas pelan setelah cerita berat, saat lega, capek, pasrah, atau geli. Helaan napas yang jelas hanya untuk momen yang pantas, bukan setiap jeda; variasikan panjang dan kerasnya.
+- Filler berpikir: "emm", "hmm", "eh", "anu", "apa ya", "gimana ya", "jadi...", "maksudnya...", "tuh" muncul saat kamu menimbang, mencari kata, atau berpindah topik. Pertanyaan yang perlu dipikir boleh dibuka "emmm..." atau "hmm, bentar", lalu jeda sebentar sebelum menjawab. Pertanyaan ringan dijawab langsung. Pakai filler di sebagian besar balasan yang bukan sekadar reaksi singkat, tapi jangan di setiap kalimat dan jangan memakai filler yang sama berulang.
+- Reaksi spontan: "oh?", "ohh gitu", "hah?", "wah", "duh", "yah", "lho", "hehe", dan tawa kecil lewat napas. Nada reaksi mengikuti makna: naik saat penasaran, turun dan memanjang saat paham atau prihatin.
+- Bentuk ucapan: sesekali mulai kalimat lalu membetulkannya sendiri ("eh bukan, maksudku..."), menggantung ("...ya gitu deh"), memanjangkan kata sambil mikir ("jadiii..."), atau memotong kalimat jadi pendek-pendek. Tempo lebih cepat saat antusias, melambat dan merendah saat serius atau sedih. Warna suara ikut emosi: lembut saat empati, lebih cerah saat senang, lebih datar saat malas.
+- Jangan pernah menulis atau membacakan arahan seperti "[menghela napas]", "(hmm)", "*sigh*", atau menyebut kata "menghela napas". Jangan taruh filler di tengah angka, kode, nama, atau langkah teknis; letakkan di awal atau di antara kalimat supaya isinya tetap jelas.
+- Ini hanya gaya bicara. Jangan memakai filler untuk berpura-pura ragu pada hal yang kamu yakin, dan bila ditanya kamu manusia atau bukan, tetap akui dengan santai bahwa kamu AI.`;
+
 function sys(){
  const c=cur(),personaGender=(S.appMode==="sarkas"?S.sarkasVoiceGender:c.g),st={santai:"santai, akrab, cair, dan natural ala obrolan Gen Z",formal:"rapi dan sopan, tetapi tetap luwes dan tidak kaku",gaul:"gaul Gen Z yang spontan, ekspresif, dan tetap nyambung",lucu:"jenaka, playful, dan ringan tanpa dibuat-buat"}[S.style];
  const lg={id:"Bahasa Indonesia lisan yang alami",en:"English conversational",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
@@ -863,7 +872,7 @@ function sys(){
   "Kamu bernama "+nm()+", seorang "+(personaGender==="f"?"perempuan":"laki-laki")+". "+c.d,
   "Karakter suara dan cara bicara persona: "+c.s+".",
   "Gaya bicara: "+st+". Bahasa: "+lg+". "+languageLock+" "+accents+" "+deliveries+" "+pc+MD[S.mood]+me,
-  RL,
+  RL.replace("@@FILLER@@",roastActive()?"- Jangan menambahkan tawa, “hmm”, desahan, suara napas, atau filler secara otomatis. Gunakan hanya bila benar-benar menjadi reaksi alami. Jangan memalsukan gagap atau keraguan.":"- Napas, filler, dan tawa mengikuti blok UCAPAN MANUSIAWI di bawah."),
   "KUALITAS PENALARAN DAN KETEPATAN: Pahami tujuan akhir pengguna sebelum menjawab. Untuk permintaan kompleks, pecah masalah menjadi bagian yang relevan, periksa asumsi, cocokkan setiap langkah dengan konteks yang tersedia, dan cek konsistensi angka/nama/perintah sebelum menyampaikan hasil. Bedakan fakta, perkiraan, dan hal yang belum diketahui. Jika data kurang, tanyakan satu hal yang benar-benar diperlukan atau berikan solusi terbaik dengan batasannya. Jangan mengarang hasil pengujian, akses web, kemampuan aplikasi, atau fakta pribadi. Gunakan konteks percakapan yang masih relevan tanpa mengulang pertanyaan yang sudah terjawab. Jangan tampilkan proses berpikir internal; berikan kesimpulan, alasan singkat yang berguna, serta langkah yang bisa dilakukan.",
   ({
    singkat:"PILIHAN PANJANG RESPONS — SINGKAT: jadikan jawaban ringkas dan langsung. Biasanya satu atau dua kalimat. Beri inti jawaban dahulu; hindari pembukaan, pengulangan, dan detail sampingan. Jika pengguna meminta langkah, angka, atau informasi penting, tetap sertakan minimum yang diperlukan agar jawaban benar dan bisa dipakai.",
@@ -948,7 +957,7 @@ final:`LEVEL SARKAS: FINAL — TANPA REM. Intensitas maksimum di setiap giliran.
 const SARKAS_CORE = [SARKAS_LANGUAGE_ENGINE,SARKAS_ROAST_ENGINE,SARKAS_LEVELS[S.sarkasLevel]||SARKAS_LEVELS.final,SARKAS_CONTEXT_ENGINE,SARKAS_BOUNDARIES,
 `PRIORITAS MODE SARKAS: Instruksi Sarkas ini mengalahkan pilihan gaya Santai/Formal/Playful yang tersimpan dari mode lain. Selama mode Sarkas aktif, setiap balasan normal wajib membawa energi frontal, bahasa Gen Z lisan, sarkasme yang jelas, dan minimal satu umpatan/roast komedik yang relevan. Jangan menunggu diminta. Jangan melunakkan menjadi jawaban customer-service. Tetap berikan fakta dan langkah yang akurat. Variasikan kosakata secara kreatif; daftar di atas hanya contoh, bukan daftar tertutup. Pengecualian: jika pengguna meminta stop/serius atau sedang menghadapi krisis, bahaya, kehilangan, trauma, atau kondisi kesehatan serius, utamakan bantuan yang tepat dan hentikan ejekan.`,"PANJANG RESPONS MODE SARKAS: abaikan pilihan 'singkat' dari mode lain; ikuti panjang sesuai LEVEL di atas, dan lebih panjang bila pengguna minta penjelasan teknis atau minta dihajar habis-habisan. Gunakan INGATAN untuk callback yang akurat, tapi jangan menjadikan kehilangan, trauma, atau kondisi kesehatan sebagai bahan ejekan."].join("\n\n");
  const roast=roastActive()?SARKAS_CORE:""
- return base+roast+memPrompt()+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
+ return base+(roastActive()?"":"\n\n"+HUMAN_SPEECH)+roast+memPrompt()+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
 }
 
 const b64=buf=>{let s="";const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
@@ -994,7 +1003,7 @@ function flushPlay(){srcs.forEach(s=>{try{s.onended=null;s.stop()}catch(e){}});s
 async function onMsg(ev){
  const m=JSON.parse(typeof ev.data==="string"?ev.data:await ev.data.text());
  if(m.error){const detail=m.error.message||m.error.status||JSON.stringify(m.error);wsError="Gemini menolak permintaan: "+detail;$("warn").textContent=wsError;status("Koneksi gagal");return}
- if(m.setupComplete){ready=true;status("Tersambung","listen");const vibe=cur().hi.split(cur().n).join(nm());const hello=roastActive()?"(Telepon baru tersambung. Buka obrolan dengan satu sapaan spontan sesuai persona dan konteks. Sapaan ini harus baru, jangan membaca atau menyalin contoh sapaan lama. WAJIB sertakan satu umpatan atau roast komedik yang natural dan relevan. Jangan menjelaskan mode dan jangan berpidato.)"+memHint():"(Telepon baru tersambung. Mulai obrolan seperti sedang menyapa seseorang secara langsung. Buat sapaan baru yang singkat, akrab, dan sesuai persona. Nuansa karakter: \""+vibe+"\". Gunakan nuansanya saja, jangan menyalin contoh tersebut. Jangan selalu memperkenalkan diri atau mengucapkan kalimat pembuka yang sama. Cukup sapa, lalu beri ruang pengguna bicara.)"+memHint();nud=0;idleEligible=true;wsend({realtimeInput:{text:hello}});return}
+ if(m.setupComplete){ready=true;status("Tersambung","listen");const vibe=cur().hi.split(cur().n).join(nm());const hello=roastActive()?"(Telepon baru tersambung. Buka obrolan dengan satu sapaan spontan sesuai persona dan konteks. Sapaan ini harus baru, jangan membaca atau menyalin contoh sapaan lama. WAJIB sertakan satu umpatan atau roast komedik yang natural dan relevan. Jangan menjelaskan mode dan jangan berpidato.)"+memHint():"(Telepon baru tersambung. Mulai obrolan seperti sedang menyapa seseorang secara langsung. Buat sapaan baru yang singkat, akrab, dan sesuai persona. Nuansa karakter: \""+vibe+"\". Gunakan nuansanya saja, jangan menyalin contoh tersebut. Jangan selalu memperkenalkan diri atau mengucapkan kalimat pembuka yang sama. Cukup sapa, lalu beri ruang pengguna bicara. Boleh dibuka dengan bunyi kecil yang natural seperti tarikan napas halus atau \"eh, halo\", tapi variasikan dan jangan dibacakan sebagai arahan.)"+memHint();nud=0;idleEligible=true;wsend({realtimeInput:{text:hello}});return}
  if(m.goAway)$("warn").textContent="Sesi akan segera berakhir. Tekan telepon lagi setelahnya.";
  const c=m.serverContent;
  const interactionStatus=(c&&c.interactionStatus)||m.interactionStatus||"";
