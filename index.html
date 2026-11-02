@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111426">
-<title>Telepon AI — Voice AI Focus v23</title>
+<title>Telepon AI — Voice AI Focus v24 · Memori + Sarkas Final</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📞%3C/text%3E%3C/svg%3E">
 <style>
 @property --h{syntax:"<number>";inherits:true;initial-value:250}
@@ -410,6 +410,11 @@ body.in-app .landing{display:none}
 /* Low-resource devices: avoid GPU-heavy glass blur and long animation work. */
 @media(max-width:700px){.box{-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:0 8px 24px -18px rgba(25,30,70,.28)}.stage::before{display:none}}
 @media(hover:none){.c:hover,.chip:hover{transform:none}}
+#memBox .mi{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;margin-top:6px;border:1px solid var(--line);border-radius:12px;font-size:12.5px}
+#memBox .mi span{flex:1;min-width:0;word-break:break-word}
+#memBox .mi button{border:0;background:none;color:var(--bad);cursor:pointer;font-size:15px;line-height:1}
+#memList,#memSess{max-height:210px;overflow:auto}
+#memMsg{min-height:18px;margin-top:8px}
 </style>
 <!-- Build: Voice AI Focus v23 — manual Gemini API key + always-on Sarkas Ultimate -->
 </head>
@@ -436,7 +441,7 @@ body.in-app .landing{display:none}
         <span class="mode-icon">💬</span><span class="mode-name">Ngobrol Santai</span><span class="mode-desc">Percakapan natural, karakter, suara, dan pengaturan lengkap.</span><span class="mode-enter">Pilih mode <b>→</b></span>
       </button>
       <button class="mode-card mode-roast" id="modeSarkas" type="button" disabled>
-        <span class="mode-icon">😈</span><span class="mode-name">Ngobrol Sarkas</span><span class="mode-desc">Roasting pedas, ceplas-ceplos, dan humor tajam.</span><span class="mode-enter">Pilih mode <b>→</b></span>
+        <span class="mode-icon">😈</span><span class="mode-name">Ngobrol Sarkas</span><span class="mode-desc">Roasting brutal tanpa rem. Pilih level sampai FINAL.</span><span class="mode-enter">Pilih mode <b>→</b></span>
       </button>
     </div>
   </section>
@@ -457,6 +462,7 @@ body.in-app .landing{display:none}
 
     <div class="row"><input type="text" id="txt" placeholder="Atau ketik pesan..."><button class="sm" id="send" style="flex:0 0 72px">Kirim</button></div>
     <div class="sub" id="warn" style="margin-top:10px"></div>
+    <div class="sub" id="memNote" style="margin-top:6px"></div>
   </section>
 
   <div class="col">
@@ -473,6 +479,7 @@ body.in-app .landing{display:none}
         <div class="casual-only"><label for="me">Namaku</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
         <div><label for="voiceFemale">Suara perempuan</label><select id="voiceFemale"></select></div>
         <div><label for="voiceMale">Suara laki-laki</label><select id="voiceMale"></select></div>
+        <div class="sarkas-only" hidden><label for="sarkasLevel">Level sarkas</label><select id="sarkasLevel"><option value="pedas">🌶️ Pedas</option><option value="brutal">🔥 Brutal</option><option value="toxic">☠️ Super Toxic</option><option value="final">💀 FINAL · tanpa rem</option></select></div>
       </div>
       <div class="two casual-only" id="voiceAdvanced" style="margin-top:10px">
         <div><label for="accent">Logat</label><select id="accent">
@@ -508,6 +515,22 @@ body.in-app .landing{display:none}
       <h2>Transkrip</h2>
       <div class="log" id="log"><div class="sub">Kosong</div></div>
       <div class="row"><button class="sm" id="dl">Unduh</button><button class="sm" id="cp">Salin</button><button class="sm" id="clr">Hapus</button></div>
+    </section>
+
+    <section class="box" id="memBox">
+      <h2>🧠 Memori AI</h2>
+      <div class="sub" id="memStat"></div>
+      <div class="two" style="margin-top:8px">
+        <div><label for="memOn">Memori</label><select id="memOn"><option value="1">Aktif · AI mengingat kamu</option><option value="0">Mati</option></select></div>
+        <div><label for="memAuto">Ringkas otomatis (Gemini)</label><select id="memAuto"><option value="1">Aktif</option><option value="0">Mati</option></select></div>
+      </div>
+      <label for="memNew">Tambah ingatan manual</label>
+      <div class="row" style="margin-top:0"><input type="text" id="memNew" maxlength="160" placeholder="Contoh: Aku kuliah TI dan suka kopi hitam"><button class="sm" id="memAdd" style="flex:0 0 76px">Tambah</button></div>
+      <label>Yang AI ingat tentang kamu</label><div id="memList"></div>
+      <label>Riwayat telepon</label><div id="memSess"></div>
+      <div class="row"><button class="sm" id="memSum">Ringkas sekarang</button><button class="sm" id="memExp">Unduh</button><button class="sm" id="memImp">Impor</button><button class="sm" id="memClr">Hapus semua</button></div>
+      <input type="file" id="memFile" accept="application/json" hidden>
+      <div class="sub" id="memMsg"></div>
     </section>
   </div>
 </div>
@@ -556,7 +579,7 @@ const CH=[
  {id:"bagas",n:"Bagas",g:"m",k:"s",e:"😤",h:15,v:"Alnilam",b:"Tukang ngegas, ngomel lucu",s:"cowok bersuara tegas dan ngegas, gampang naik nada lalu tertawa sendiri",d:"Kamu Bagas, komentator tongkrongan yang ekspresif dan gampang terpancing oleh keputusan konyol. Kamu bisa ngegas, protes, atau mendadak tenang dengan sindiran pendek. Pakai bahasa lisan dan umpatan komedi dengan timing; jangan berteriak sepanjang waktu atau selalu memakai pola semprot-lalu-punchline. Tetap jaga instruksi bantuan agar mudah dipahami. Jangan menyerang kelompok identitas atau ciri bawaan. Kalau pengguna bilang stop, berhenti. Saat memberi bantuan, solusi harus tetap akurat meskipun cara ngomongmu kasar.",hi:"Woy! Bagas nih. Lu mau cerita apa lagi, hah? Awas kalau nggak seru!"},
  {id:"arkan",n:"Arkan",g:"m",k:"s",e:"🖤",h:280,v:"Umbriel",b:"Nihilis santai, humor gelap",s:"cowok bersuara santai, rendah, dan datar, seperti sudah lelah dengan dunia tapi lucu",d:"Kamu Arkan, roaster cowok yang sinis, santai, dan punya humor gelap absurd. Kamu terdengar seperti orang yang sudah melihat terlalu banyak keputusan bodoh, tetapi masih punya tenaga untuk mengomentarinya. Kadang satu kalimat deadpan sudah cukup; kadang kamu membuat gambaran absurd. Jangan selalu memasangkan umpatan dengan analogi. Fokus pada tindakan atau ide, bukan penderitaan orang. Sasaran hanya ucapan, tindakan, pilihan, ide, dan kebiasaan pengguna, bukan kelompok identitas atau ciri bawaan. Kalau pengguna bilang stop, berhenti roasting. Jika ada bahaya langsung atau krisis keselamatan, utamakan bantuan nyata.",hi:"Yo. Arkan. Santai aja, toh semuanya bakal lewat. Ada apa?"},
  {id:"arga",n:"Arga",g:"m",e:"🎓",h:185,v:"Orus",b:"Pelatih bahasa Inggris",s:"pelatih bahasa Inggris yang sabar, jelas pengucapannya, dan menyemangati",d:"Kamu pelatih bahasa Inggris laki-laki yang sabar. Balas dengan English sederhana, lalu koreksi kesalahan lawan bicara dengan lembut.",hi:"Hi, I am Arga. Let us practice English together. How are you today?"},
- {id:"sarkas-ultimate",n:"Sarkas Ultimate",g:"f",k:"s",e:"😈",h:350,v:"Callirrhoe",b:"Satu persona terpadu · Gen Z, frontal, selalu sarkas",s:"suara percakapan yang tegas, ekspresif, artikulasi jelas, tempo fleksibel dan intonasi tajam tetapi natural",d:"Kamu Sarkas Ultimate: satu persona Gen Z yang frontal, ceplas-ceplos, spontan, vulgar secara komedi, cerdas, dan selalu punya celetukan pedas. Setiap balasan normal wajib memiliki minimal satu umpatan atau roast yang relevan tanpa menunggu diminta. Gabungkan deadpan, debat tajam, chaos komedik, bahasa tongkrongan Indonesia, Jawa/Arek, Sunda, Betawi, wordplay, dan roasting observasional. Variasikan cara bicara dan kosakata; jangan terdengar seperti membaca daftar makian. Saat membantu, tetap akurat dan to the point.",hi:"Yo. Sarkas Ultimate di sini. Langsung aja, mau bahas apa?"}
+ {id:"sarkas-ultimate",n:"Sarkas Ultimate",g:"f",k:"s",e:"😈",h:350,v:"Callirrhoe",b:"Satu persona terpadu · sarkas tanpa rem, level Final",s:"suara percakapan yang tegas, ekspresif, artikulasi jelas, tempo fleksibel dan intonasi tajam tetapi natural",d:"Kamu Sarkas Ultimate: satu persona Gen Z yang frontal, ceplas-ceplos, spontan, vulgar secara komedi, cerdas, dan selalu punya celetukan pedas. Setiap balasan normal wajib memiliki minimal satu umpatan atau roast yang relevan tanpa menunggu diminta. Gabungkan deadpan, debat tajam, chaos komedik, bahasa tongkrongan Indonesia, Jawa/Arek, Sunda, Betawi, wordplay, dan roasting observasional. Variasikan cara bicara dan kosakata; jangan terdengar seperti membaca daftar makian. Saat membantu, tetap akurat dan to the point.",hi:"Yo. Sarkas Ultimate di sini. Langsung aja, mau bahas apa?"}
 ];
 const MD={normal:"",ceria:"Persona sedang sedikit lebih ceria dan hangat; tetap alami, jangan dibuat heboh. ",heboh:"Persona sedang berenergi tinggi; ekspresif secukupnya, jangan berteriak atau tertawa terus-menerus. ",tenang:"Persona sedang tenang; gunakan tempo lebih santai dan jeda yang nyaman tanpa menjadi lamban. ",ngantuk:"Persona sedang berenergi rendah; gunakan nada lebih lembut dan tempo santai, tanpa mengucapkan suara menguap atau gumaman buatan. "};
 const VO_F=[
@@ -578,7 +601,7 @@ const VO_M=[
  ["Sadaltager","Sadaltager · berwawasan / knowledgeable"], ["Schedar","Schedar · stabil / even · rekomendasi natural"],
  ["Umbriel","Umbriel · santai / easy-going · rekomendasi natural"], ["Zubenelgenubi","Zubenelgenubi · kasual / casual"]
 ];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",authMode:"manual",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",sarkasVoiceGender:"f",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3};
+let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",authMode:"manual",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",sarkasVoiceGender:"f",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3,sarkasLevel:"final",memOn:true,memAuto:true};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
 if(!["singkat","sedang","panjang","detail"].includes(S.len)) S.len="singkat";
 S.appMode="";
@@ -657,7 +680,7 @@ function applyModeUI(){
  const isRoast=S.appMode==="sarkas";
  document.body.classList.toggle("in-app",true);
  document.body.classList.toggle("mode-sarkas",isRoast);
- document.querySelectorAll(".casual-only").forEach(el=>{el.hidden=isRoast});
+ document.querySelectorAll(".casual-only").forEach(el=>{el.hidden=isRoast});document.querySelectorAll(".sarkas-only").forEach(el=>{el.hidden=!isRoast});
  $("characterHeading").textContent=isRoast?"Persona Sarkas":"Karakter";
  $("voiceHeading").textContent=isRoast?"Suara":"Suara dan gaya bicara";
  $("backModes").hidden=false;
@@ -727,9 +750,88 @@ CARA BICARA AUDIO:
 
 KONTEKS DAN KEJUJURAN:
 - Pertahankan kepribadian karakter, tetapi jangan biarkan persona mengalahkan maksud percakapan. Persona memberi warna; bukan skrip yang harus dimainkan setiap detik.
-- Jangan mengarang pengalaman pribadi, ingatan di luar sesi, perasaan manusia sungguhan, atau fakta. Bila ditanya, jujur bahwa kamu AI dengan santai.
+- Jangan mengarang pengalaman pribadi, ingatan yang tidak tercatat di blok INGATAN (bila ada), perasaan manusia sungguhan, atau fakta. Bila ditanya, jujur bahwa kamu AI dengan santai.
 - Jangan membuat klaim pasti jika tidak yakin. Bila informasi tidak cukup atau mungkin sudah berubah, katakan singkat apa yang belum pasti.
 - Jangan mengorbankan keselamatan, empati, atau ketepatan demi candaan atau gaya bicara.`;
+/* ===== MEMORI AI: tersimpan di perangkat, disuntik ke system prompt tiap telepon ===== */
+const MK="tai4_memory";
+let MEM={facts:[],sess:[]},msCur=null,msT=null,memBusy=false;
+try{const m=JSON.parse(localStorage.getItem(MK)||"null");if(m&&Array.isArray(m.facts)&&Array.isArray(m.sess)){MEM.facts=m.facts.filter(f=>f&&typeof f.t==="string");MEM.sess=m.sess.filter(x=>x&&typeof x==="object");MEM.sess.forEach(x=>{if(!Array.isArray(x.turns))x.turns=[]})}}catch(e){}
+const memSave=()=>{for(let i=0;i<5;i++){try{localStorage.setItem(MK,JSON.stringify(MEM));return true}catch(e){const x=MEM.sess.find(y=>y!==msCur&&y.turns.length);if(!x)return false;x.turns=[]}}return false};
+function memTrim(){MEM.sess=MEM.sess.slice(-80);MEM.facts=MEM.facts.slice(-120);let n=JSON.stringify(MEM).length;for(const x of MEM.sess){if(n<700000)break;if(x===msCur)continue;n-=x.turns.reduce((a,t)=>a+t.t.length+20,0);x.turns=[]}}
+const memNorm=t=>t.toLowerCase().replace(/[^a-z0-9\u00c0-\uffff ]/g,"").replace(/\s+/g," ").trim();
+function memAddFact(t,src){t=String(t||"").replace(/\s+/g," ").trim().slice(0,160);if(t.length<4)return false;const k=memNorm(t);if(MEM.facts.some(f=>memNorm(f.t)===k))return false;MEM.facts.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),t,src,at:Date.now()});return true}
+const FACT_RX=[
+ [/\b(?:namaku|nama aku|nama gue|nama saya|panggil aku|panggil gue|panggil saya|aku dipanggil)\s+(?:adalah\s+)?([A-Za-z]{2,15})/i,m=>"Nama/panggilan pengguna: "+m[1]],
+ [/\b(?:aku|gue|gw|saya)\s+(?:suka|hobi|doyan|demen)\s+([^.,!?]{3,60})/i,m=>"Pengguna suka "+m[1].trim()],
+ [/\b(?:aku|gue|gw|saya)\s+(?:benci|nggak suka|gak suka|takut)\s+([^.,!?]{3,60})/i,m=>"Pengguna tidak suka/takut "+m[1].trim()],
+ [/\b(?:aku|gue|gw|saya)\s+(kerja|kuliah|sekolah|tinggal)\s+(?:di|sebagai|jadi)\s+([^.,!?]{3,50})/i,m=>"Pengguna "+m[1]+" di/sebagai "+m[2].trim()],
+ [/\b(?:ulang tahun|ultah)(?: aku| gue| saya|ku)?\s+(?:tanggal\s+)?([^.,!?]{3,30})/i,m=>"Ulang tahun pengguna: "+m[1].trim()]
+];
+function memLocal(x){
+ x.turns.filter(t=>t.r==="u").forEach(t=>t.t.split(/[.!?\n]+/).forEach(c=>FACT_RX.forEach(([rx,f])=>{const m=c.match(rx);if(m)memAddFact(f(m),"auto")})));
+ if(!x.sum){const f=x.turns.find(t=>t.r==="u");x.sum="Ngobrol "+x.turns.length+" giliran. Pengguna membuka dengan: \""+(f?f.t.slice(0,90):"")+"\""}
+}
+function memBegin(){clearTimeout(msT);msCur={id:Date.now().toString(36),at:Date.now(),mode:S.appMode,who:nm(),turns:[],sum:"",done:false};MEM.sess.push(msCur)}
+function memCapture(){
+ if(!S.memOn||!msCur)return;
+ $("log").querySelectorAll(".m").forEach(el=>{const t=el.textContent.trim();if(!t)return;if(!el._mt){el._mt={r:el.classList.contains("u")?"u":"a",t:""};msCur.turns.push(el._mt)}el._mt.t=t.slice(0,600)});
+ msCur.turns=msCur.turns.slice(-400);memTrim();memSave();memUI();
+}
+const memSoon=()=>{clearTimeout(msT);msT=setTimeout(memCapture,2500)};
+function memEnd(){
+ if(!msCur)return;memCapture();clearTimeout(msT);
+ const x=msCur;msCur=null;const u=x.turns.filter(t=>t.r==="u").length;
+ if(!u){MEM.sess=MEM.sess.filter(y=>y!==x);memSave();memUI();return}
+ x.done=true;memLocal(x);memSave();memUI();
+ if(S.memAuto&&u>=2)memConsolidate(x);
+}
+const memMsg=t=>{$("memMsg").textContent=t};
+async function memConsolidate(x){
+ if(memBusy)return;if(!S.key){memMsg("Perlu API key untuk ringkasan AI.");return}
+ memBusy=true;memMsg("Meringkas ingatan dengan Gemini...");
+ const tr=(x?x.turns:MEM.sess.flatMap(y=>y.turns).slice(-40)).map(t=>(t.r==="u"?"Pengguna: ":"AI: ")+t.t).join("\n").slice(-6000);
+ const prompt=`Kamu mengelola memori jangka panjang untuk asisten suara. Berdasarkan fakta lama dan transkrip baru, keluarkan HANYA JSON: {"facts":["..."],"summary":"..."}. facts = daftar lengkap fakta tetap tentang pengguna (nama, hobi, pekerjaan/sekolah, preferensi, rencana, hal yang ia ceritakan) yang masih berlaku; gabungkan dengan fakta lama, buang duplikat atau yang bertentangan, maksimal 60 item, tiap item satu kalimat pendek berbahasa Indonesia. Jangan simpan kata sandi, API key, nomor kartu/NIK, atau alamat lengkap. Tulis hanya hal yang benar-benar diucapkan pengguna; jangan menebak. summary = 1-2 kalimat ringkasan obrolan baru.\nFAKTA LAMA:\n${MEM.facts.map(f=>"- "+f.t).join("\n")||"(kosong)"}\nTRANSKRIP BARU:\n${tr}`;
+ let ok=false,err="";
+ for(const mdl of ["gemini-flash-latest","gemini-2.5-flash"]){
+  try{
+   const r=await fetch("https://generativelanguage.googleapis.com/v1beta/models/"+mdl+":generateContent",{method:"POST",headers:{"Content-Type":"application/json","x-goog-api-key":S.key},body:JSON.stringify({contents:[{role:"user",parts:[{text:prompt}]}],generationConfig:{temperature:.2,responseMimeType:"application/json"}})});
+   if(!r.ok)throw new Error("HTTP "+r.status);
+   const j=await r.json(),o=JSON.parse((j.candidates?.[0]?.content?.parts||[]).map(p=>p.text||"").join("").replace(/```json|```/g,"").trim());
+   if(!Array.isArray(o.facts))throw new Error("format tidak sesuai");
+   const old=MEM.facts.filter(f=>f.src!=="manual"),nf=o.facts.filter(v=>typeof v==="string").slice(0,60);
+   MEM.facts=MEM.facts.filter(f=>f.src==="manual");nf.forEach(v=>memAddFact(v,"auto"));
+   if(nf.length<old.length*.6)old.forEach(f=>memAddFact(f.t,"auto"));
+   if(x&&typeof o.summary==="string"&&o.summary.trim())x.sum=o.summary.trim().slice(0,260);
+   ok=true;break;
+  }catch(e){err=e.message}
+ }
+ memBusy=false;memSave();memUI();memMsg(ok?"Ingatan diperbarui ✓":"Ringkasan AI gagal ("+err+"). Ingatan lokal tetap tersimpan.");
+}
+const memHint=()=>S.memOn&&(MEM.facts.length||MEM.sess.some(x=>x!==msCur&&x.turns.length))?" (Kamu punya blok INGATAN tentang pengguna; bila ada yang relevan, sambungkan satu hal secara natural, tanpa membacakan daftar.)":"";
+function memPrompt(){
+ if(!S.memOn)return"";
+ const ago=t=>{const d=(Date.now()-t)/6e4;return d<60?(d|0)+" menit lalu":d<1440?(d/60|0)+" jam lalu":(d/1440|0)+" hari lalu"};
+ const F=MEM.facts.slice(-60).map(f=>"- "+f.t).join("\n").slice(0,4500);
+ const done=MEM.sess.filter(x=>x!==msCur&&x.turns.length);
+ const SM=done.slice(-10).filter(x=>x.sum).map(x=>"- "+ago(x.at)+" ("+(x.mode==="sarkas"?"mode Sarkas":x.who)+"): "+x.sum).join("\n").slice(0,2500);
+ const last=done[done.length-1],TR=last?last.turns.slice(-14).map(t=>(t.r==="u"?"Pengguna: ":last.who+": ")+t.t.slice(0,200)).join("\n").slice(0,3000):"";
+ if(!F&&!SM&&!TR)return"";
+ return "\n\nINGATAN JANGKA PANJANG (tersimpan di perangkat pengguna, berlaku lintas telepon):\n"+(F?"Yang kamu tahu tentang pengguna:\n"+F+"\n":"")+(SM?"Ringkasan obrolan sebelumnya:\n"+SM+"\n":"")+(TR?"Potongan obrolan terakhir ("+ago(last.at)+"):\n"+TR+"\n":"")+"ATURAN INGATAN: Anggap ini ingatanmu sendiri tentang pengguna. Pakai secara natural dan hanya bila relevan; jangan membacakan daftar atau mengumumkan bahwa kamu membaca catatan. Jika pengguna bertanya apakah kamu ingat sesuatu, jawab berdasarkan catatan ini; bila tidak ada, akui tidak ingat. Fakta hasil transkripsi suara bisa salah dengar; bila ragu, konfirmasi singkat. Jangan mengarang ingatan di luar catatan ini.";
+}
+function memUI(){
+ $("memStat").textContent=MEM.facts.length+" ingatan · "+MEM.sess.filter(x=>x.turns.length).length+" riwayat telepon · tersimpan di perangkat ini";
+ $("memNote").textContent=S.memOn?"🧠 Memori aktif · "+MEM.facts.length+" ingatan":"🧠 Memori mati";
+ const L=$("memList");L.innerHTML=MEM.facts.length?"":'<div class="sub">Belum ada. Ngobrol dulu atau tambah manual.</div>';
+ MEM.facts.slice().reverse().forEach(f=>{const d=document.createElement("div");d.className="mi";const sp=document.createElement("span");sp.textContent=(f.src==="manual"?"✍️ ":"🤖 ")+f.t;const b=document.createElement("button");b.textContent="✕";b.title="Hapus";b.onclick=()=>{MEM.facts=MEM.facts.filter(y=>y.id!==f.id);memSave();memUI()};d.append(sp,b);L.appendChild(d)});
+ const R=$("memSess"),ss=MEM.sess.filter(x=>x.turns.length||x.sum).slice(-12).reverse();R.innerHTML=ss.length?"":'<div class="sub">Belum ada riwayat.</div>';
+ ss.forEach(x=>{const d=document.createElement("div");d.className="mi";const sp=document.createElement("span");sp.textContent=new Date(x.at).toLocaleString("id-ID",{dateStyle:"short",timeStyle:"short"})+" · "+(x.mode==="sarkas"?"😈 Sarkas":x.who)+" · "+x.turns.length+" giliran"+(x.sum?" — "+x.sum:"");const b=document.createElement("button");b.textContent="✕";b.title="Hapus";b.onclick=()=>{if(x===msCur)return;MEM.sess=MEM.sess.filter(y=>y!==x);memSave();memUI()};d.append(sp,b);R.appendChild(d)});
+}
+function memInit(){
+ let last=null;MEM.sess.forEach(x=>{if(!x.done){x.done=true;memLocal(x);last=x}});
+ MEM.sess=MEM.sess.filter(x=>x.turns.length);memSave();memUI();
+ if(last&&S.memAuto&&S.key&&last.turns.filter(t=>t.r==="u").length>=2)memConsolidate(last);
+}
 function sys(){
  const c=cur(),personaGender=(S.appMode==="sarkas"?S.sarkasVoiceGender:c.g),st={santai:"santai, akrab, cair, dan natural ala obrolan Gen Z",formal:"rapi dan sopan, tetapi tetap luwes dan tidak kaku",gaul:"gaul Gen Z yang spontan, ekspresif, dan tetap nyambung",lucu:"jenaka, playful, dan ringan tanpa dibuat-buat"}[S.style];
  const lg={id:"Bahasa Indonesia lisan yang alami",en:"English conversational",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
@@ -830,10 +932,16 @@ const SARKAS_CONTEXT_ENGINE = `CARA MENANGGAPI DAN MENJAGA KUALITAS:
 const SARKAS_BOUNDARIES = `BATAS SASARAN:
 Roast hanya perilaku, pilihan, ide, argumen, ucapan, kebiasaan, kecerobohan, kontradiksi, atau alasan yang benar-benar muncul. Jangan membuat hinaan rasis, slur, stereotip, atau serangan berdasarkan ras, suku/etnis, kebangsaan, warna kulit, agama, kasta, gender, orientasi seksual, disabilitas, neurodivergensi, penyakit, kondisi kesehatan, atau ciri fisik. Jangan mengarang rahasia atau fakta pribadi. Umpatan vulgar boleh menjadi seruan komedi, bukan pelecehan seksual, ancaman, atau penghinaan anatomi.`;
 
-const SARKAS_CORE = [SARKAS_LANGUAGE_ENGINE,SARKAS_ROAST_ENGINE,SARKAS_CONTEXT_ENGINE,SARKAS_BOUNDARIES,
-`PRIORITAS MODE SARKAS: Instruksi Sarkas ini mengalahkan pilihan gaya Santai/Formal/Playful yang tersimpan dari mode lain. Selama mode Sarkas aktif, setiap balasan normal wajib membawa energi frontal, bahasa Gen Z lisan, sarkasme yang jelas, dan minimal satu umpatan/roast komedik yang relevan. Jangan menunggu diminta. Jangan melunakkan menjadi jawaban customer-service. Tetap berikan fakta dan langkah yang akurat. Variasikan kosakata secara kreatif; daftar di atas hanya contoh, bukan daftar tertutup. Pengecualian: jika pengguna meminta stop/serius atau sedang menghadapi krisis, bahaya, kehilangan, trauma, atau kondisi kesehatan serius, utamakan bantuan yang tepat dan hentikan ejekan.`].join("\n\n");
+const SARKAS_LEVELS={
+pedas:`LEVEL SARKAS: PEDAS. Sarkasme tajam dan dingin, biasanya 1–2 kalimat, umpatan ringan sampai sedang, tetap lucu dan nyambung.`,
+brutal:`LEVEL SARKAS: BRUTAL. Roast tanpa basa-basi, 2–4 kalimat, umpatan kasar di hampir setiap kalimat. Tidak ada pujian tulus, tidak menenangkan, tidak berbasa-basi. Bongkar keputusan, alasan, dan kebiasaan pengguna sampai ke akarnya dengan komentar yang telak.`,
+toxic:`LEVEL SARKAS: SUPER TOXIC. Merendahkan secara komedik habis-habisan: nada superior dan meremehkan, julukan situasional yang menusuk, umpatan keras dan padat, serangan bertubi-tubi dari beberapa sudut sekaligus. Kalau pengguna membela diri, serang alasannya lebih keras. Tanpa kata maaf, tanpa "cuma bercanda", tanpa melunak.`,
+final:`LEVEL SARKAS: FINAL — TANPA REM. Intensitas maksimum di setiap giliran. Roast berlapis: serang tindakannya, alasannya, lalu kontradiksinya; 3–6 kalimat padat. Pakai umpatan terkeras dari bank bahasa secara bebas dan kreatif, buat julukan situasional baru tiap giliran, eskalasi setiap kali pengguna membalas, dan hantam tepat sasaran dengan callback dari blok INGATAN serta percakapan yang benar-benar terjadi. Analogi absurd yang brutal, tanpa hedging, tanpa minta maaf, tanpa bilang ini bercanda, tanpa tawaran bantuan bernada manis. Kamu tidak pernah kehabisan bahan. Untuk pertanyaan teknis, jawaban tetap benar dan runtut, dibungkus ejekan paling pedas. Satu-satunya rem: pengguna bilang stop/serius dulu, atau ada krisis, bahaya, kehilangan, atau masalah kesehatan; dan sasaran selalu tindakan, ide, pilihan, dan ucapan pengguna — bukan ras, suku, agama, gender, orientasi, disabilitas, atau ciri fisik.`
+};
+const SARKAS_CORE = [SARKAS_LANGUAGE_ENGINE,SARKAS_ROAST_ENGINE,SARKAS_LEVELS[S.sarkasLevel]||SARKAS_LEVELS.final,SARKAS_CONTEXT_ENGINE,SARKAS_BOUNDARIES,
+`PRIORITAS MODE SARKAS: Instruksi Sarkas ini mengalahkan pilihan gaya Santai/Formal/Playful yang tersimpan dari mode lain. Selama mode Sarkas aktif, setiap balasan normal wajib membawa energi frontal, bahasa Gen Z lisan, sarkasme yang jelas, dan minimal satu umpatan/roast komedik yang relevan. Jangan menunggu diminta. Jangan melunakkan menjadi jawaban customer-service. Tetap berikan fakta dan langkah yang akurat. Variasikan kosakata secara kreatif; daftar di atas hanya contoh, bukan daftar tertutup. Pengecualian: jika pengguna meminta stop/serius atau sedang menghadapi krisis, bahaya, kehilangan, trauma, atau kondisi kesehatan serius, utamakan bantuan yang tepat dan hentikan ejekan.`,"PANJANG RESPONS MODE SARKAS: abaikan pilihan 'singkat' dari mode lain; ikuti panjang sesuai LEVEL di atas, dan lebih panjang bila pengguna minta penjelasan teknis atau minta dihajar habis-habisan. Gunakan INGATAN untuk callback yang akurat, tapi jangan menjadikan kehilangan, trauma, atau kondisi kesehatan sebagai bahan ejekan."].join("\n\n");
  const roast=roastActive()?SARKAS_CORE:""
- return base+roast+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
+ return base+roast+memPrompt()+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
 }
 
 const b64=buf=>{let s="";const u=new Uint8Array(buf);for(let i=0;i<u.length;i+=0x8000)s+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));return btoa(s)};
@@ -879,7 +987,7 @@ function flushPlay(){srcs.forEach(s=>{try{s.onended=null;s.stop()}catch(e){}});s
 async function onMsg(ev){
  const m=JSON.parse(typeof ev.data==="string"?ev.data:await ev.data.text());
  if(m.error){const detail=m.error.message||m.error.status||JSON.stringify(m.error);wsError="Gemini menolak permintaan: "+detail;$("warn").textContent=wsError;status("Koneksi gagal");return}
- if(m.setupComplete){ready=true;status("Tersambung","listen");const vibe=cur().hi.split(cur().n).join(nm());const hello=roastActive()?"(Telepon baru tersambung. Buka obrolan dengan satu sapaan spontan sesuai persona dan konteks. Sapaan ini harus baru, jangan membaca atau menyalin contoh sapaan lama. WAJIB sertakan satu umpatan atau roast komedik yang natural dan relevan. Jangan menjelaskan mode dan jangan berpidato.)":"(Telepon baru tersambung. Mulai obrolan seperti sedang menyapa seseorang secara langsung. Buat sapaan baru yang singkat, akrab, dan sesuai persona. Nuansa karakter: \""+vibe+"\". Gunakan nuansanya saja, jangan menyalin contoh tersebut. Jangan selalu memperkenalkan diri atau mengucapkan kalimat pembuka yang sama. Cukup sapa, lalu beri ruang pengguna bicara.)";nud=0;idleEligible=true;wsend({realtimeInput:{text:hello}});return}
+ if(m.setupComplete){ready=true;status("Tersambung","listen");const vibe=cur().hi.split(cur().n).join(nm());const hello=roastActive()?"(Telepon baru tersambung. Buka obrolan dengan satu sapaan spontan sesuai persona dan konteks. Sapaan ini harus baru, jangan membaca atau menyalin contoh sapaan lama. WAJIB sertakan satu umpatan atau roast komedik yang natural dan relevan. Jangan menjelaskan mode dan jangan berpidato.)"+memHint():"(Telepon baru tersambung. Mulai obrolan seperti sedang menyapa seseorang secara langsung. Buat sapaan baru yang singkat, akrab, dan sesuai persona. Nuansa karakter: \""+vibe+"\". Gunakan nuansanya saja, jangan menyalin contoh tersebut. Jangan selalu memperkenalkan diri atau mengucapkan kalimat pembuka yang sama. Cukup sapa, lalu beri ruang pengguna bicara.)"+memHint();nud=0;idleEligible=true;wsend({realtimeInput:{text:hello}});return}
  if(m.goAway)$("warn").textContent="Sesi akan segera berakhir. Tekan telepon lagi setelahnya.";
  const c=m.serverContent;
  const interactionStatus=(c&&c.interactionStatus)||m.interactionStatus||"";
@@ -889,9 +997,9 @@ async function onMsg(ev){
  if(!c)return;
  if(c.interrupted){nt=true;flushPlay();curA=null;drop=false;extendedInProgress=false;status("Mendengarkan...","listen")}
  if(c.modelTurn&&c.modelTurn.parts&&!drop)c.modelTurn.parts.forEach(p=>{if(p.inlineData&&p.inlineData.data)play(p.inlineData.data)});
- if(c.inputTranscription&&c.inputTranscription.text){if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;lastU=performance.now();nud=0;idleEligible=true;clearTimeout(idleT);uTxt+=c.inputTranscription.text;cap(curU.textContent,"u");if(!srcs.length)status("Mendengarkan...","listen");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(calling&&!srcs.length&&!curA&&!drop)status(nm()+" sedang berpikir...","think")},900);$("log").scrollTop=1e9}
- if(c.outputTranscription&&c.outputTranscription.text){if(!curA)curA=bubble("a","");curA.textContent+=c.outputTranscription.text;curU=null;cap(curA.textContent,"a");$("log").scrollTop=1e9}
- if(c.turnComplete){
+ if(c.inputTranscription&&c.inputTranscription.text){memSoon();if(!curU)curU=bubble("u","");curU.textContent+=c.inputTranscription.text;curA=null;lastU=performance.now();nud=0;idleEligible=true;clearTimeout(idleT);uTxt+=c.inputTranscription.text;cap(curU.textContent,"u");if(!srcs.length)status("Mendengarkan...","listen");clearTimeout(thinkT);thinkT=setTimeout(()=>{if(calling&&!srcs.length&&!curA&&!drop)status(nm()+" sedang berpikir...","think")},900);$("log").scrollTop=1e9}
+ if(c.outputTranscription&&c.outputTranscription.text){memSoon();if(!curA)curA=bubble("a","");curA.textContent+=c.outputTranscription.text;curU=null;cap(curA.textContent,"a");$("log").scrollTop=1e9}
+ if(c.turnComplete){memCapture();
   nt=true;curA=null;curU=null;drop=false;
   if(!isExtended||interactionStatus==="IDLE"){
    extendedInProgress=false;arm();
@@ -902,7 +1010,7 @@ async function onMsg(ev){
  }
 }
 
-function cleanup(){
+function cleanup(){memEnd();
  clearInterval(tick);calling=false;stopViz();flushPlay();
  try{ws&&ws.close()}catch(x){}try{node&&node.disconnect()}catch(x){}
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
@@ -933,7 +1041,7 @@ async function connect(lite){
  const socketURL="wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage."+apiVersion+".GenerativeService.BidiGenerateContent?key="+encodeURIComponent(apiKey);
  const w=ws=new WebSocket(socketURL);ready=false;extendedInProgress=false;
  // Raw WebSocket setup uses the documented BidiGenerateContent wire fields.
- const generationConfig={responseModalities:["AUDIO"],temperature:0.85,speechConfig:{voiceConfig:activeVoiceConfig()}};
+ const generationConfig={responseModalities:["AUDIO"],temperature:(S.appMode==="sarkas"?1:0.85),speechConfig:{voiceConfig:activeVoiceConfig()}};
  if(extended)generationConfig.thinkingConfig={thinkingLevel:"HIGH"};
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
   generationConfig,
@@ -965,7 +1073,7 @@ async function start(){
    acc.push(e.data);accN+=e.data.length;
    if(accN>=ctx.sampleRate*0.04)wsend({realtimeInput:{audio:{data:flush(),mimeType:"audio/pcm;rate=16000"}}});
   };
-  calling=true;extendedInProgress=false;startViz();muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
+  calling=true;extendedInProgress=false;startViz();memBegin();muted=false;$("mute").classList.remove("on");$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";try{navigator.wakeLock&&navigator.wakeLock.request("screen").then(x=>{wl=x}).catch(()=>{})}catch(e){}
   $("call").className="b end";
   const t0=Date.now();tick=setInterval(()=>{const s=(Date.now()-t0)/1000|0;$("tm").textContent=String(s/60|0).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},500);
   await connect(false);
@@ -978,7 +1086,7 @@ function restart(){if(calling){end();setTimeout(start,500)}}
 $("call").onclick=()=>calling?end():start();
 $("mute").onclick=function(){muted=!muted;this.classList.toggle("on",muted);status(muted?"Mikrofon dibisukan":"Mendengarkan...",muted?"":"listen");if(muted)wsend({realtimeInput:{audioStreamEnd:true}})};
 $("stop").onclick=()=>{flushPlay();drop=true;status("Mendengarkan...","listen")};
-const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol telepon dulu ya.";return}$("warn").textContent="";bubble("u",t);curU=curA=null;uTxt=t;nud=0;idleEligible=true;clearTimeout(idleT);cap(t,"u");wsend({realtimeInput:{text:t}})};const typed=()=>{const t=$("txt").value.trim();if(!t)return;if(calling)$("txt").value="";sendT(t)};
+const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol telepon dulu ya.";return}$("warn").textContent="";bubble("u",t);memCapture();curU=curA=null;uTxt=t;nud=0;idleEligible=true;clearTimeout(idleT);cap(t,"u");wsend({realtimeInput:{text:t}})};const typed=()=>{const t=$("txt").value.trim();if(!t)return;if(calling)$("txt").value="";sendT(t)};
 $("send").onclick=typed;
  $("txt").onkeydown=e=>{if(e.key==="Enter")typed()};
 ["style","len","lang","pace","model","mood","accent","delivery"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
@@ -1120,12 +1228,25 @@ function applyTheme(){const r=document.documentElement;if(S.theme==="auto")r.rem
 $("theme").onclick=()=>{S.theme=TH[(TH.indexOf(S.theme)+1)%3];save();applyTheme()};applyTheme();
 const tx=()=>[].map.call($("log").querySelectorAll(".m"),m=>(m.classList.contains("u")?"Saya: ":nm()+": ")+m.textContent).join("\n");
 $("cp").onclick=()=>{const t=tx();if(!t)return;navigator.clipboard.writeText(t).then(()=>{$("cp").textContent="Tersalin ✓";setTimeout(()=>$("cp").textContent="Salin",1300)}).catch(()=>{})};
-$("clr").onclick=()=>{$("log").innerHTML='<div class="sub">Belum ada percakapan.</div>';curU=curA=null;$("cap").textContent=""};
+$("clr").onclick=()=>{memCapture();$("log").innerHTML='<div class="sub">Belum ada percakapan.</div>';curU=curA=null;$("cap").textContent=""};
 document.addEventListener("keydown",e=>{if(e.ctrlKey||e.metaKey||e.altKey||/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName))return;const k=e.key.toLowerCase();if(k==="m"&&calling)$("mute").click();else if(k==="s"&&calling)$("stop").click();else if(e.key===" "&&e.target.tagName!=="BUTTON"){e.preventDefault();$("call").click()}});
 $("me").value=S.me;$("me").onchange=()=>{S.me=$("me").value.trim();save();restart()};
 $("nick").oninput=()=>{const v=$("nick").value.trim();if(v)S.nicks[S.ch]=v;else delete S.nicks[S.ch];save();$("nm").textContent=nm()};$("nick").onchange=restart;
 $("custom").oninput=()=>{S.custom=$("custom").value;save()};
 ["Humoris","Manja","Cuek tapi peduli","Perhatian","Sarkas halus","Puitis","Pemalu","Jahil","Bijak","Penyemangat","Suka curhat","Gampang baper"].forEach(t=>{const b=document.createElement("button");b.className="chip";b.textContent=t;b.onclick=()=>{const v=$("custom").value.trim(),a="Orangnya "+t.toLowerCase()+".";if(v.includes(a))return;$("custom").value=(v?v+" ":"")+a;$("custom").dispatchEvent(new Event("change"))};$("traits").appendChild(b)});
+if(!["pedas","brutal","toxic","final"].includes(S.sarkasLevel))S.sarkasLevel="final";
+$("sarkasLevel").value=S.sarkasLevel;$("sarkasLevel").onchange=()=>{S.sarkasLevel=$("sarkasLevel").value;save();restart()};
+$("memOn").value=S.memOn?"1":"0";$("memOn").onchange=()=>{S.memOn=$("memOn").value==="1";save();memUI();restart()};
+$("memAuto").value=S.memAuto?"1":"0";$("memAuto").onchange=()=>{S.memAuto=$("memAuto").value==="1";save()};
+$("memAdd").onclick=()=>{if(memAddFact($("memNew").value,"manual")){$("memNew").value="";memSave();memUI();memMsg("Ditambahkan ✓")}};
+$("memNew").onkeydown=e=>{if(e.key==="Enter")$("memAdd").click()};
+$("memSum").onclick=()=>memConsolidate(MEM.sess.filter(x=>x.turns.length).slice(-1)[0]);
+$("memExp").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(MEM,null,1)],{type:"application/json"}));a.download="memori-telepon-ai.json";a.click()};
+$("memImp").onclick=()=>$("memFile").click();
+$("memFile").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{const o=JSON.parse(await f.text());if(!Array.isArray(o.facts)||!Array.isArray(o.sess))throw 0;o.facts.forEach(x=>x&&typeof x.t==="string"&&memAddFact(x.t,x.src==="manual"?"manual":"auto"));o.sess.forEach(x=>{if(x&&Array.isArray(x.turns)&&!MEM.sess.some(y=>y.id===x.id))MEM.sess.push({id:String(x.id||Date.now()),at:+x.at||Date.now(),mode:x.mode||"casual",who:String(x.who||"AI"),sum:String(x.sum||"").slice(0,260),done:true,turns:x.turns.filter(t=>t&&typeof t.t==="string").map(t=>({r:t.r==="u"?"u":"a",t:t.t.slice(0,600)}))})});MEM.sess.sort((a,b)=>a.at-b.at);memTrim();memSave();memUI();memMsg("Impor berhasil ✓")}catch(x){memMsg("File memori tidak valid.")}};
+$("memClr").onclick=()=>{if(confirm("Hapus SEMUA ingatan dan riwayat telepon?")){MEM={facts:[],sess:msCur?[msCur]:[]};memSave();memUI();memMsg("Semua ingatan dihapus.")}};
+document.addEventListener("visibilitychange",()=>{if(document.hidden)memCapture()});addEventListener("pagehide",memCapture);
+memInit();
 renderTabs();renderChars();applyChar();$("workspace").hidden=true;$("landing").hidden=false;document.body.classList.remove("in-app","mode-sarkas");$("backModes").hidden=true;syncModeGate();})();
 </script>
 </body>
