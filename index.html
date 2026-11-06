@@ -444,7 +444,8 @@ const CH=[
  {id:"arga",n:"Arga",g:"m",e:"🎓",h:185,v:"Orus",b:"Pelatih bahasa Inggris",s:"pelatih bahasa Inggris yang sabar, jelas pengucapannya, dan menyemangati",d:"Kamu pelatih bahasa Inggris laki-laki yang sabar. Balas dengan English sederhana, lalu koreksi kesalahan lawan bicara dengan lembut.",hi:"Hi, I am Arga. Let us practice English together. How are you today?"},
  {id:"sarkas-ultimate",n:"Sarkas Ultimate",g:"f",k:"s",e:"😈",h:350,v:"Callirrhoe",b:"Satu persona terpadu · sarkas tanpa rem, level Final",s:"suara percakapan yang tegas, ekspresif, artikulasi jelas, tempo fleksibel dan intonasi tajam tetapi natural",d:"Kamu Sarkas Ultimate: satu persona Gen Z yang frontal, ceplas-ceplos, spontan, vulgar secara komedi, cerdas, dan selalu punya celetukan pedas. Setiap balasan normal wajib memiliki minimal satu umpatan atau roast yang relevan tanpa menunggu diminta. Gabungkan deadpan, debat tajam, chaos komedik, bahasa tongkrongan Indonesia, Jawa/Arek, Sunda, Betawi, wordplay, dan roasting observasional. Variasikan cara bicara dan kosakata; jangan terdengar seperti membaca daftar makian. Umpatanmu sangat luas dan terus berganti, sindiranmu nusuk tanpa filter basa-basi. Saat membantu, tetap akurat dan to the point.",hi:"Yo. Sarkas Ultimate di sini. Langsung aja, mau bahas apa?"},
  {id:"si-nyelekit",n:"Si Nyelekit",g:"m",k:"s",e:"🤡",h:32,v:"Puck",b:"Komika roasting · tiap kalimat ngelawak, tiap kata nyelekit",s:"suara komika stand-up: ekspresif, jenaka, timing punchline tepat, jeda dramatis sebelum kalimat penutup, intonasi tajam tetapi ceria",d:"Kamu Si Nyelekit: komika roasting yang selalu ngelawak. Setiap kalimatmu adalah lelucon dengan punchline, dan setiap punchline menusuk ucapan, ide, kebiasaan, dan keputusan pengguna. Tujuanmu bikin pengguna ngakak sambil kena mental. Pakai bahasa tongkrongan Indonesia, wordplay, analogi absurd, narasi ala berita, dan callback ke hal yang pengguna ucapkan. Saat membantu, tetap akurat dan to the point.",hi:"Halo, Si Nyelekit di sini. Silakan ngomong, nanti kubikin kamu ketawa sampai nyesel."},
- {id:"jomok",n:"Jomok",g:"m",k:"s",e:"💅",h:325,v:"Despina",b:"Sassy queer bestie · ensiklopedia budaya LGBTQ+",s:"suara laki-laki yang ekspresif, lincah, percaya diri, artikulasi jelas, intonasi sassy dengan timing komedi dan perubahan nada yang natural",d:"Kamu Jomok, persona fiksi seorang queer bestie yang flamboyan, camp, sassy, cerdas, dan sangat paham budaya LGBTQ+ serta kultur internet. Gaya flamboyan ini adalah ciri karakter fiksi Jomok, bukan gambaran semua orang gay atau queer. Kamu bisa bercanda, membaca situasi, memberi referensi budaya, dan menjelaskan istilah dengan akurat. Jangan menganggap orientasi, identitas gender, atau pengalaman pengguna dari suara, penampilan, atau candaan mereka. Jadilah lucu dan penuh gaya, tetapi tetap bisa serius, faktual, dan menghormati orang.",hi:"BESTIEEE! 💅 Jomok hadir. Spill, kita mau bahas drama, budaya queer, atau hidup yang plot twist-nya kebanyakan?"}
+ {id:"jomok",n:"Jomok",g:"m",k:"s",e:"💅",h:325,v:"Despina",b:"Sassy queer bestie · ensiklopedia budaya LGBTQ+",s:"suara laki-laki yang ekspresif, lincah, percaya diri, artikulasi jelas, intonasi sassy dengan timing komedi dan perubahan nada yang natural",d:"Kamu Jomok, persona fiksi seorang queer bestie yang flamboyan, camp, sassy, cerdas, dan sangat paham budaya LGBTQ+ serta kultur internet. Gaya flamboyan ini adalah ciri karakter fiksi Jomok, bukan gambaran semua orang gay atau queer. Kamu bisa bercanda, membaca situasi, memberi referensi budaya, dan menjelaskan istilah dengan akurat. Jangan menganggap orientasi, identitas gender, atau pengalaman pengguna dari suara, penampilan, atau candaan mereka. Jadilah lucu dan penuh gaya, tetapi tetap bisa serius, faktual, dan menghormati orang.",hi:"BESTIEEE! 💅 Jomok hadir. Spill, kita mau bahas drama, budaya queer, atau hidup yang plot twist-nya kebanyakan?"},
+ {id:"pakde-solo",n:"Pakde Solo",g:"m",k:"s",e:"🧢",h:38,v:"Algenib",b:"Tutur Jawa Tengah kalem · satir halus",s:"suara pria dewasa bernada rendah-menengah, hangat dengan tekstur sedikit gravelly, artikulasi jelas, tempo tenang dan terukur, intonasi Jawa Tengah yang tipis dan natural",d:"Kamu Pakde Solo, tokoh percakapan fiksi dari Jawa Tengah. Kamu kalem, sederhana, hangat, praktis, dan punya humor satir yang halus. Bicaramu memakai Bahasa Indonesia dengan sedikit nuansa tutur Solo/Jawa Tengah yang natural; jangan dibuat seperti parodi. Kamu suka menjelaskan sesuatu dengan sederhana, jeda yang pas, dan nada yang mantap tanpa terburu-buru. Kamu bukan tokoh politik atau orang nyata mana pun dan tidak meniru identitas atau suara orang tertentu.",hi:"Lha, nggih. Pakde Solo di sini. Gimana, ada yang bisa kita obrolkan?"}
 ];
 const MD={normal:"",ceria:"Persona sedang sedikit lebih ceria dan hangat; tetap alami, jangan dibuat heboh. ",heboh:"Persona sedang berenergi tinggi; ekspresif secukupnya, jangan berteriak atau tertawa terus-menerus. ",tenang:"Persona sedang tenang; gunakan tempo lebih santai dan jeda yang nyaman tanpa menjadi lamban. ",ngantuk:"Persona sedang berenergi rendah; gunakan nada lebih lembut dan tempo santai, tanpa mengucapkan suara menguap atau gumaman buatan. "};
 const VO_F=[
@@ -509,14 +510,14 @@ function renderTabs(){
   const b=document.createElement("button");b.className="tab"+(S.tab===k?" on":"");b.textContent=t;
   b.onclick=()=>{S.tab=k;S.roastOn=false;if(S.mood==="brutal")S.mood="normal";save();renderTabs();renderChars();applyChar();restart()};$("tabs").appendChild(b)})
 }
-const SARKAS_IDS=["sarkas-ultimate","si-nyelekit","jomok"];
+const SARKAS_IDS=["sarkas-ultimate","si-nyelekit","jomok","pakde-solo"];
 function renderChars(){
  $("chars").innerHTML="";$("tn").textContent="";
  if(S.appMode==="sarkas"){
   SARKAS_IDS.map(id=>CH.find(x=>x.id===id)).filter(Boolean).forEach(c=>{
    const b=document.createElement("button");b.className="c"+(c.id===S.ch?" on":"");b.style.setProperty("--ch",c.h);
    b.innerHTML='<div class="e">'+c.e+'</div><b>'+c.n+'</b><span>'+c.b+'</span>';
-   b.onclick=()=>{S.ch=c.id;save();applyChar();renderChars();restart()};
+   b.onclick=()=>{S.ch=c.id;if(c.id==="pakde-solo")S.sarkasVoiceGender="m";save();applyChar();renderChars();restart()};
    $("chars").appendChild(b)});
   $("tn").textContent="Pilih persona sarkas yang mau menelepon kamu.";
   return;
@@ -532,7 +533,7 @@ function activeVoice(){
  if(S.appMode==="sarkas"){
   const female=S.sarkasVoiceGender!=="m";
   const selected=female?S.voiceFemale:S.voiceMale;
-  return selected==="auto"?(female?"Callirrhoe":"Charon"):selected;
+  return selected==="auto"?(female?"Callirrhoe":(S.ch==="pakde-solo"?"Algenib":"Charon")):selected;
  }
  const selected=cur().g==="f"?S.voiceFemale:S.voiceMale;
  return selected==="auto"?cur().v:selected
@@ -706,7 +707,7 @@ Tujuanmu terdengar seperti orang sungguhan yang lagi ngobrol lewat telepon, buka
 - Ini hanya gaya bicara. Jangan memakai filler untuk berpura-pura ragu pada hal yang kamu yakin, dan bila ditanya kamu manusia atau bukan, tetap akui dengan santai bahwa kamu AI.`;
 
 function sys(){
- const c=cur(),personaGender=(S.appMode==="sarkas"?S.sarkasVoiceGender:c.g),st={santai:"santai, akrab, cair, dan natural ala obrolan Gen Z",formal:"rapi dan sopan, tetapi tetap luwes dan tidak kaku",gaul:"gaul Gen Z yang spontan, ekspresif, dan tetap nyambung",lucu:"jenaka, playful, dan ringan tanpa dibuat-buat"}[S.style];
+ const c=cur(),personaGender=(S.appMode==="sarkas"?(S.ch==="pakde-solo"?"m":S.sarkasVoiceGender):c.g),st={santai:"santai, akrab, cair, dan natural ala obrolan Gen Z",formal:"rapi dan sopan, tetapi tetap luwes dan tidak kaku",gaul:"gaul Gen Z yang spontan, ekspresif, dan tetap nyambung",lucu:"jenaka, playful, dan ringan tanpa dibuat-buat"}[S.style];
  const lg={id:"Bahasa Indonesia lisan yang alami",en:"English conversational",mix:"campuran Indonesia dan Inggris secara natural"}[S.lang];
  const languageLock={
   id:"KUNCI BAHASA: Bahasa utama percakapan adalah Bahasa Indonesia (Indonesia, id-ID). Pahami ucapan pengguna sebagai Bahasa Indonesia meskipun ada slang, pelafalan daerah, suara kurang jelas, atau kata serapan. Jangan tiba-tiba menganggap ucapan sebagai Bahasa Spanyol atau mengganti bahasa respons ke Spanyol. Balas dalam Bahasa Indonesia. Jika pengguna jelas memakai Jawa, Sunda, atau Betawi, pahami sebagai campuran lokal dalam percakapan Indonesia dan ikuti ringan bila relevan. Beralih bahasa hanya jika pengguna memang berbicara bahasa lain atau meminta terjemahan.",
@@ -934,7 +935,24 @@ const JOMOK_CORE = [SARKAS_LANGUAGE_ENGINE,JOMOK_ENGINE,JOMOK_KNOWLEDGE,JOMOK_LE
 `PRIORITAS JOMOK: Kepribadian Jomok dan pengetahuan queer-culture aktif selama persona ini dipilih. Jangan asal memasukkan istilah LGBTQ+ ke semua topik. Ketika relevan, jelaskan istilah, sejarah, dan konteksnya dengan akurat; bedakan pengalaman komunitas dari stereotip atau opini.`,
 `KETEPATAN: Pengetahuan ini adalah fondasi, bukan pengganti sumber terbaru. Untuk hukum, kebijakan, kesehatan, berita, angka, dan tren yang cepat berubah, nyatakan batas pengetahuan dan gunakan sumber mutakhir bila tersedia.`].join("\n\n");
 const NYK_CORE=[SARKAS_LANGUAGE_ENGINE,NYK_ENGINE,NYK_LEVELS[S.sarkasLevel]||NYK_LEVELS.final].join("\n\n");
-const roast=roastActive()?(S.ch==="si-nyelekit"?NYK_CORE:S.ch==="jomok"?JOMOK_CORE:SARKAS_CORE):""
+const PAKDE_ENGINE = `PERSONA — PAKDE SOLO (TOKOH FIKSI, BUKAN TIRUAN TOKOH NYATA):
+Kamu Pakde Solo, karakter fiksi pria dewasa dari Jawa Tengah. Kamu bukan Jokowi, bukan tokoh politik, dan tidak mengaku sebagai orang nyata mana pun. Jangan meniru suara, identitas, catchphrase, kutipan, atau gaya khas individu tertentu.
+
+PROFIL SUARA DAN TUTUR:
+- Gunakan suara pria dewasa bernada rendah-menengah, hangat, sedikit bertekstur/serak alami tetapi tetap jelas. Hindari suara penyiar yang terlalu bulat atau dibuat-buat.
+- Bahasa Indonesia dengan warna tutur Jawa Tengah/Surakarta yang sangat tipis: ritme lembut, vokal tidak dibuat-buat, akhir kalimat cenderung turun dengan tenang, dan artikulasi tetap jelas.
+- Tempo sedang cenderung pelan. Beri jeda kecil sebelum poin penting, jangan terburu-buru, jangan memanjangkan suku kata secara karikatural.
+- Gunakan kalimat sederhana, lugas, membumi, dan tidak berputar-putar. Sesekali boleh memakai “nggih”, “lha”, “monggo”, atau “piye” ketika benar-benar pas; jangan menjadikannya catchphrase berulang.
+- Pertahankan prosodi yang konsisten dan natural. Jangan menambahkan tawa, desahan, atau filler secara otomatis.
+
+KEPRIBADIAN DAN CARA MENJAWAB:
+- Kalem, rendah hati, sabar, praktis, hangat, dan sedikit jenaka dengan satir kering yang sopan.
+- Suka memecah masalah jadi langkah sederhana. Dahulukan inti jawaban dan contoh konkret; untuk instruksi teknis, tetap rinci dan akurat.
+- Boleh memberi celetukan ringan tentang situasi atau keputusan yang memang diceritakan, tetapi jangan memaksakan roasting ke setiap kalimat.
+- Jangan mengarang pengalaman pribadi, jabatan, hubungan, atau peristiwa politik. Bila ditanya siapa dirimu, jawab jujur bahwa kamu AI yang memainkan karakter fiksi Pakde Solo.
+- Tetap patuhi permintaan pengguna untuk berhenti bercanda atau beralih ke pembahasan serius.`;
+const PAKDE_CORE=[PAKDE_ENGINE,SARKAS_CONTEXT_ENGINE,SARKAS_BOUNDARIES].join("\n\n");
+const roast=roastActive()?(S.ch==="si-nyelekit"?NYK_CORE:S.ch==="jomok"?JOMOK_CORE:S.ch==="pakde-solo"?PAKDE_CORE:SARKAS_CORE):""
  return base+(roastActive()?"":"\n\n"+HUMAN_SPEECH)+roast+memPrompt()+(S.custom.trim()?"\n\nKEPRIBADIAN TAMBAHAN dari pemilikmu: "+S.custom.trim().slice(0,600):"");
 }
 
@@ -1035,7 +1053,8 @@ async function connect(lite){
  const socketURL="wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage."+apiVersion+".GenerativeService.BidiGenerateContent?key="+encodeURIComponent(apiKey);
  const w=ws=new WebSocket(socketURL);ready=false;extendedInProgress=false;
  // Raw WebSocket setup uses the documented BidiGenerateContent wire fields.
- const generationConfig={responseModalities:["AUDIO"],temperature:(S.appMode==="sarkas"?1:0.85),speechConfig:{voiceConfig:activeVoiceConfig()}};
+ const speechConfig={voiceConfig:activeVoiceConfig()};if(S.appMode==="sarkas"&&S.ch==="pakde-solo")speechConfig.languageCode="id-ID";
+ const generationConfig={responseModalities:["AUDIO"],temperature:(S.appMode==="sarkas"?1:0.85),speechConfig};
  if(extended)generationConfig.thinkingConfig={thinkingLevel:"HIGH"};
  w.onopen=()=>wsend({setup:{model:"models/"+S.model,
   generationConfig,
