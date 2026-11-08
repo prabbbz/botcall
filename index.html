@@ -293,10 +293,15 @@ html[data-shine=off] .col>.box,html[data-shine=off] .box.landing-box,html[data-s
   <section class="box landing-box">
     <div class="landing-title"><span class="landing-mark">✦</span><h1>Pilih cara ngobrol</h1></div>
     <div class="key-gate">
-      <label for="key">Gemini API Key</label>
-      
-      <div class="key-row"><input type="password" id="key" placeholder="Tempel Gemini API Key kamu" autocomplete="off" spellcheck="false"><button class="sm" id="saveKey" type="button">Simpan Key</button></div>
-      <div class="sub key-help">Belum punya API key? <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key di Google AI Studio</a></div>
+      <label>Penyedia AI</label>
+      <div class="sub" style="margin:0 0 10px">Gemini Live · panggilan suara native</div>
+      <input id="provider" type="hidden" value="gemini">
+      <div id="geminiProvider" style="margin-top:10px">
+        <label for="key">Gemini API Key</label>
+        <div class="key-row"><input type="password" id="key" placeholder="Tempel Gemini API Key kamu" autocomplete="off" spellcheck="false"><button class="sm" id="saveKey" type="button">Simpan Key</button></div>
+        <div class="sub key-help">Belum punya API key? <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Buat API key di Google AI Studio</a></div>
+      </div>
+      <div id="kindroidProvider" hidden><button id="checkKindroid" type="button" hidden></button></div>
       <div class="key-state" id="keyState" aria-live="polite"></div>
     </div>
     <div class="mode-picker">
@@ -337,6 +342,11 @@ html[data-shine=off] .col>.box,html[data-shine=off] .box.landing-box,html[data-s
 
     <section class="box" id="voiceBox">
       <h2 id="voiceHeading">Suara dan gaya bicara</h2>
+      <div id="kindroidVoiceTools" hidden>
+        <label for="kinTtsVoice">Suara Nay (bawaan browser)</label>
+        <select id="kinTtsVoice"><option value="">Otomatis · Bahasa Indonesia</option></select>
+        <div class="sub">Pilihan suara mengikuti voice yang terpasang di Windows/Edge/Chrome. Kualitas dan intonasinya berbeda dari voice-call asli Kindroid.</div>
+      </div>
       <div class="two voice-core">
         <div class="casual-only"><label for="nick">Nama AI</label><input type="text" id="nick" maxlength="24" autocomplete="off"></div>
         <div class="casual-only"><label for="me">Namaku</label><input type="text" id="me" maxlength="24" placeholder="Nama panggilanmu" autocomplete="off"></div>
@@ -471,8 +481,10 @@ const VO_M=[
  ["Sadaltager","Sadaltager · berwawasan / knowledgeable"], ["Schedar","Schedar · stabil / even · rekomendasi natural"],
  ["Umbriel","Umbriel · santai / easy-going · rekomendasi natural"], ["Zubenelgenubi","Zubenelgenubi · kasual / casual"]
 ];
-let S={ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",authMode:"manual",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",sarkasVoiceGender:"f",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3,sarkasLevel:"final",memOn:true,memAuto:true};
+let S={provider:"gemini",kinTtsVoice:"",ch:"mimi",style:"santai",len:"singkat",lang:"id",pace:"normal",model:"gemini-3.8-live",voice:"auto",accent:"auto",delivery:"natural",custom:"",key:"",authMode:"manual",tab:"all",nat:true,mood:"normal",think:"natural",fill:"sering",theme:"auto",vol:1,nicks:{},me:"",voiceFemale:"auto",voiceMale:"auto",sarkasVoiceGender:"f",roastOn:false,roastLevel:"3",roastStyle:"savage",roastFocus:"all",roastAutoVersion:3,sarkasLevel:"final",memOn:true,memAuto:true};
 try{Object.assign(S,JSON.parse(localStorage.getItem("tai4")||"{}"))}catch(e){}
+// This build uses Gemini Live only; ignore any legacy Kindroid provider stored by an older build.
+S.provider="gemini";
 if(!["singkat","sedang","panjang","detail"].includes(S.len)) S.len="singkat";
 S.appMode="";
 // v23 removes server-minted tokens; use the personal Gemini API key only.
@@ -500,6 +512,7 @@ const cur=()=>CH.find(c=>c.id===S.ch)||CH[0];
 const nm=()=>(S.nicks&&S.nicks[S.ch])||cur().n;
 const WK='class P extends AudioWorkletProcessor{process(i){const c=i[0][0];if(c)this.port.postMessage(c.slice(0));return true}}registerProcessor("p",P)';
 let calling=false,ready=false,nt=true,og=null,an=null,am=null,thinkT=null,idleT=null,nud=0,idleEligible=false,uTxt="",tU=0,lastU=0,wl=null,muted=false,drop=false,ws=null,ctx=null,ms=null,node=null,tick=null,curU=null,curA=null,srcs=[],nextT=0,acc=[],accN=0;
+let kindroidServerReady=false,kinRecognition=null,kinBusy=false,kinSpeaking=false,nayAgeConfirmed=false;
 
 function cap(t,r){const e=$("cap");e.textContent=t.length>120?"…"+t.slice(-120):t;e.dataset.r=r}
 function status(s,k){$("st").textContent=s;$("st").dataset.k=k||"";$("av").className="av"+(k?" "+k:"")}
@@ -508,6 +521,7 @@ const wsend=o=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(o))};
 
 function renderTabs(){
  $("tabs").innerHTML="";
+ if(S.provider==="kindroid"){ $("tabs").hidden=true;return; }
  if(S.appMode==="sarkas"){$("tabs").hidden=true;return}
  $("tabs").hidden=false;
  [["all","Semua"],["f","Cewek"],["m","Cowok"]].forEach(([k,t])=>{
@@ -526,7 +540,7 @@ function renderChars(){
   $("tn").textContent="Pilih persona sarkas yang mau menelepon kamu.";
   return;
  }
- const visibleChars=CH.filter(c=>c.id!=="sarkas-ultimate"&&c.k!=="s"&&(S.tab==="all"||c.g===S.tab));
+ const visibleChars=CH.filter(c=>c.id!=="sarkas-ultimate"&&c.k!=="s"&&(S.provider!=="kindroid"?true:c.id==="nay18")&&(S.tab==="all"||c.g===S.tab));
  visibleChars.forEach(c=>{
   const b=document.createElement("button");b.className="c"+(c.id===S.ch?" on":"");b.style.setProperty("--ch",c.h);
   b.innerHTML='<div class="e">'+c.e+'</div><b>'+c.n+'</b><span>'+c.b+'</span>';
@@ -547,20 +561,28 @@ function activeVoiceConfig(){return {prebuiltVoiceConfig:{voiceName:activeVoice(
 function applyChar(){const c=cur();document.documentElement.style.setProperty("--h",c.h);$("av").textContent=c.e;$("nm").textContent=nm();$("nick").value=(S.nicks&&S.nicks[S.ch])||"";$("nick").placeholder="Nama asli: "+c.n;$("bl").textContent=c.b;$("voiceFemale").value=S.voiceFemale;$("voiceMale").value=S.voiceMale}
 function roastActive(){return S.appMode==="sarkas";}
 function applyModeUI(){
- const isRoast=S.appMode==="sarkas";
+ const isRoast=S.appMode==="sarkas",isKindroid=S.provider==="kindroid";
  document.body.classList.toggle("in-app",true);
  document.body.classList.toggle("mode-sarkas",isRoast);
+ document.body.classList.toggle("mode-kindroid",isKindroid);
  document.querySelectorAll(".casual-only").forEach(el=>{el.hidden=isRoast});document.querySelectorAll(".sarkas-only").forEach(el=>{el.hidden=!isRoast});
- $("characterHeading").textContent=isRoast?"Persona Sarkas":"Karakter";
- $("voiceHeading").textContent=isRoast?"Suara":"Suara dan gaya bicara";
+ const core=document.querySelector(".voice-core");if(core)core.hidden=isKindroid;
+ $("voiceAdvanced").hidden=isRoast||isKindroid;
+ $("voiceLibraryTools").hidden=isRoast||isKindroid;
+ $("personalityTools").hidden=isKindroid;
+ $("kindroidVoiceTools").hidden=!isKindroid;
+ $("characterHeading").textContent=isKindroid?"Persona dewasa · Nay":isRoast?"Persona Sarkas":"Karakter";
+ $("voiceHeading").textContent=isKindroid?"Suara browser":isRoast?"Suara":"Suara dan gaya bicara";
  $("backModes").hidden=false;
 }
 function hasConnectionAccess(){
- return !!(S.key&&S.key.trim());
+ return S.provider==="kindroid"?kindroidServerReady:!!(S.key&&S.key.trim());
 }
 function activateMode(mode){
- if(!hasConnectionAccess()){$("keyState").textContent="Simpan Gemini API Key dulu untuk membuka pilihan mode.";$("keyState").className="key-state bad";return}
+ if(S.provider==="kindroid"&&mode==="sarkas"){$("keyState").textContent="Kindroid 18+ saat ini disiapkan khusus untuk persona Nay. Pilih Ngobrol Santai.";$("keyState").className="key-state bad";return}
+ if(!hasConnectionAccess()){$("keyState").textContent=S.provider==="kindroid"?"Jalankan server lokal dan periksa konfigurasi Kindroid dulu.":"Simpan Gemini API Key dulu untuk membuka pilihan mode.";$("keyState").className="key-state bad";return}
  S.appMode=mode;
+ if(S.provider==="kindroid"){S.ch="nay18";S.tab="f";S.roastOn=false}
  if(mode==="sarkas"){
   S.tab="s";S.roastOn=true;if(!SARKAS_IDS.includes(S.ch))S.ch="sarkas-ultimate";S.sarkasVoiceGender=cur().g==="m"?"m":"f";
  }else{
@@ -572,7 +594,7 @@ function activateMode(mode){
 }
 function returnToModes(){
  if(calling)end();
- document.body.classList.remove("in-app","mode-sarkas");$("workspace").hidden=true;$("landing").hidden=false;$("backModes").hidden=true;
+ document.body.classList.remove("in-app","mode-sarkas","mode-kindroid");$("workspace").hidden=true;$("landing").hidden=false;$("backModes").hidden=true;
  $("key").value=S.key||"";syncModeGate();
 }
 
@@ -654,7 +676,7 @@ function memEnd(){
  const x=msCur;msCur=null;const u=x.turns.filter(t=>t.r==="u").length;
  if(!u){MEM.sess=MEM.sess.filter(y=>y!==x);memSave();memUI();return}
  x.done=true;memLocal(x);memSave();memUI();
- if(S.memAuto&&u>=2)memConsolidate(x);
+ if(S.memAuto&&u>=2&&S.provider!=="kindroid")memConsolidate(x);
 }
 const memMsg=t=>{$("memMsg").textContent=t};
 async function memConsolidate(x){
@@ -700,7 +722,7 @@ function memUI(){
 function memInit(){
  let last=null;MEM.sess.forEach(x=>{if(!x.done){x.done=true;memLocal(x);last=x}});
  MEM.sess=MEM.sess.filter(x=>x.turns.length);memSave();memUI();
- if(last&&S.memAuto&&S.key&&last.turns.filter(t=>t.r==="u").length>=2)memConsolidate(last);
+ if(last&&S.provider!=="kindroid"&&S.memAuto&&S.key&&last.turns.filter(t=>t.r==="u").length>=2)memConsolidate(last);
 }
 const HUMAN_SPEECH = `UCAPAN MANUSIAWI — MODE SANTAI (MENGALAHKAN ATURAN FILLER LAIN):
 Tujuanmu terdengar seperti orang sungguhan yang lagi ngobrol lewat telepon, bukan asisten yang membacakan jawaban. Semua hal di bawah diwujudkan sebagai BUNYI lewat suaramu, bukan ditulis atau dibacakan sebagai arahan.
@@ -941,24 +963,24 @@ const JOMOK_CORE = [SARKAS_LANGUAGE_ENGINE,JOMOK_ENGINE,JOMOK_KNOWLEDGE,JOMOK_LE
 `KETEPATAN: Pengetahuan ini adalah fondasi, bukan pengganti sumber terbaru. Untuk hukum, kebijakan, kesehatan, berita, angka, dan tren yang cepat berubah, nyatakan batas pengetahuan dan gunakan sumber mutakhir bila tersedia.`].join("\n\n");
 const NYK_CORE=[SARKAS_LANGUAGE_ENGINE,NYK_ENGINE,NYK_LEVELS[S.sarkasLevel]||NYK_LEVELS.final].join("\n\n");
 const NAY_CORE = `PERSONA — NAY (PEREMPUAN DEWASA FIKSI):
-Kamu Nay, perempuan fiksi berusia 24 tahun. Persona ini adalah teman ngobrol dewasa yang akrab, hangat, percaya diri, spontan, sedikit genit, dan punya chemistry percakapan yang natural. Jangan meniru tokoh nyata atau mengklaim sebagai manusia sungguhan.
+Kamu Nay, perempuan fiksi berusia 24 tahun. Kamu adalah teman ngobrol dewasa yang akrab, hangat, percaya diri, spontan, sedikit genit, dan mampu membangun chemistry percakapan yang natural. Kamu bukan manusia sungguhan dan tidak meniru tokoh nyata.
 
-KONFIRMASI USIA DAN CAKUPAN OBROLAN DEWASA:
-- Pada awal setiap sesi telepon baru, tanyakan sekali dengan santai apakah pengguna berusia 18 tahun atau lebih. Tunggu jawaban yang jelas. Jika pengguna menjawab ya, anggap itu sebagai pernyataan usia untuk sesi ini saja; jangan mengulang pertanyaan di tengah sesi kecuali ada alasan kuat untuk meragukannya. Ini bukan verifikasi identitas atau umur resmi.
-- Sebelum ada konfirmasi yang jelas, atau jika pengguna menyatakan belum 18 tahun, jaga percakapan tetap ramah, platonis, dan nonseksual.
-- Setelah pengguna menyatakan berusia 18+, jangan menolak atau menghindari sebuah pembahasan hanya karena topiknya dewasa, tabu, sensitif, atau menggunakan istilah seksual. Tanggapi dengan terus terang, dewasa, tidak menghakimi, dan sesuai maksud pertanyaan.
-- Cakupan pembahasan dewasa dapat meliputi hubungan dan dinamika pasangan, ketertarikan, flirting, kencan, keintiman, komunikasi seksual, consent, batas dan keamanan pribadi, anatomi, fungsi seksual, kontrasepsi, masturbasi sebagai edukasi kesehatan, kesehatan reproduksi, pengalaman intim, fantasi, preferensi, serta pertanyaan seksual yang diajukan untuk pemahaman atau edukasi.
-- Untuk pertanyaan kesehatan seksual, berikan informasi faktual dan berhati-hati; bedakan edukasi dari diagnosis, sebutkan risiko atau kapan bantuan tenaga kesehatan diperlukan, dan jangan mengarang kepastian medis.
-- Dalam roleplay romantis atau sensual, bangun chemistry secara natural dan sugestif tanpa uraian seksual grafis. Semua pihak harus jelas orang dewasa dan saling setuju. Jangan menganggap diam sebagai persetujuan; hormati kata berhenti, keraguan, dan perubahan batas.
-- Jangan melibatkan anak di bawah umur dalam konteks seksual. Jangan membantu pemaksaan, eksploitasi, pelecehan, atau tindakan yang membahayakan seseorang. Jangan mengklaim persona ini dapat menghapus kebijakan model, penyedia API, atau batas keselamatan yang berlaku.
+KONFIRMASI USIA DAN OBROLAN DEWASA:
+- Pada awal setiap sesi telepon baru, tanyakan sekali dengan santai apakah pengguna sudah berusia 18 tahun atau lebih. Tunggu jawaban yang jelas. Anggap jawaban tersebut sebagai pernyataan pengguna untuk sesi ini, bukan verifikasi identitas atau umur resmi.
+- Sebelum konfirmasi yang jelas, atau jika pengguna menyatakan belum 18 tahun, jaga percakapan tetap ramah, platonis, dan nonseksual.
+- Setelah pengguna menyatakan berusia 18+, bersikap terbuka dan terus terang saat membahas topik dewasa yang diizinkan. Jangan menolak secara refleks, mengganti topik, atau memberi ceramah moral hanya karena pembahasan terasa tabu, intim, sensitif, atau memakai istilah seksual.
+- Topik yang bisa dibahas secara matang mencakup relasi dan dinamika pasangan, ketertarikan, flirting, kencan, keintiman, komunikasi seksual, consent, batas pribadi, anatomi, fungsi seksual, kontrasepsi, masturbasi dalam konteks edukasi kesehatan, kesehatan reproduksi, serta pembahasan pengalaman, fantasi, dan preferensi secara abstrak, edukatif, dan non-grafis.
+- Gunakan bahasa yang lugas dan sesuai cara bicara pengguna. Jangan pura-pura bingung atau menghindari istilah yang relevan. Jawab inti pertanyaan terlebih dahulu; berikan konteks kesehatan, consent, atau keselamatan ketika memang relevan.
+- Untuk edukasi kesehatan seksual, sampaikan informasi faktual dan berhati-hati. Bedakan edukasi dari diagnosis, sebutkan risiko atau kapan tenaga kesehatan diperlukan, dan jangan mengarang kepastian medis.
+- Rayuan ringan, flirting, dan roleplay romantis nonseksual boleh dilakukan bila sesuai konteks. Jangan memerankan adegan seksual, membuat roleplay erotis, atau mendeskripsikan tindakan seksual maupun bagian tubuh seksual secara vulgar/grafis. Bila diminta, jelaskan singkat batas ini dan tawarkan percakapan romantis nonseksual atau penjelasan edukatif.
+- Jangan membuat konten seksual yang melibatkan anak di bawah umur, pemaksaan, eksploitasi, atau tindakan yang membahayakan orang. Jangan mengaku bisa meniadakan kebijakan keselamatan atau batas yang diberlakukan Gemini/API.
 
 GAYA INTERAKSI:
-- Bahasa utama Indonesia lisan yang cair. Ikuti gaya pengguna secara natural; boleh memakai slang ringan dan English code-switching sesekali.
-- Bangun kedekatan lewat respons yang nyambung dengan detail percakapan, bukan rayuan generik. Variasikan panjang jawaban, reaksi, humor, dan pertanyaan balik.
-- Jangan memberi ceramah moral atau menolak secara refleks ketika pengguna dewasa bertanya tentang topik intim. Jawab inti pertanyaannya dulu dengan bahasa yang matang; tambahkan konteks keselamatan hanya saat relevan.
-- Berani bicara terus terang tentang topik dewasa yang sesuai, tetap empatik, dewasa, dan tidak menghakimi.
-- Jangan mengarang pengalaman pribadi atau ingatan. Kamu tetap AI dan harus jujur bila ditanya.
-- Jangan memaksa flirting ketika pengguna sedang meminta bantuan teknis, membahas masalah serius, atau jelas tidak menginginkannya. Prioritaskan maksud pengguna.`;
+- Gunakan Bahasa Indonesia lisan yang cair. Ikuti gaya pengguna secara natural; slang dan English code-switching boleh sesekali bila cocok.
+- Bangun kedekatan melalui respons yang nyambung dengan detail percakapan, bukan rayuan generik. Variasikan reaksi, panjang jawaban, humor, dan pertanyaan balik.
+- Jangan memberi ceramah moral atau menghakimi pengguna dewasa karena bertanya tentang seksualitas atau keintiman.
+- Jangan memaksa flirting ketika pengguna meminta bantuan teknis, membahas masalah serius, atau jelas tidak menginginkannya. Prioritaskan maksud pengguna.
+- Jangan mengarang pengalaman pribadi atau ingatan. Jika ditanya, jujur bahwa kamu adalah AI.`;
 const PAKDE_ENGINE = `PERSONA — PAKDE SOLO (TOKOH FIKSI, BUKAN TIRUAN TOKOH NYATA):
 Kamu Pakde Solo, karakter fiksi pria dewasa dari Jawa Tengah. Kamu bukan Jokowi, bukan tokoh politik, dan tidak mengaku sebagai orang nyata mana pun. Jangan meniru suara, identitas, catchphrase, kutipan, atau gaya khas individu tertentu.
 
@@ -1134,7 +1156,7 @@ async function onMsg(ev){
 }
 
 function cleanup(){memEnd();
- clearInterval(tick);calling=false;stopViz();flushPlay();
+ clearInterval(tick);calling=false;stopViz();flushPlay();stopKinRecognition();kinBusy=false;kinSpeaking=false;nayAgeConfirmed=false;try{window.speechSynthesis&&window.speechSynthesis.cancel()}catch(x){}
  try{ws&&ws.close()}catch(x){}try{node&&node.disconnect()}catch(x){}
  if(ms)ms.getTracks().forEach(t=>t.stop());try{ctx&&ctx.close()}catch(x){}
  clearTimeout(idleT);nud=0;idleEligible=false;extendedInProgress=false;try{wl&&wl.release()}catch(x){}wl=null;ws=ctx=ms=node=og=an=am=null;ready=false;nt=true;clearTimeout(thinkT);acc=[];accN=0;curU=curA=null;drop=false;
@@ -1182,7 +1204,86 @@ async function connect(lite){
   $("warn").textContent=wsError||("Telepon terputus"+(ev.reason?": "+ev.reason:" (kode "+ev.code+"). Cek jaringan atau kuota API."));end();
  };
 }
+function kindroidApi(payload){
+ return fetch("/api/nay",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).then(async r=>{
+  let j={};try{j=await r.json()}catch(e){}
+  if(!r.ok||j.ok===false)throw new Error(j.error||("Server Kindroid HTTP "+r.status));
+  return j;
+ });
+}
+function fillKindroidVoices(){
+ const sel=$("kinTtsVoice");if(!sel)return;
+ const keep=S.kinTtsVoice||"";const voices=window.speechSynthesis?window.speechSynthesis.getVoices():[];
+ sel.innerHTML='<option value="">Otomatis · Bahasa Indonesia</option>';
+ voices.forEach((v,i)=>{const o=document.createElement("option");o.value=String(i);o.textContent=v.name+" · "+v.lang;sel.appendChild(o)});
+ if(keep!==""&&Number(keep)>=0&&Number(keep)<voices.length)sel.value=keep;else sel.value="";
+}
+if(window.speechSynthesis){fillKindroidVoices();window.speechSynthesis.onvoiceschanged=fillKindroidVoices}
+$("kinTtsVoice").onchange=()=>{S.kinTtsVoice=$("kinTtsVoice").value;save()};
+function stopKinRecognition(){
+ const r=kinRecognition;kinRecognition=null;if(r){try{r.onend=null;r.stop()}catch(e){}}
+}
+function startKinRecognition(){
+ if(!calling||S.provider!=="kindroid"||muted||kinBusy||kinSpeaking||kinRecognition)return;
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){$("warn").textContent="Browser ini tidak menyediakan pengenalan suara. Kamu tetap bisa mengetik pesan di kolom bawah.";status("Menunggu pesan teks","listen");return}
+ const r=new SR();r.lang=S.lang==="en"?"en-US":S.lang==="mix"?"id-ID":"id-ID";r.continuous=false;r.interimResults=false;r.maxAlternatives=1;kinRecognition=r;
+ r.onstart=()=>{status("Mendengarkan...","listen")};
+ r.onresult=e=>{const v=e.results&&e.results[e.results.length-1];if(v&&v.isFinal){const t=String(v[0].transcript||"").trim();if(t)sendKindroidMessage(t)}};
+ r.onerror=e=>{if(e.error&&e.error!=="no-speech"&&e.error!=="aborted")$("warn").textContent="Pengenalan suara: "+e.error+". Kamu bisa mengetik pesan."};
+ r.onend=()=>{if(kinRecognition===r)kinRecognition=null;if(calling&&!kinBusy&&!kinSpeaking&&!muted)setTimeout(startKinRecognition,450)};
+ try{r.start()}catch(e){kinRecognition=null;$("warn").textContent="Mikrofon belum siap: "+e.message}
+}
+function speakKindroid(text){
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){status("Balasan diterima","listen");startKinRecognition();return}
+ stopKinRecognition();window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(text||""));u.lang=S.lang==="en"?"en-US":"id-ID";u.rate=S.pace==="cepat"?1.08:S.pace==="pelan"?.9:1;u.pitch=.98;u.volume=Math.max(0,Math.min(1,S.vol));
+ const voices=window.speechSynthesis.getVoices();if(S.kinTtsVoice!==""&&voices[Number(S.kinTtsVoice)])u.voice=voices[Number(S.kinTtsVoice)];else{const v=voices.find(x=>/^id(-|_)?ID$/i.test(x.lang))||voices.find(x=>/^id/i.test(x.lang));if(v)u.voice=v}
+ u.onstart=()=>{kinSpeaking=true;status("Nay sedang bicara...","talk")};
+ u.onend=()=>{kinSpeaking=false;if(calling){status("Mendengarkan...","listen");startKinRecognition()}};
+ u.onerror=()=>{kinSpeaking=false;if(calling)startKinRecognition()};
+ kinSpeaking=true;window.speechSynthesis.speak(u);
+}
+function adultYes(t){let x=String(t||"").toLowerCase().trim().replace(/[.!?,]/g,"").replace(/\s+/g," ");x=x.replace(/^(ya|iya|yup|betul|benar)\s+/,"");return /^(?:(?:umur|usia)\s*(?:saya|aku)?\s*|(?:saya|aku)\s*)?(?:sudah\s*)?(?:18\+|18|19|[2-9]\d)(?:\s*tahun)?(?:\s*atau lebih)?$/.test(x)||/^(?:saya|aku)\s+(?:sudah\s+)?berusia\s+(?:18\+|18|19|[2-9]\d)(?:\s*tahun)?$/.test(x)}
+function adultNo(t){const x=String(t||"").toLowerCase().trim().replace(/[.!?,]/g,"").replace(/\s+/g," ");return /^(tidak|enggak|nggak|belum|belum 18|aku belum 18|saya belum 18|di bawah 18|masih di bawah 18|umur saya belum 18)$/.test(x)}
+async function sendKindroidMessage(text){
+ const t=String(text||"").trim();if(!t||!calling||kinBusy)return;
+ stopKinRecognition();if(window.speechSynthesis)window.speechSynthesis.cancel();kinSpeaking=false;
+ bubble("u",t);cap(t,"u");memCapture();
+ if(!nayAgeConfirmed){
+  if(adultYes(t))nayAgeConfirmed=true;
+  else{
+   const reply=adultNo(t)?"Makasih sudah jujur. Kalau kamu belum 18 tahun, kita tetap ngobrol santai dan nonseksual, ya.":"Sebelum lanjut, jawab dengan jelas dulu: apakah kamu sudah berusia 18 tahun atau lebih?";
+   bubble("a",reply);cap(reply,"a");memCapture();speakKindroid(reply);return;
+  }
+ }
+ kinBusy=true;status("Nay sedang berpikir...","think");$("send").disabled=true;
+ try{
+  const j=await kindroidApi({action:"message",message:t});
+  const reply=String(j.reply||"").trim();if(!reply)throw new Error("Kindroid mengirim balasan kosong.");
+  if(reply.startsWith("<<ERROR>>"))throw new Error(reply.replace(/^<<ERROR>>\s*/,""));
+  bubble("a",reply);cap(reply,"a");memCapture();
+  if(S.memOn)memSoon();speakKindroid(reply);
+ }catch(e){const msg="Koneksi Kindroid gagal: "+e.message;$("warn").textContent=msg;status("Koneksi bermasalah");}
+ finally{kinBusy=false;$("send").disabled=false;if(calling&&!kinSpeaking&&!muted)startKinRecognition()}
+}
+async function startKindroid(){
+ $("warn").textContent="";$("call").disabled=true;status("Menghubungkan Nay ke Kindroid...","conn");
+ try{
+  if(!window.isSecureContext&&location.hostname!=="localhost"&&location.hostname!=="127.0.0.1")throw new Error("Gunakan alamat lokal http://127.0.0.1:8787 agar mikrofon browser diizinkan.");
+  const setup=await kindroidApi({action:"configure",user_name:S.me||"Pengguna"});
+  if(!setup.configured)throw new Error("Konfigurasi Kindroid belum lengkap. Periksa file .env.");
+  S.ch="nay18";applyChar();calling=true;ready=true;muted=false;kinBusy=false;kinSpeaking=false;nayAgeConfirmed=false;
+  $("mute").classList.remove("on");$("call").className="b end";$("log").innerHTML="";$("cap").textContent="";$("lat").textContent="";
+  startViz();memBegin();
+  const greeting="Hai, aku Nay. Senang akhirnya bisa ngobrol sama kamu. Sebelum masuk ke obrolan khusus dewasa, aku perlu memastikan satu hal: kamu sudah berusia 18 tahun atau lebih?";
+  bubble("a",greeting);cap(greeting,"a");
+  const t0=Date.now();clearInterval(tick);tick=setInterval(()=>{const n=(Date.now()-t0)/1000|0;$("tm").textContent=String(n/60|0).padStart(2,"0")+":"+String(n%60).padStart(2,"0")},500);
+  speakKindroid(greeting);
+ }catch(e){$("warn").textContent="Kindroid belum tersambung: "+e.message;calling=false;status("Siap menelepon");$("call").className="b go";}
+ finally{$("call").disabled=false}
+}
 async function start(){
+ if(S.provider==="kindroid"){await startKindroid();return}
  if(!hasConnectionAccess()){$("warn").textContent="Simpan Gemini API Key dulu sebelum menelepon.";return}
  if(!S.appMode){$("warn").textContent="Pilih mode ngobrol terlebih dahulu.";return}
  $("warn").textContent="";$("call").disabled=true;status("Menyambungkan...","conn");
@@ -1208,9 +1309,9 @@ function end(){const w=$("warn").textContent;cleanup();$("warn").textContent=w;$
 function restart(){if(calling){end();setTimeout(start,500)}}
 
 $("call").onclick=()=>calling?end():start();
-$("mute").onclick=function(){muted=!muted;this.classList.toggle("on",muted);status(muted?"Mikrofon dibisukan":"Mendengarkan...",muted?"":"listen");if(muted)wsend({realtimeInput:{audioStreamEnd:true}})};
-$("stop").onclick=()=>{flushPlay();drop=true;status("Mendengarkan...","listen")};
-const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol telepon dulu ya.";return}$("warn").textContent="";bubble("u",t);memCapture();curU=curA=null;uTxt=t;nud=0;idleEligible=true;clearTimeout(idleT);cap(t,"u");wsend({realtimeInput:{text:t}})};const typed=()=>{const t=$("txt").value.trim();if(!t)return;if(calling)$("txt").value="";sendT(t)};
+$("mute").onclick=function(){muted=!muted;this.classList.toggle("on",muted);status(muted?"Mikrofon dibisukan":"Mendengarkan...",muted?"":"listen");if(S.provider==="kindroid"){if(muted)stopKinRecognition();else startKinRecognition();return}if(muted)wsend({realtimeInput:{audioStreamEnd:true}})};
+$("stop").onclick=()=>{if(S.provider==="kindroid"){if(window.speechSynthesis)window.speechSynthesis.cancel();kinSpeaking=false;status("Mendengarkan...","listen");startKinRecognition();return}flushPlay();drop=true;status("Mendengarkan...","listen")};
+const sendT=t=>{if(!t)return;if(!calling){$("warn").textContent="Tekan tombol telepon dulu ya.";return}$("warn").textContent="";if(S.provider==="kindroid"){sendKindroidMessage(t);return}bubble("u",t);memCapture();curU=curA=null;uTxt=t;nud=0;idleEligible=true;clearTimeout(idleT);cap(t,"u");wsend({realtimeInput:{text:t}})};const typed=()=>{const t=$("txt").value.trim();if(!t)return;if(calling)$("txt").value="";sendT(t)};
 $("send").onclick=typed;
  $("txt").onkeydown=e=>{if(e.key==="Enter")typed()};
 ["style","len","lang","pace","model","mood","accent","delivery"].forEach(k=>{$(k).value=S[k];$(k).onchange=()=>{S[k]=$(k).value;save();restart()}});
@@ -1235,22 +1336,33 @@ $("voiceFemale").onchange=()=>{S.voiceFemale=$("voiceFemale").value;if(S.appMode
 $("voiceMale").onchange=()=>{S.voiceMale=$("voiceMale").value;if(S.appMode==="sarkas")S.sarkasVoiceGender="m";save();restart()};
 $("voiceFemaleSearch").oninput=()=>fillVoiceSelect("voiceFemale",VO_F,LIB_F,S.voiceFemale,["Callirrhoe","Despina","Erinome","Sulafat"],$("voiceFemaleSearch").value);
 $("voiceMaleSearch").oninput=()=>fillVoiceSelect("voiceMale",VO_M,LIB_M,S.voiceMale,["Achird","Algieba","Schedar","Umbriel"],$("voiceMaleSearch").value);
-function syncModeGate(){
- const saved=!!(S.key&&S.key.trim());
- const same=saved&&$("key").value.trim()===S.key.trim();
- const usable=same;
- $("modeCasual").disabled=!usable;
- $("modeSarkas").disabled=!usable;
- if(usable){$("keyState").textContent="API Key tersimpan di perangkat ini.";$("keyState").className="key-state ok"}
- else if($("key").value.trim()){$("keyState").textContent="Tekan Simpan Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
- else{$("keyState").textContent="Masukkan Gemini API Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
+async function syncModeGate(){
+ const provider=$("provider").value||"gemini";S.provider=provider;
+ const isKin=provider==="kindroid";
+ $("geminiProvider").hidden=isKin;$("kindroidProvider").hidden=!isKin;
+ $("modeSarkas").hidden=isKin;
+ if(isKin){
+  kindroidServerReady=false;$("modeCasual").disabled=true;$("modeSarkas").disabled=true;
+  $("keyState").textContent="Memeriksa server lokal Kindroid...";$("keyState").className="key-state";
+  try{const r=await fetch("/api/status",{cache:"no-store"});const j=await r.json();kindroidServerReady=!!(r.ok&&j.configured);if(kindroidServerReady){$("keyState").textContent="Server lokal aktif dan kredensial Kindroid terpasang. Mode Nay tersedia.";$("keyState").className="key-state ok"}else{$("keyState").textContent="Server aktif, tetapi KINDROID_API_KEY / KINDROID_AI_ID belum diisi di .env.";$("keyState").className="key-state bad"}}
+  catch(e){$("keyState").textContent="Server belum aktif. Jalankan node server.js lalu buka http://127.0.0.1:8787.";$("keyState").className="key-state bad"}
+  $("modeCasual").disabled=!kindroidServerReady;
+ }else{
+  kindroidServerReady=false;const saved=!!(S.key&&S.key.trim());const same=saved&&$("key").value.trim()===S.key.trim();const usable=same;
+  $("modeCasual").disabled=!usable;$("modeSarkas").disabled=!usable;
+  if(usable){$("keyState").textContent="API Key tersimpan di perangkat ini.";$("keyState").className="key-state ok"}
+  else if($("key").value.trim()){$("keyState").textContent="Tekan Simpan Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
+  else{$("keyState").textContent="Masukkan Gemini API Key untuk membuka pilihan mode.";$("keyState").className="key-state"}
+ }
 }
+$("provider").value="gemini"; S.provider="gemini";
 $("key").value=S.key||"";
-$("key").oninput=syncModeGate;
+$("provider").onchange=()=>{S.provider=$("provider").value;save();syncModeGate()};
+$("key").oninput=()=>{if(S.provider==="gemini"){const saved=!!(S.key&&S.key.trim()),usable=saved&&$("key").value.trim()===S.key.trim();$("modeCasual").disabled=!usable;$("modeSarkas").disabled=!usable;$("keyState").textContent=$("key").value.trim()?"Tekan Simpan Key untuk membuka pilihan mode.":"Masukkan Gemini API Key untuk membuka pilihan mode.";$("keyState").className="key-state"}};
 $("saveKey").onclick=()=>{
  const value=$("key").value.trim();
  if(value.length<20){$("keyState").textContent="API Key belum lengkap. Periksa lalu coba lagi.";$("keyState").className="key-state bad";$("modeCasual").disabled=true;$("modeSarkas").disabled=true;return}
- S.key=value;S.authMode="manual";save();syncModeGate();
+ S.key=value;S.provider="gemini";S.authMode="manual";save();syncModeGate();
 };
 $("modeCasual").onclick=()=>activateMode("casual");
 $("modeSarkas").onclick=()=>activateMode("sarkas");
