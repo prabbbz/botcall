@@ -278,7 +278,7 @@ html[data-shine=off] body::after,html[data-shine=off] .col>.box::after,html[data
 html[data-shine=off] .col>.box,html[data-shine=off] .box.landing-box,html[data-shine=off] .top{border-color:var(--line)}
 @media(max-width:600px){#uiPanel{top:6px;right:6px;bottom:6px;width:calc(100vw - 12px);border-radius:26px}.col>.box,.box.landing-box{zoom:var(--zm,1)}}
 </style>
-<!-- Build: Voice AI Focus v23 — manual Gemini API key + always-on Sarkas Ultimate -->
+<!-- Build: Voice AI Focus v24 · UI v2 — manual Gemini API key + always-on Sarkas Ultimate -->
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div><canvas id="fx" aria-hidden="true"></canvas>
@@ -465,7 +465,7 @@ const MD={normal:"",ceria:"Persona sedang sedikit lebih ceria dan hangat; tetap 
 const VO_F=[
  ["Achernar","Achernar · lembut / soft"], ["Aoede","Aoede · ringan / breezy"],
  ["Autonoe","Autonoe · cerah / bright"], ["Callirrhoe","Callirrhoe · santai / easy-going · rekomendasi natural"],
- ["Despina","Despina · halus / smooth · rekomendasi natural"], ["Erinome","Erinome","Erinome · jernih / clear · rekomendasi natural"],
+ ["Despina","Despina · halus / smooth · rekomendasi natural"], ["Erinome","Erinome · jernih / clear · rekomendasi natural"],
  ["Gacrux","Gacrux · dewasa / mature"], ["Kore","Kore · tegas / firm"],
  ["Laomedeia","Laomedeia · upbeat / bersemangat"], ["Leda","Leda · muda / youthful"],
  ["Pulcherrima","Pulcherrima · ekspresif / forward"], ["Sulafat","Sulafat · hangat / warm · rekomendasi natural"],
@@ -1575,6 +1575,91 @@ document.addEventListener("keydown",e=>{if(!R.classList.contains("ui-open"))retu
  e.stopPropagation()},true);
 new MutationObserver(sync).observe(R,{attributes:true,attributeFilter:["data-theme"]});
 apply();rest();
+})();
+</script>
+<!-- ===== UI v2 ADD-ON · tempel di akhir halaman, sebelum penutup body ===== -->
+<style id="uiv2">
+:root{--sp:cubic-bezier(.34,1.56,.64,1);--ou:cubic-bezier(.2,.8,.2,1);--hd:84px}
+html{scroll-padding-top:100px}.call{scroll-margin-top:90px}
+@supports(animation-timeline:scroll()){body::before{content:"";position:fixed;inset:0 0 auto;height:3px;z-index:101;transform-origin:0 50%;transform:scaleX(0);background:var(--goldg);box-shadow:0 0 12px rgba(236,196,100,.7);animation:spg linear both;animation-timeline:scroll(root)}}
+@keyframes spg{to{transform:scaleX(1)}}
+/* header mengecil saat scroll */
+.top{transition:min-height .4s var(--ou),padding .4s var(--ou),box-shadow .4s}
+.logo i{transition:width .4s var(--ou),height .4s var(--ou),font-size .4s}
+body.scrolled .top{min-height:54px;padding-block:6px;box-shadow:inset 0 1px 0 var(--in),0 22px 44px -22px var(--sh)}
+body.scrolled .logo i{width:36px;height:36px;font-size:17px}
+/* tombol & kartu: gerak pegas */
+.sm,.chip,.tab,.b{transition:transform .35s var(--sp),border-color .2s,box-shadow .3s,background .3s,rotate .35s}
+.b:hover{transform:translateY(-3px) scale(1.06)}.b:active{transform:scale(.88)}
+.sm:active,.chip:active,.tab:active{transform:scale(.94)}
+button:focus-visible,.c:focus-visible{outline-color:#e7c36b}
+.c{transition:transform .4s var(--sp),border-color .25s,box-shadow .3s,background .3s}
+.c .e,.mode-icon{transition:transform .5s var(--sp)}
+.c:hover .e{transform:scale(1.1) rotate(-6deg)}.mode-card:not(:disabled):hover .mode-icon{transform:scale(1.12) rotate(-8deg)}
+.m{animation-timing-function:var(--sp)}.cap{animation:pop .4s var(--sp)}
+/* panel telepon */
+.call{transform:perspective(1400px) rotateX(var(--prx,0deg)) rotateY(var(--pry,0deg));transition:transform .6s var(--ou),box-shadow .7s}
+.st{background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04));-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+#tm{background:linear-gradient(180deg,#fff,hsl(var(--h) 90% 82%));-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 0 12px hsl(var(--h) 90% 65%/.5))}
+.stage:has(.av.talk)::before{animation-duration:1.8s}
+/* DESKTOP: phone tetap di tempat & selalu muat di layar */
+@media(min-width:921px){
+ .app{align-items:start}
+ .call{position:sticky;top:calc(var(--hd) + 14px);align-self:start;max-height:calc(100dvh - var(--hd) - 30px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none}
+ .call::-webkit-scrollbar{display:none}
+ .stage{width:min(100%,300px,max(132px,calc(100dvh - 560px)))}
+ .call:has(.av.talk){box-shadow:0 0 0 7px #0a0b18,0 0 0 8px hsl(var(--h) 90% 70%/.5),0 0 0 9px #000,0 50px 100px -28px hsl(var(--h) 90% 52%/.85),0 30px 50px -30px #000,inset 0 1px 0 rgba(255,255,255,.25)}
+ .call:has(.av.listen){box-shadow:0 0 0 7px #0a0b18,0 0 0 8px hsl(150 80% 55%/.45),0 0 0 9px #000,0 50px 90px -30px hsl(150 75% 40%/.6),0 30px 50px -30px #000,inset 0 1px 0 rgba(255,255,255,.22)}
+}
+@media(min-width:921px) and (max-height:820px){.call .chips{display:none}.call .vol,.call .bt{margin-top:12px}.call .cap{min-height:0;-webkit-line-clamp:2}}
+/* MOBILE/TABLET: dock kontrol yang menempel di bawah */
+@media(max-width:920px){body.in-app .app{padding-bottom:104px}}
+#dock{position:fixed;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:60;width:min(calc(100vw - 20px),460px);display:flex;align-items:center;gap:10px;padding:8px 10px 8px 8px;border-radius:26px;color:#f2f4ff;border:1px solid rgba(255,255,255,.18);background:linear-gradient(160deg,hsl(var(--h) 60% 22%/.92),rgba(8,10,28,.94));box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 24px 50px -18px #000,0 0 40px -14px hsl(var(--h) 90% 55%/.7);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);translate:-50% 160%;opacity:0;visibility:hidden;transition:translate .55s var(--sp),opacity .35s,visibility .55s}
+#dock.show{translate:-50% 0;opacity:1;visibility:visible}html.ui-open #dock{opacity:0;pointer-events:none}
+body.mode-sarkas #dock{background:linear-gradient(160deg,hsl(350 60% 22%/.92),rgba(20,6,12,.95))}
+#dkUp{flex:none;width:46px;height:46px;padding:0;border:0;border-radius:16px;font-size:24px;cursor:pointer;display:grid;place-items:center;background:linear-gradient(145deg,hsl(var(--h) 88% 66%),hsl(calc(var(--h) + 40) 80% 46%));box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}#dkAv{font-style:normal}
+.dk-t{flex:1;min-width:0;display:grid;line-height:1.25}.dk-t b{font:700 14px var(--fd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dk-t small{font-size:11.5px;color:#a9b0d8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#dkSt[data-k=listen]{color:#22d37a}#dkSt[data-k=talk]{color:hsl(var(--h) 95% 75%)}#dkSt[data-k=conn],#dkSt[data-k=think]{color:#f5a524}
+#dkTm{font:600 13px var(--fd);letter-spacing:.06em;font-variant-numeric:tabular-nums;color:#dfe3ff}
+.dk-b{position:relative;flex:none;width:44px;height:44px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.2);color:#fff;cursor:pointer;display:grid;place-items:center;background:rgba(255,255,255,.1);transition:transform .3s var(--sp),background .3s}
+.dk-b svg{width:20px;height:20px;fill:currentColor}.dk-b:active{transform:scale(.88)}
+.dk-b.go{border:0;background:radial-gradient(120% 120% at 30% 14%,#7bf5b8,#12b76a 55%,#0a8a4e)}
+.dk-b.end{border:0;background:radial-gradient(120% 120% at 30% 14%,#ff8aa3,#f0386b 55%,#c21e4d)}.dk-b.end svg{transform:rotate(135deg)}
+.dk-b.on{background:hsl(var(--h) 78% 56%)}.dk-b.on::after{content:"";position:absolute;width:26px;height:3px;border-radius:2px;background:#fff;transform:rotate(-45deg)}
+</style>
+<script>
+(()=>{
+const $=i=>document.getElementById(i),R=document.documentElement,B=document.body,RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const top=document.querySelector(".top"),call=document.querySelector(".call"),ws=$("workspace");
+/* tinggi header -> posisi sticky phone */
+const hd=()=>R.style.setProperty("--hd",(top.offsetHeight+10)+"px");hd();addEventListener("resize",hd);
+if("ResizeObserver"in window)new ResizeObserver(hd).observe(top);
+addEventListener("scroll",()=>B.classList.toggle("scrolled",scrollY>24),{passive:true});
+/* dock kontrol telepon */
+const d=document.createElement("div");d.id="dock";d.setAttribute("role","region");d.setAttribute("aria-label","Kontrol telepon");
+d.innerHTML='<button type="button" id="dkUp" aria-label="Kembali ke layar telepon"><i id="dkAv"></i></button><div class="dk-t"><b id="dkNm"></b><small id="dkSt"></small></div><time id="dkTm"></time><button type="button" class="dk-b" id="dkMute" aria-label="Bisukan mikrofon"></button><button type="button" class="dk-b go" id="dkCall" aria-label="Telepon"></button>';
+B.appendChild(d);
+$("dkMute").innerHTML=$("mute").innerHTML;$("dkCall").innerHTML=$("call").innerHTML;
+const sync=()=>{
+ $("dkAv").textContent=$("av").textContent;$("dkNm").textContent=$("nm").textContent;
+ $("dkSt").textContent=$("st").textContent;$("dkSt").dataset.k=$("st").dataset.k||"";$("dkTm").textContent=$("tm").textContent;
+ $("dkMute").classList.toggle("on",$("mute").classList.contains("on"));
+ const e=$("call").classList.contains("end");$("dkCall").classList.toggle("end",e);$("dkCall").classList.toggle("go",!e);$("dkCall").disabled=$("call").disabled;
+};
+sync();new MutationObserver(sync).observe(call,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["class","data-k","disabled"]});
+let out=false;const show=()=>d.classList.toggle("show",out&&B.classList.contains("in-app")&&!ws.hidden);
+new IntersectionObserver(([e])=>{out=!e.isIntersecting;show()},{rootMargin:"-70px 0px 0px 0px",threshold:.12}).observe(call);
+new MutationObserver(show).observe(B,{attributes:true,attributeFilter:["class"]});new MutationObserver(()=>{if(!ws.hidden)out=false;show()}).observe(ws,{attributes:true,attributeFilter:["hidden"]});
+$("dkMute").onclick=()=>$("mute").click();$("dkCall").onclick=()=>$("call").click();
+$("dkUp").onclick=()=>call.scrollIntoView({behavior:RM?"auto":"smooth",block:"start"});
+/* haptik ringan di HP */
+document.addEventListener("pointerdown",e=>{if(navigator.vibrate&&e.target.closest&&e.target.closest("button"))navigator.vibrate(6)},{passive:true});
+/* tilt halus phone di desktop */
+if(!RM&&matchMedia("(hover:hover) and (min-width:921px)").matches){let f=0;
+ addEventListener("pointermove",e=>{if(f||R.dataset.motion==="off")return;f=requestAnimationFrame(()=>{f=0;const r=call.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5,n=Math.abs(x)<.9&&Math.abs(y)<.8;
+  call.style.setProperty("--pry",n?(x*5).toFixed(2)+"deg":"0deg");call.style.setProperty("--prx",n?(-y*4).toFixed(2)+"deg":"0deg")})},{passive:true});
+ addEventListener("blur",()=>{call.style.setProperty("--pry","0deg");call.style.setProperty("--prx","0deg")});
+}
 })();
 </script>
 </body>
