@@ -278,7 +278,7 @@ html[data-shine=off] body::after,html[data-shine=off] .col>.box::after,html[data
 html[data-shine=off] .col>.box,html[data-shine=off] .box.landing-box,html[data-shine=off] .top{border-color:var(--line)}
 @media(max-width:600px){#uiPanel{top:6px;right:6px;bottom:6px;width:calc(100vw - 12px);border-radius:26px}.col>.box,.box.landing-box{zoom:var(--zm,1)}}
 </style>
-<!-- Build: Voice AI Focus v24 · UI v2 — manual Gemini API key + always-on Sarkas Ultimate -->
+<!-- Build: Voice AI Focus v25 · UI v3 — manual Gemini API key + always-on Sarkas Ultimate -->
 </head>
 <body>
 <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div><canvas id="fx" aria-hidden="true"></canvas>
@@ -1660,6 +1660,80 @@ if(!RM&&matchMedia("(hover:hover) and (min-width:921px)").matches){let f=0;
   call.style.setProperty("--pry",n?(x*5).toFixed(2)+"deg":"0deg");call.style.setProperty("--prx",n?(-y*4).toFixed(2)+"deg":"0deg")})},{passive:true});
  addEventListener("blur",()=>{call.style.setProperty("--pry","0deg");call.style.setProperty("--prx","0deg")});
 }
+})();
+</script>
+<!-- ===== UI v3 ADD-ON · aksen warna, AMOLED, mode fokus, animasi tambahan ===== -->
+<style id="uiv3">
+:root{--ta:42;--rot:0deg}
+@supports(color:light-dark(red,blue)){
+:root[data-ac][data-ac]{--goldg:linear-gradient(135deg,hsl(var(--ta) 100% 88%),hsl(var(--ta) 78% 66%) 26%,hsl(var(--ta) 62% 42%) 58%,hsl(var(--ta) 85% 78%) 84%,hsl(var(--ta) 60% 52%));--gtext:linear-gradient(135deg,light-dark(hsl(var(--ta) 70% 28%),hsl(var(--ta) 100% 86%)),light-dark(hsl(var(--ta) 62% 46%),hsl(var(--ta) 75% 66%)) 50%,light-dark(hsl(var(--ta) 70% 28%),hsl(var(--ta) 60% 46%)));--goldtx:light-dark(hsl(var(--ta) 65% 30%),hsl(var(--ta) 75% 70%));--line:light-dark(hsl(var(--ta) 45% 40%/.26),hsl(var(--ta) 70% 70%/.22));--s1:light-dark(hsl(var(--ta) 70% 28%),hsl(var(--ta) 70% 48%));--s2:light-dark(hsl(var(--ta) 60% 52%),hsl(var(--ta) 100% 90%));--shim:linear-gradient(100deg,var(--s1) 0%,var(--s2) 25%,var(--s1) 50%,var(--s2) 75%,var(--s1) 100%)}
+:root[data-am][data-am]{--bg:light-dark(#edecef,#000)}
+}
+:root[data-ac][data-ac] :is(.col>.box,.box.landing-box,.top)::after{background:conic-gradient(from var(--ang),hsl(var(--ta) 100% 78%/.9),hsl(var(--ta) 50% 40%/.08) 22%,hsl(var(--ta) 100% 78%/.55) 50%,hsl(var(--ta) 50% 40%/.08) 78%,hsl(var(--ta) 100% 78%/.9))}
+:root[data-ac][data-ac] .mode-card:not(.mode-roast)::before{background:conic-gradient(from var(--ang),transparent 0 45%,hsl(var(--ta) 100% 85%) 72%,hsl(var(--ta) 65% 48%) 86%,transparent)}
+:root[data-ac][data-ac] .aurora i:nth-child(1){background:hsl(var(--ta) 85% 52%)}
+:root[data-ac][data-ac] #fx{filter:hue-rotate(var(--rot))}
+:root[data-ac] ::selection{background:hsl(var(--ta) 80% 60%/.35)}
+:root[data-ac] button:focus-visible,:root[data-ac] .c:focus-visible{outline-color:hsl(var(--ta) 90% 65%)}
+/* cahaya yang mengikuti kursor */
+.aurora::before{content:"";position:absolute;inset:0;background:radial-gradient(560px circle at var(--gx,50%) var(--gy,22%),hsl(var(--ta) 90% 62%/.13),transparent 62%)}
+/* kilau menyapu di kartu & tombol */
+.c:not(.on)::after,.sm::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.2) 50%,transparent 62%);transform:translateX(-130%);transition:transform .9s var(--ou)}
+.c:not(.on):hover::after,.sm:hover::after{transform:translateX(130%)}
+/* avatar saat menyambung/berpikir */
+.av.conn,.av.think{animation:float 6s ease-in-out infinite,thinkp 1.5s ease-in-out infinite}
+.stage:has(.av.conn)::after,.stage:has(.av.think)::after{animation-duration:3s}
+@keyframes thinkp{50%{filter:brightness(1.2) saturate(1.25)}}
+/* panel muncul saat di-scroll */
+.rv-p{animation:none!important;opacity:0;transform:translateY(28px) scale(.98);filter:blur(6px);transition:opacity .8s var(--ou),transform .8s var(--ou),filter .8s,border-color .3s,box-shadow .3s}
+.rv-p.rv-in{opacity:1;transform:none;filter:none}
+html[data-motion=off] .rv-p{opacity:1;transform:none;filter:none;transition:none}
+/* indikator telepon aktif + mode fokus */
+body.on-call .logo b::after{content:" ●";font-size:12px;color:#f0386b;-webkit-text-fill-color:#f0386b;animation:bl 1s infinite}
+#zenBtn{flex:none;width:44px;height:44px;padding:0;border-radius:15px;font-size:18px;display:grid;place-items:center}body:not(.in-app) #zenBtn{display:none}
+html.zen .app{grid-template-columns:minmax(0,440px);justify-content:center}html.zen .col{display:none}
+/* pemilih aksen di menu pengaturan */
+.ac-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:6px}
+.ac-b{width:34px;height:34px;padding:0;border-radius:50%;border:2px solid var(--line);cursor:pointer;background:radial-gradient(circle at 35% 30%,hsl(var(--c) 100% 85%),hsl(var(--c) 75% 52%) 60%,hsl(var(--c) 70% 34%));transition:transform .3s var(--sp),box-shadow .3s}
+.ac-b:hover{transform:scale(1.12)}.ac-b.on{transform:scale(1.08);box-shadow:0 0 0 3px var(--bg),0 0 0 5px hsl(var(--c) 80% 60%)}
+</style>
+<script>
+(()=>{
+const $=i=>document.getElementById(i),R=document.documentElement,B=document.body,RM=matchMedia("(prefers-reduced-motion:reduce)").matches;
+const K="tpai_ui_v3",A={gold:42,safir:212,zamrud:152,mawar:338,ungu:268,senja:16,es:186},N={gold:"Emas",safir:"Safir",zamrud:"Zamrud",mawar:"Mawar",ungu:"Ungu",senja:"Senja",es:"Es"};
+let U={ac:"gold",am:0};try{Object.assign(U,JSON.parse(localStorage.getItem(K)||"{}"))}catch(e){}
+if(!(U.ac in A))U.ac="gold";
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(U))}catch(e){}};
+/* menu aksen di panel pengaturan */
+const sec=document.createElement("div");sec.className="ui-sec";
+sec.innerHTML='<b>Warna aksen</b><div class="ac-row">'+Object.keys(A).map(k=>'<button type="button" class="ac-b" data-acc="'+k+'" style="--c:'+A[k]+'" title="'+N[k]+'" aria-label="Aksen '+N[k]+'"></button>').join("")+'</div><div class="ui-sw"><span>AMOLED hitam<small class="sub">Latar hitam pekat saat mode gelap</small></span><button type="button" role="switch" data-amb aria-label="AMOLED hitam"></button></div>';
+const foot=document.querySelector("#uiPanel .ui-foot");if(foot)foot.before(sec);
+function apply(){const h=A[U.ac];
+ if(U.ac==="gold")R.removeAttribute("data-ac");else R.dataset.ac=U.ac;
+ R.style.setProperty("--ta",h);R.style.setProperty("--rot",(h-42)+"deg");
+ if(U.am)R.dataset.am="1";else R.removeAttribute("data-am");
+ sec.querySelectorAll("[data-acc]").forEach(b=>{const on=b.dataset.acc===U.ac;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)});
+ const s=sec.querySelector("[data-amb]");s.classList.toggle("on",!!U.am);s.setAttribute("aria-checked",!!U.am)}
+sec.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.acc)U.ac=b.dataset.acc;else if("amb"in b.dataset)U.am=U.am?0:1;else return;save();apply()});
+apply();
+/* mode fokus: sembunyikan panel kanan */
+const ta=document.querySelector(".top-actions"),zb=document.createElement("button");
+zb.id="zenBtn";zb.className="sm";zb.type="button";zb.textContent="◐";zb.title="Mode fokus (sembunyikan panel)";zb.setAttribute("aria-label","Mode fokus");zb.setAttribute("aria-pressed","false");
+zb.onclick=()=>zb.setAttribute("aria-pressed",R.classList.toggle("zen"));
+if(ta)ta.prepend(zb);
+/* judul tab menampilkan timer saat menelepon */
+const ct=$("call"),tm=$("tm"),nmE=$("nm"),T0=document.title;
+const tt=()=>{const on=ct.classList.contains("end");B.classList.toggle("on-call",on);document.title=on?"📞 "+tm.textContent+" · "+nmE.textContent:T0};
+new MutationObserver(tt).observe(ct,{attributes:true,attributeFilter:["class"]});
+new MutationObserver(tt).observe(tm,{childList:true,characterData:true,subtree:true});
+/* cahaya latar mengikuti kursor (desktop) */
+const au=document.querySelector(".aurora");
+if(au&&!RM&&matchMedia("(hover:hover)").matches){let f=0,x=0,y=0;
+ addEventListener("pointermove",e=>{x=e.clientX;y=e.clientY;if(f)return;f=requestAnimationFrame(()=>{f=0;au.style.setProperty("--gx",x+"px");au.style.setProperty("--gy",y+"px")})},{passive:true})}
+/* panel di bawah muncul saat di-scroll */
+if("IntersectionObserver"in window&&!RM){
+ const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("rv-in");io.unobserve(e.target)}}),{rootMargin:"0px 0px -8% 0px"});
+ [...document.querySelectorAll(".col>.box")].slice(2).forEach(b=>{b.classList.add("rv-p");io.observe(b)})}
 })();
 </script>
 </body>
